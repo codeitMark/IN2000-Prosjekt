@@ -76,6 +76,7 @@ dependencies {
     implementation("io.ktor:ktor-client-android:$ktor_version")
     implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
     implementation("io.ktor:ktor-serialization-gson:$ktor_version")
+    implementation("io.ktor:ktor-client-cio:$ktor_version")
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
