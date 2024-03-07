@@ -29,7 +29,7 @@ data class DataSource(private val path: String = "link") { //for json files
         val method2 = HttpClient(CIO){
             defaultRequest {
                 url("https://gw-uio.intark.uh-it.no/in2000/")
-                header("X-Gravitee-API-Key", "<din-api-nøkkel>")
+                header("X-Gravitee-Api-Key", "2da3279c-ee4c-4d21-955e-d13822ff578c")
             }
         }
         val response = client.get("weatherapi/")
