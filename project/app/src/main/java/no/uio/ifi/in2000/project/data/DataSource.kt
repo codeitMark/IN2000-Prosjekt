@@ -18,8 +18,8 @@ data class DataSource(private val path: String = "link") { //for json files
     }
 
     suspend fun getObject(){
-        val response = client.get(path)
-        Log.i("DataSource", "response ${response.status.value}") //Checks API response and if it's available (200 if successful)
+        //val response = client.get(path)
+        //Log.i("DataSource", "response ${response.status.value}") //Checks API response and if it's available (200 if successful)
         /* //example code of what to return from an API call
         val objects = response.body<>()
         return objects.objects
@@ -32,5 +32,7 @@ data class DataSource(private val path: String = "link") { //for json files
                 header("X-Gravitee-API-Key", "<din-api-nøkkel>")
             }
         }
+        val response = client.get("weatherapi/")
+        Log.i("DataSource", "response ${response.status.value}")
     }
 }
