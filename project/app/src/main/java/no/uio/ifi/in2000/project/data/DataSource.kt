@@ -35,4 +35,10 @@ data class DataSource(private val path: String = "link") { //for json files
         val response = client.get("weatherapi/")
         Log.i("DataSource", "response ${response.status.value}")
     }
+
+    /*
+    Her er de to obligatoriske API-ene
+    url til LocationForecast: https://api.met.no/weatherapi/locationforecast/2.0/complete?lat=60.10&lon=10
+    url til MetAlerts: https://api.met.no/weatherapi/metalerts/2.0/current.json
+     */
 }
