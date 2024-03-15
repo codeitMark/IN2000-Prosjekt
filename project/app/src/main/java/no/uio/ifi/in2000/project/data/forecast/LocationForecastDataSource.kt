@@ -24,6 +24,6 @@ data class LocationForecastDataSource(private val path: String = "https://gw-uio
             }
         }
         val response = client.get("weatherapi/locationforecast/2.0/compact?lat=60&lon=11")
-        Log.i("DataSource", "response ${response.status.value}")
+        Log.i("LocationForecastDataSource", "response ${response.status.value}")
     }
 }

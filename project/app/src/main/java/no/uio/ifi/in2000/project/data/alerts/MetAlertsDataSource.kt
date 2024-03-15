@@ -24,6 +24,6 @@ data class MetAlertsDataSource(private val path: String = "https://gw-uio.intark
             }
         }
         val response = client.get("weatherapi/metalerts/2.0/current.json")
-        Log.i("DataSource", "response ${response.status.value}")
+        Log.i("MetAlertsDataSource", "response ${response.status.value}")
     }
 }
