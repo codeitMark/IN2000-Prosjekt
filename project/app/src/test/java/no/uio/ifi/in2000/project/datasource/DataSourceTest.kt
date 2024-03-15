@@ -1,4 +1,4 @@
-package no.uio.ifi.in2000.project
+package no.uio.ifi.in2000.project.datasource
 
 import kotlinx.coroutines.runBlocking
 import no.uio.ifi.in2000.project.data.DataSource
