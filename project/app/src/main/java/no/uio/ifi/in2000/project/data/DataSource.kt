@@ -32,7 +32,7 @@ data class DataSource(private val path: String = "link") { //for json files
                 header("X-Gravitee-Api-Key", "2da3279c-ee4c-4d21-955e-d13822ff578c")
             }
         }
-        val response = client.get("weatherapi/")
+        val response = client.get("weatherapi/locationforecast/2.0/compact?lat=60&lon=11")
         Log.i("DataSource", "response ${response.status.value}")
     }
 
