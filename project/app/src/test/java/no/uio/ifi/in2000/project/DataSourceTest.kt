@@ -6,7 +6,7 @@ import org.junit.Test
 
 class DataSourceTest {
     @Test
-    fun test_fetchJokes(){
+    fun test_fetchData(){
         //runBlocking oppretter en coroutine for å kjøre funksjonene våre (spesielt for suspend funksjoner)
         runBlocking {
             val source = DataSource()
