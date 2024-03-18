@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    kotlin("plugin.serialization").version("1.9.10")
 }
 
 android {
@@ -81,4 +82,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
     implementation("io.coil-kt:coil-compose:2.5.0")
+
+    implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.8")
 }
