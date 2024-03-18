@@ -20,7 +20,7 @@ data class LocationForecastDataSource(private val path: String = "https://gw-uio
         }
     }
 
-    suspend fun getObject(){
+    suspend fun getObject(): LocationForecastResponse{
         val klienten = HttpClient(CIO){
             defaultRequest {
                 url(path)
@@ -29,5 +29,6 @@ data class LocationForecastDataSource(private val path: String = "https://gw-uio
         }
         val response: LocationForecastResponse = client.get("weatherapi/locationforecast/2.0/compact?lat=60&lon=11").body()
         //Log.i("LocationForecastDataSource", "response ${response.status.value}")
+        return response
     }
 }
