@@ -6,7 +6,7 @@ import org.junit.Test
 
 class DataSourceTest { //hei, kun et mal! Lag gjerne egen fil :)
     @Test
-    fun test_fetchData(){ //sjekke API status og om det er tomt
+    fun test_getObject(){ //sjekke API status og om det er tomt
         //runBlocking oppretter en coroutine for å kjøre funksjonene våre (spesielt for suspend funksjoner)
         runBlocking {
             val source = DataSource()

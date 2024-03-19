@@ -20,7 +20,7 @@ data class LocationForecastDataSource(private val path: String = "https://gw-uio
         }
     }
 
-    suspend fun fetchWeather(): LocationForecastResponse{
+    suspend fun getWeather(): LocationForecastResponse{
         val klienten = HttpClient(CIO){
             defaultRequest {
                 url(path)
