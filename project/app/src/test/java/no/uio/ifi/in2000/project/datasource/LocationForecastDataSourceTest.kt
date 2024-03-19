@@ -10,7 +10,7 @@ class LocationForecastDataSourceTest {
         runBlocking {
             val source = LocationForecastDataSource()
             val weatherData = source.getWeather()
-            println(weatherData)
+            //println(weatherData)
             assert(weatherData != null)
         }
     }

@@ -10,19 +10,17 @@ import io.ktor.client.request.header
 import io.ktor.serialization.gson.gson
 
 data class MetAlertsDataSource(private val path: String = "https://gw-uio.intark.uh-it.no/in2000/") {
-    private val client = HttpClient(){
+    private val client = HttpClient(CIO){
         install(ContentNegotiation){
             gson()
         }
+        defaultRequest {
+            url(path)
+            header("X-Gravitee-Api-Key", "2da3279c-ee4c-4d21-955e-d13822ff578c")
+        }
     }
 
-    suspend fun getObject(){
-        val klienten = HttpClient(CIO){
-            defaultRequest {
-                url(path)
-                header("X-Gravitee-Api-Key", "2da3279c-ee4c-4d21-955e-d13822ff578c")
-            }
-        }
+    suspend fun getAlerts(){
         val response = client.get("weatherapi/metalerts/2.0/current.json")
         Log.i("MetAlertsDataSource", "response ${response.status.value}")
     }
