@@ -22,6 +22,8 @@ data class MetAlertsDataSource(private val path: String = "https://gw-uio.intark
 
     suspend fun getAlerts(){
         val response = client.get("weatherapi/metalerts/2.0/current.json")
+        //Husk at man kan legge til parametere (for LocationForecast også!), sjekk dokumentasjon!
+        //Eksempel: https://api.met.no/weatherapi/metalerts/2.0/current.json?county=42
         Log.i("MetAlertsDataSource", "response ${response.status.value}")
     }
 }
