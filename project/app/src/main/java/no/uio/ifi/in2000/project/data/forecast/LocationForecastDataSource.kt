@@ -27,8 +27,10 @@ data class LocationForecastDataSource(private val path: String = "https://gw-uio
                 header("X-Gravitee-Api-Key", "2da3279c-ee4c-4d21-955e-d13822ff578c")
             }
         }
-        val response: LocationForecastResponse = client.get("weatherapi/locationforecast/2.0/compact?lat=60&lon=11").body()
-        //Log.i("LocationForecastDataSource", "response ${response.status.value}")
-        return response
+        val httpResponse = client.get("weatherapi/locationforecast/2.0/compact?lat=60&lon=11")
+        Log.i("LocationForecastDataSource", "response ${httpResponse.status.value}")
+        //val response = httpResponse.body<LocationForecastResponse>()
+        //return response
+        return httpResponse.body<LocationForecastResponse>()
     }
 }

@@ -6,8 +6,14 @@ import java.io.Serial
 @Serializable
 data class LocationForecastResponse(
     val type: String,
-    val geometry: List<Int>,
+    val geometry: Geometry,
     val properties: Properties
+)
+
+@Serializable
+data class Geometry(
+    val type: String,
+    val coordinates: List<Int>
 )
 
 @Serializable
