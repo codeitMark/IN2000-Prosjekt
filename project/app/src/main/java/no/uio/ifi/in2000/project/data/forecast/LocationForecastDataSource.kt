@@ -34,3 +34,28 @@ data class LocationForecastDataSource(private val path: String = "https://gw-uio
         return httpResponse.body<LocationForecastResponse>()
     }
 }
+
+/*
+*
+* private val client = HttpClient(CIO) {
+        install(ContentNegotiation) {
+            json(Json {
+                ignoreUnknownKeys = true
+            })
+        }
+    }
+
+    suspend fun getAlpacaParties(): List<PartyInfo> {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response: AlpacaPartiesResponse = client.get("https://www.uio.no/studier/emner/matnat/ifi/IN2000/v24/obligatoriske-oppgaver/alpacaparties.json").body()
+                response.parties
+            } catch (e: Exception) {
+                println("No network connection")
+                println(e)
+                emptyList()
+            }
+        }
+    }
+*
+* */
