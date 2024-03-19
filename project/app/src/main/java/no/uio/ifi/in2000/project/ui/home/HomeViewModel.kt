@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.project.data.forecast.LocationForecastDataSource
 import no.uio.ifi.in2000.project.data.forecast.LocationForecastRepository
 import no.uio.ifi.in2000.project.model.forecast.Data
 import no.uio.ifi.in2000.project.model.forecast.Geometry
@@ -25,7 +26,7 @@ import no.uio.ifi.in2000.project.model.forecast.Units
 data class weatherUiState(val data: LocationForecastResponse)
 
 class HomeViewModel : ViewModel(){
-    private val rep = LocationForecastRepository()
+    private val rep = LocationForecastRepository(LocationForecastDataSource())
 
     //var weatherUiState by mutableStateOf(weatherUiState)
 
@@ -41,7 +42,12 @@ class HomeViewModel : ViewModel(){
 
     init {
         viewModelScope.launch(Dispatchers.IO){
-            weatherData = rep.fetchWeather()
+
+            // bare midlertidige hardkodede koordinater for MVP-en
+            val lat = 59.9
+            val lon = 10.7
+
+            weatherData = rep.fetchWeather(lat, lon)
             Log.i("HOMEVIEWMODEL INIT", "Initiated.")
             //weatherUiState = weatherUiState.copy(weather = weather)
         }

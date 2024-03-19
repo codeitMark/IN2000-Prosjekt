@@ -9,7 +9,6 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.serialization.gson.gson
-import kotlinx.serialization.Serializable
 import no.uio.ifi.in2000.project.model.forecast.LocationForecastResponse
 
 
@@ -24,8 +23,8 @@ data class LocationForecastDataSource(private val path: String = "https://gw-uio
         }
     }
 
-    suspend fun getWeather(): LocationForecastResponse { //add try catch for no internet connection?
-        val httpResponse = client.get("weatherapi/locationforecast/2.0/compact?lat=58.775&lon=5.9")
+    suspend fun getWeather(lat: Double, lon: Double): LocationForecastResponse { //add try catch for no internet connection?
+        val httpResponse = client.get("weatherapi/locationforecast/2.0/compact?lat=$lat&lon=$lon")
         Log.i("LocationForecastDataSource", "response ${httpResponse.status.value}")
         //val response = httpResponse.body<LocationForecastResponse>()
         //return response
