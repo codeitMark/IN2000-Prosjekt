@@ -16,7 +16,7 @@ data class MetAlertsDataSource(private val path: String = "https://gw-uio.intark
         }
     }
 
-    suspend fun getObject(){
+    suspend fun getAlerts(){
         val klienten = HttpClient(CIO){
             defaultRequest {
                 url(path)
