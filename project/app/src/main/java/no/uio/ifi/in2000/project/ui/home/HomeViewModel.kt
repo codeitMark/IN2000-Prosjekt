@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.project.ui.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -17,6 +18,7 @@ class HomeViewModel : ViewModel(){
     init {
         viewModelScope.launch(Dispatchers.IO){
             val weather = rep.fetchWeather()
+            Log.i("HOMEVIEWMODEL INIT", "Initiated.")
             //weatherUiState = weatherUiState.copy(weather = weather)
         }
     }
