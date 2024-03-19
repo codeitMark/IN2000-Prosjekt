@@ -4,7 +4,7 @@ import kotlinx.coroutines.runBlocking
 import no.uio.ifi.in2000.project.data.DataSource
 import org.junit.Test
 
-class DataSourceTest {
+class DataSourceTest { //hei, kun et mal! Lag gjerne egen fil :)
     @Test
     fun test_fetchData(){ //sjekke API status og om det er tomt
         //runBlocking oppretter en coroutine for å kjøre funksjonene våre (spesielt for suspend funksjoner)
