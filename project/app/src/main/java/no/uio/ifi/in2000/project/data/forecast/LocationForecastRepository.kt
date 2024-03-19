@@ -5,7 +5,7 @@ import no.uio.ifi.in2000.project.model.forecast.LocationForecastResponse
 class LocationForecastRepository {
     private val locationForecastSource = LocationForecastDataSource()
 
-    suspend fun fetchWeather(): LocationForecastResponse{
+    suspend fun fetchWeather(): LocationForecastResponse {
         return locationForecastSource.getWeather()
     }
 }
