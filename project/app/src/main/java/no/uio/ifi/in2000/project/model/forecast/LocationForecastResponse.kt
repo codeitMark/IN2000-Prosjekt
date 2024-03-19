@@ -13,7 +13,7 @@ data class LocationForecastResponse(
 @Serializable
 data class Geometry(
     val type: String,
-    val coordinates: List<Float>
+    val coordinates: List<Int>
 )
 //Comments Comments Comments
 @Serializable
