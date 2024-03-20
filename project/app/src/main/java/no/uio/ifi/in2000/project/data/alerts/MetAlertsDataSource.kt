@@ -2,12 +2,14 @@ package no.uio.ifi.in2000.project.data.alerts
 
 import android.util.Log
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.serialization.gson.gson
+import no.uio.ifi.in2000.project.model.alerts.Features
 
 data class MetAlertsDataSource(private val path: String = "https://gw-uio.intark.uh-it.no/in2000/") {
     private val client = HttpClient(CIO){
@@ -20,10 +22,16 @@ data class MetAlertsDataSource(private val path: String = "https://gw-uio.intark
         }
     }
 
-    suspend fun getAlerts(){
-        val response = client.get("weatherapi/metalerts/2.0/current.json")
-        //Husk at man kan legge til parametere (for LocationForecast også!), sjekk dokumentasjon!
-        //Eksempel: https://api.met.no/weatherapi/metalerts/2.0/current.json?county=42
-        Log.i("MetAlertsDataSource", "response ${response.status.value}")
+    private val emptyResponse = Features(emptyList())
+    suspend fun getAlerts(lat: Double, lon: Double, lang: String): Features { //finnes mange andre parametere, la til lang!
+        return try {
+            val httpResponse = client.get("weatherapi/metalerts/2.0/current.json?lat=$lat&lon=$lon&lang=$lang")
+            Log.i("LocationForecastDataSource", "response ${httpResponse.status.value}")
+            httpResponse.body<Features>()
+        } catch (e: Exception){
+            Log.w("MetAlertsDataSource", "Error getting weather data! No internet connection?")
+            Log.e("MetAlertsDataSource", "$e")
+            emptyResponse
+        }
     }
 }
