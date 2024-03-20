@@ -29,15 +29,15 @@ class HomeViewModel : ViewModel(){
     private val rep = LocationForecastRepository(LocationForecastDataSource())
     var responseStatus = false
 
-    //var weatherUiState by mutableStateOf(weatherUiState)
+    //var weatherUiState by mutableStateOf(weatherUiState) //the same as weatherData
 
 
-    val emptyResponse = LocationForecastResponse("empty", Geometry("empty", emptyList()), Properties(
+    private val emptyResponse = LocationForecastResponse("empty", Geometry("empty", emptyList()), Properties(
         Meta("empty", Units("empty", "empty", "empty", "empty", "empty", "empty", "empty")),
         listOf(TimeSeries("empty", Data(Instant(Instant_Details(0.toFloat(), 0.toFloat(), 0.toFloat(), 0.toFloat(), 0.toFloat(), 0.toFloat())), NextHours(
             Summary("empty"), NextHours_Details(0.toFloat())
         ), NextHours(Summary("empty"), NextHours_Details(0.toFloat())), NextHours(Summary("empty"), NextHours_Details(0.toFloat())))))
-    ))
+    )) //Used as a placeholder for weatherData's content (mutableStateOf)
     var weatherData by mutableStateOf(emptyResponse)
         private set
 
@@ -48,10 +48,10 @@ class HomeViewModel : ViewModel(){
             val lat = 58.7753
             val lon = 5.90566
 
-            weatherData = rep.fetchWeather(lat, lon)!! //!! makes it convert from null to this. Allows us to use null.
+            weatherData = rep.fetchWeather(lat, lon)
             responseStatus = true
             Log.i("HOMEVIEWMODEL INIT", "Initiated.")
-            //weatherUiState = weatherUiState.copy(weather = weather)
+            //weatherUiState = weatherUiState.copy(weather = weather) //same functionality as weatherData = rep.fetchWeather(lat, lon)
         }
     }
 }

@@ -9,7 +9,18 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.serialization.gson.gson
+import no.uio.ifi.in2000.project.model.forecast.Data
+import no.uio.ifi.in2000.project.model.forecast.Geometry
+import no.uio.ifi.in2000.project.model.forecast.Instant
+import no.uio.ifi.in2000.project.model.forecast.Instant_Details
 import no.uio.ifi.in2000.project.model.forecast.LocationForecastResponse
+import no.uio.ifi.in2000.project.model.forecast.Meta
+import no.uio.ifi.in2000.project.model.forecast.NextHours
+import no.uio.ifi.in2000.project.model.forecast.NextHours_Details
+import no.uio.ifi.in2000.project.model.forecast.Properties
+import no.uio.ifi.in2000.project.model.forecast.Summary
+import no.uio.ifi.in2000.project.model.forecast.TimeSeries
+import no.uio.ifi.in2000.project.model.forecast.Units
 
 
 data class LocationForecastDataSource(private val path: String = "https://gw-uio.intark.uh-it.no/in2000/") {
@@ -23,7 +34,20 @@ data class LocationForecastDataSource(private val path: String = "https://gw-uio
         }
     }
 
-    suspend fun getWeather(lat: Double, lon: Double): LocationForecastResponse? { //for try catch to work, LocationForecastResponse needs to be nullable (with a ? at the end). It is also edited in Repository's fetchWeather and HomeViewModel's init (!!).
+    private val emptyResponse = LocationForecastResponse("empty", Geometry("empty", emptyList()), Properties(
+        Meta("empty", Units("empty", "empty", "empty", "empty", "empty", "empty", "empty")),
+        listOf(
+            TimeSeries("empty", Data(
+                Instant(Instant_Details(0.toFloat(), 0.toFloat(), 0.toFloat(), 0.toFloat(), 0.toFloat(), 0.toFloat())), NextHours(
+            Summary("empty"), NextHours_Details(0.toFloat())
+        ), NextHours(Summary("empty"), NextHours_Details(0.toFloat())), NextHours(Summary("empty"), NextHours_Details(0.toFloat()))
+            )
+            )
+        )
+    )
+    )
+
+    suspend fun getWeather(lat: Double, lon: Double): LocationForecastResponse {
         return try {
             val httpResponse = client.get("weatherapi/locationforecast/2.0/compact?lat=$lat&lon=$lon")
             Log.i("LocationForecastDataSource", "response ${httpResponse.status.value}")
@@ -31,35 +55,9 @@ data class LocationForecastDataSource(private val path: String = "https://gw-uio
             //return response
             httpResponse.body<LocationForecastResponse>() //Samme som det kommentert over
         } catch (e: Exception){
-            Log.w("LocationForecastDataSource", "No internet connection!") //i = info, w = warning, e = error
+            Log.w("LocationForecastDataSource", "Error getting weather data! No internet connection?") //i = info, w = warning, e = error
             Log.e("LocationForecastDataSource", "$e")
-            null
-            //could use something like emptyResponse like in homeViewModel, rather than null.
+            emptyResponse
         }
     }
 }
-
-/*
-*
-* private val client = HttpClient(CIO) {
-        install(ContentNegotiation) {
-            json(Json {
-                ignoreUnknownKeys = true
-            })
-        }
-    }
-
-    suspend fun getAlpacaParties(): List<PartyInfo> {
-        return withContext(Dispatchers.IO) {
-            try {
-                val response: AlpacaPartiesResponse = client.get("https://www.uio.no/studier/emner/matnat/ifi/IN2000/v24/obligatoriske-oppgaver/alpacaparties.json").body()
-                response.parties
-            } catch (e: Exception) {
-                println("No network connection")
-                println(e)
-                emptyList()
-            }
-        }
-    }
-*
-* */
