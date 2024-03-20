@@ -27,6 +27,7 @@ data class weatherUiState(val data: LocationForecastResponse)
 
 class HomeViewModel : ViewModel(){
     private val rep = LocationForecastRepository(LocationForecastDataSource())
+    var responseStatus = false
 
     //var weatherUiState by mutableStateOf(weatherUiState)
 
@@ -44,10 +45,11 @@ class HomeViewModel : ViewModel(){
         viewModelScope.launch(Dispatchers.IO){
 
             // bare midlertidige hardkodede koordinater for MVP-en
-            val lat = 59.9
-            val lon = 10.7
+            val lat = 58.7753
+            val lon = 5.90566
 
             weatherData = rep.fetchWeather(lat, lon)
+            responseStatus = true
             Log.i("HOMEVIEWMODEL INIT", "Initiated.")
             //weatherUiState = weatherUiState.copy(weather = weather)
         }
