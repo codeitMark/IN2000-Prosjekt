@@ -50,7 +50,7 @@ class HomeViewModel : ViewModel(){
 
             weatherData = rep.fetchWeather(lat, lon)
             responseStatus = true
-            Log.i("HOMEVIEWMODEL INIT", "Initiated.")
+            //Log.i("HOMEVIEWMODEL INIT", "Initiated.")
             //weatherUiState = weatherUiState.copy(weather = weather) //same functionality as weatherData = rep.fetchWeather(lat, lon)
         }
     }

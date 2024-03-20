@@ -50,7 +50,7 @@ data class LocationForecastDataSource(private val path: String = "https://gw-uio
     suspend fun getWeather(lat: Double, lon: Double): LocationForecastResponse {
         return try {
             val httpResponse = client.get("weatherapi/locationforecast/2.0/compact?lat=$lat&lon=$lon")
-            Log.i("LocationForecastDataSource", "response ${httpResponse.status.value}")
+            //Log.i("LocationForecastDataSource", "response ${httpResponse.status.value}")
             //val response = httpResponse.body<LocationForecastResponse>()
             //return response
             httpResponse.body<LocationForecastResponse>() //Samme som det kommentert over
