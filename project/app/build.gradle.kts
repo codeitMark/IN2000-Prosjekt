@@ -81,7 +81,9 @@ dependencies {
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
+    val coil_version = "2.0.0"
     implementation("io.coil-kt:coil-compose:2.5.0")
+    implementation("io.coil-kt:coil-svg:$coil_version")
 
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.8")
 }
