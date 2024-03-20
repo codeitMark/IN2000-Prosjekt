@@ -22,16 +22,15 @@ data class MetAlertsDataSource(private val path: String = "https://gw-uio.intark
         }
     }
 
-    private val emptyResponse = Features(emptyList())
     suspend fun getAlerts(lat: Double, lon: Double, lang: String): Features { //finnes mange andre parametere, la til lang!
         return try {
             val httpResponse = client.get("weatherapi/metalerts/2.0/current.json?lat=$lat&lon=$lon&lang=$lang")
-            Log.i("LocationForecastDataSource", "response ${httpResponse.status.value}")
+            //Log.i("LocationForecastDataSource", "response ${httpResponse.status.value}")
             httpResponse.body<Features>()
         } catch (e: Exception){
-            Log.w("MetAlertsDataSource", "Error getting weather data! No internet connection?")
-            Log.e("MetAlertsDataSource", "$e")
-            emptyResponse
+            //Log.w("MetAlertsDataSource", "Error getting weather data! No internet connection?")
+            //Log.e("MetAlertsDataSource", "$e")
+            Features(emptyList())
         }
     }
 }
