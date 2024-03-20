@@ -23,7 +23,7 @@ import no.uio.ifi.in2000.project.model.forecast.Summary
 import no.uio.ifi.in2000.project.model.forecast.TimeSeries
 import no.uio.ifi.in2000.project.model.forecast.Units
 
-data class weatherUiState(val data: LocationForecastResponse)
+//data class weatherUiState(val data: LocationForecastResponse)
 
 class HomeViewModel : ViewModel(){
     private val rep = LocationForecastRepository(LocationForecastDataSource())
