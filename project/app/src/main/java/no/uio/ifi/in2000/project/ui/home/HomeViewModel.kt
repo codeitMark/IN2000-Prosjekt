@@ -48,7 +48,7 @@ class HomeViewModel : ViewModel(){
             val lat = 58.7753
             val lon = 5.90566
 
-            weatherData = rep.fetchWeather(lat, lon)
+            weatherData = rep.fetchWeather(lat, lon)!! //!! makes it convert from null to this. Allows us to use null.
             responseStatus = true
             Log.i("HOMEVIEWMODEL INIT", "Initiated.")
             //weatherUiState = weatherUiState.copy(weather = weather)

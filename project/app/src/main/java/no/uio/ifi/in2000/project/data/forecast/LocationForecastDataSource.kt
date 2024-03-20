@@ -23,13 +23,19 @@ data class LocationForecastDataSource(private val path: String = "https://gw-uio
         }
     }
 
-    suspend fun getWeather(lat: Double, lon: Double): LocationForecastResponse { //add try catch for no internet connection?
-        val httpResponse = client.get("weatherapi/locationforecast/2.0/compact?lat=$lat&lon=$lon")
-        Log.i("LocationForecastDataSource", "response ${httpResponse.status.value}")
-        //val response = httpResponse.body<LocationForecastResponse>()
-        //return response
-        val responseBody = httpResponse.body<LocationForecastResponse>()
-        return responseBody
+    suspend fun getWeather(lat: Double, lon: Double): LocationForecastResponse? { //for try catch to work, LocationForecastResponse needs to be nullable (with a ? at the end). It is also edited in Repository's fetchWeather and HomeViewModel's init (!!).
+        return try {
+            val httpResponse = client.get("weatherapi/locationforecast/2.0/compact?lat=$lat&lon=$lon")
+            Log.i("LocationForecastDataSource", "response ${httpResponse.status.value}")
+            //val response = httpResponse.body<LocationForecastResponse>()
+            //return response
+            httpResponse.body<LocationForecastResponse>() //Samme som det kommentert over
+        } catch (e: Exception){
+            Log.w("LocationForecastDataSource", "No internet connection!") //i = info, w = warning, e = error
+            Log.e("LocationForecastDataSource", "$e")
+            null
+            //could use something like emptyResponse like in homeViewModel, rather than null.
+        }
     }
 }
 
