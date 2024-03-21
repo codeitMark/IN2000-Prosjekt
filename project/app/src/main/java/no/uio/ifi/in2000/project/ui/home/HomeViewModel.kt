@@ -47,6 +47,7 @@ class HomeViewModel : ViewModel(){
 
     var weatherData by mutableStateOf(locationForecastEmptyResponse)
         private set
+    //private set gjør at variabelen kan kun endres inni klassen. Dette sørger for at det ikke kan endres av noe fra HomeScreen/utenfor HVM.
 
     var alertsData by mutableStateOf(metAlertsEmptyResponse)
         private set
