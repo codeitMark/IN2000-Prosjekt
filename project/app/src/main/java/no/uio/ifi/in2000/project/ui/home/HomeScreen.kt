@@ -142,22 +142,21 @@ fun HomeScreen(vm: HomeViewModel = viewModel()){
                     Column (
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
-                        modifier = Modifier.size(150.dp, 230.dp)
+                        modifier = Modifier.size(120.dp, 250.dp)
                     ) {
                         val time: String = vm.weatherData.properties.timeseries[i].time.removeRange(0, 11).removeRange(2, 9)
+                        Text(text = "kl. $time", fontSize = 30.sp)
                         val smallIconName = weatherConstants[vm.weatherData.properties.timeseries[i].data.next_1_hours.summary.symbol_code]
                         val smallSvgImageUrl = "https://raw.githubusercontent.com/nrkno/yr-weather-symbols/master/symbols/shadows/$smallIconName.svg"
                         AsyncImage(
+                            modifier = Modifier.size(70.dp),
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data(smallSvgImageUrl)
                                 .decoderFactory(SvgDecoder.Factory())
                                 .build(),
                             contentDescription = "Weather icon",
-                            modifier = Modifier.height(100.dp)
                         )
-                        Text(text = "${vm.weatherData.properties.timeseries[i].data.instant.details.air_temperature.roundToInt()}°C", fontSize = 40.sp)
-                        Text(text = "kl. $time", fontSize = 30.sp)
-
+                        Text(text = "${vm.weatherData.properties.timeseries[i].data.instant.details.air_temperature.roundToInt()}°C", fontSize = 30.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }
