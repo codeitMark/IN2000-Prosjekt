@@ -122,7 +122,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()){
     ) {
         Text(text = "Været", fontSize = 60.sp, fontWeight = FontWeight.Bold)
         Text(text = "Nå", fontSize = 30.sp)
-        Text(text = "${vm.weatherData.properties.timeseries[0].data.instant.details.air_temperature}°C", fontSize = 50.sp)
+        Text(text = "${vm.weatherData.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C", fontSize = 50.sp)
 
         val iconName = weatherConstants[vm.weatherData.properties.timeseries[0].data.next_1_hours.summary.symbol_code]
         val svgImageUrl = "https://raw.githubusercontent.com/nrkno/yr-weather-symbols/master/symbols/shadows/$iconName.svg"
@@ -155,7 +155,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()){
                             contentDescription = "Weather icon",
                             modifier = Modifier.height(100.dp)
                         )
-                        Text(text = "${vm.weatherData.properties.timeseries[i].data.instant.details.air_temperature}°C", fontSize = 40.sp)
+                        Text(text = "${vm.weatherData.properties.timeseries[i].data.instant.details.air_temperature.roundToInt()}°C", fontSize = 40.sp)
                         Text(text = "kl. $time", fontSize = 30.sp)
 
                     }
