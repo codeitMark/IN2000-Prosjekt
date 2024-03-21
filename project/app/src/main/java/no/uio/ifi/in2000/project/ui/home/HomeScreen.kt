@@ -119,10 +119,10 @@ fun HomeScreen(vm: HomeViewModel = viewModel()){
     ) {
         Text(text = "Været", fontSize = 60.sp, fontWeight = FontWeight.Bold)
         Text(text = "Nå", fontSize = 30.sp)
-        Text(text = vm.weatherData.properties.timeseries[0].data.instant.details.air_temperature.toString(), fontSize = 50.sp)
+        Text(text = "${vm.weatherData.properties.timeseries[0].data.instant.details.air_temperature}°C", fontSize = 50.sp)
 
         val iconName = weatherConstants[vm.weatherData.properties.timeseries[0].data.next_1_hours.summary.symbol_code]
-        val svgImageUrl = "https://raw.githubusercontent.com/nrkno/yr-weather-symbols/master/symbols/lightmode/$iconName.svg"
+        val svgImageUrl = "https://raw.githubusercontent.com/nrkno/yr-weather-symbols/master/symbols/shadows/$iconName.svg"
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(svgImageUrl)
@@ -139,11 +139,11 @@ fun HomeScreen(vm: HomeViewModel = viewModel()){
                     Column (
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
-                        modifier = Modifier.size(120.dp, 150.dp)
+                        modifier = Modifier.size(150.dp, 150.dp)
                     ) {
                         val time: String = vm.weatherData.properties.timeseries[i].time.removeRange(0, 11).removeRange(2, 9)
                         Text(text = "kl. $time", fontSize = 30.sp)
-                        Text(text = vm.weatherData.properties.timeseries[i].data.instant.details.air_temperature.toString(), fontSize = 50.sp)
+                        Text(text = "${vm.weatherData.properties.timeseries[i].data.instant.details.air_temperature}°C", fontSize = 50.sp)
                     }
                 }
             }
