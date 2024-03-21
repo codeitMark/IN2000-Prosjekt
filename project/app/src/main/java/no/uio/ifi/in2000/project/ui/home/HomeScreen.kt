@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -140,11 +142,22 @@ fun HomeScreen(vm: HomeViewModel = viewModel()){
                     Column (
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
-                        modifier = Modifier.size(150.dp, 150.dp)
+                        modifier = Modifier.size(150.dp, 230.dp)
                     ) {
                         val time: String = vm.weatherData.properties.timeseries[i].time.removeRange(0, 11).removeRange(2, 9)
+                        val smallIconName = weatherConstants[vm.weatherData.properties.timeseries[i].data.next_1_hours.summary.symbol_code]
+                        val smallSvgImageUrl = "https://raw.githubusercontent.com/nrkno/yr-weather-symbols/master/symbols/shadows/$smallIconName.svg"
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(smallSvgImageUrl)
+                                .decoderFactory(SvgDecoder.Factory())
+                                .build(),
+                            contentDescription = "Weather icon",
+                            modifier = Modifier.height(100.dp)
+                        )
+                        Text(text = "${vm.weatherData.properties.timeseries[i].data.instant.details.air_temperature}°C", fontSize = 40.sp)
                         Text(text = "kl. $time", fontSize = 30.sp)
-                        Text(text = "${vm.weatherData.properties.timeseries[i].data.instant.details.air_temperature}°C", fontSize = 50.sp)
+
                     }
                 }
             }
