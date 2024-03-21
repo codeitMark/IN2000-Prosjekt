@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.project.ui.home
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -29,6 +28,10 @@ class HomeViewModel : ViewModel(){
     private val rep = LocationForecastRepository(LocationForecastDataSource())
     var responseStatus = false
 
+    // bare midlertidige hardkodede koordinater for MVP-en
+    val lat = 58.7753
+    val lon = 5.90566
+
     //var weatherUiState by mutableStateOf(weatherUiState) //the same as weatherData
 
 
@@ -44,9 +47,8 @@ class HomeViewModel : ViewModel(){
     init {
         viewModelScope.launch(Dispatchers.IO){
 
-            // bare midlertidige hardkodede koordinater for MVP-en
-            val lat = 58.7753
-            val lon = 5.90566
+
+
 
             weatherData = rep.fetchWeather(lat, lon)
             responseStatus = true

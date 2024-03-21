@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.project.ui.home
 
+import android.location.Geocoder
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -118,8 +120,12 @@ fun HomeScreen(vm: HomeViewModel = viewModel()){
         //verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        val geocoder = Geocoder(LocalContext.current);
+        val sted = geocoder.getFromLocation(vm.lat, vm.lon, 1);
         Text(text = "Været", fontSize = 60.sp, fontWeight = FontWeight.Bold)
-        Text(text = "Nå", fontSize = 30.sp)
+        if (sted != null) {
+            Text(text = sted[0].subAdminArea + ", "+sted[0].countryName, fontSize = 30.sp)
+        }
         Text(text = vm.weatherData.properties.timeseries[0].data.instant.details.air_temperature.roundToInt().toString() + "°C", fontSize = 50.sp)
 
         val iconName = weatherConstants[vm.weatherData.properties.timeseries[0].data.next_1_hours.summary.symbol_code]
@@ -140,11 +146,21 @@ fun HomeScreen(vm: HomeViewModel = viewModel()){
                     Column (
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
-                        modifier = Modifier.size(120.dp, 150.dp)
+                        modifier = Modifier.size(120.dp, 250.dp)
                     ) {
                         val time: String = vm.weatherData.properties.timeseries[i].time.removeRange(0, 11).removeRange(2, 9)
                         Text(text = "kl. $time", fontSize = 30.sp)
-                        Text(text = vm.weatherData.properties.timeseries[i].data.instant.details.air_temperature.roundToInt().toString() + "°C", fontSize = 50.sp)
+                        AsyncImage(
+                            modifier = Modifier
+                                .size(70.dp),
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(svgImageUrl)
+                                .decoderFactory(SvgDecoder.Factory())
+                                .build(),
+                            contentDescription = "Weather icon"
+                        )
+                        Text(text = vm.weatherData.properties.timeseries[i].data.instant.details.air_temperature.roundToInt().toString() + "°C", fontSize = 30.sp, fontWeight = Bold)
+
                     }
                 }
             }
