@@ -17,6 +17,7 @@ import no.uio.ifi.in2000.project.model.forecast.Units
 import org.junit.Test
 
 //NOTAT: Husk å kommentere vekk logcat! Du kan ikke teste med jUnit4 med Logcat i koden fordi det ikke er en native java metode.
+//Husk å lage flere tester: En for å teste internett. En for å teste om det ikke kommer noe! (responskode 401 (unauthorized) eller noe lignende.
 class LocationForecastDataSourceTest {
     @Test
     fun test_getWeather(){
