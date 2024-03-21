@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.project.ui.home
 
+import android.location.Geocoder
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -121,7 +122,17 @@ fun HomeScreen(vm: HomeViewModel = viewModel()){
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = "Været", fontSize = 60.sp, fontWeight = FontWeight.Bold)
-        Text(text = "Nå", fontSize = 30.sp)
+
+        val geocoder = Geocoder(LocalContext.current)
+        val sted = geocoder.getFromLocation(vm.lat, vm.lon, 1) //ignore deprecated. There is a new method but it requires API Level 33 and above, which does not align with our minimum (API Level 24).
+        if (sted != null){
+            var kommune = sted[0].subAdminArea + ", "
+            if (sted[0].subAdminArea == null){
+                kommune = ""
+            }
+            val land = sted[0].countryName
+            Text(text = kommune + land, fontSize = 30.sp)
+        }
         Text(text = "${vm.weatherData.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C", fontSize = 50.sp)
 
         val iconName = weatherConstants[vm.weatherData.properties.timeseries[0].data.next_1_hours.summary.symbol_code]

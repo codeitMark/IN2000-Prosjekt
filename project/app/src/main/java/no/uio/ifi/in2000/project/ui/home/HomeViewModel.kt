@@ -41,13 +41,12 @@ class HomeViewModel : ViewModel(){
     var weatherData by mutableStateOf(emptyResponse)
         private set
 
+    // bare midlertidige hardkodede koordinater for MVP-en
+    val lat = 58.7753
+    val lon = 5.90566
+
     init {
         viewModelScope.launch(Dispatchers.IO){
-
-            // bare midlertidige hardkodede koordinater for MVP-en
-            val lat = 58.7753
-            val lon = 5.90566
-
             weatherData = rep.fetchWeather(lat, lon)
             responseStatus = true
             //Log.i("HOMEVIEWMODEL INIT", "Initiated.")
