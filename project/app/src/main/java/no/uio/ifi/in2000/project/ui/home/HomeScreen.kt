@@ -20,6 +20,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
+import kotlin.math.roundToInt
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
@@ -119,7 +120,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()){
     ) {
         Text(text = "Været", fontSize = 60.sp, fontWeight = FontWeight.Bold)
         Text(text = "Nå", fontSize = 30.sp)
-        Text(text = vm.weatherData.properties.timeseries[0].data.instant.details.air_temperature.toString(), fontSize = 50.sp)
+        Text(text = vm.weatherData.properties.timeseries[0].data.instant.details.air_temperature.roundToInt().toString() + "°C", fontSize = 50.sp)
 
         val iconName = weatherConstants[vm.weatherData.properties.timeseries[0].data.next_1_hours.summary.symbol_code]
         val svgImageUrl = "https://raw.githubusercontent.com/nrkno/yr-weather-symbols/master/symbols/lightmode/$iconName.svg"
@@ -143,7 +144,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()){
                     ) {
                         val time: String = vm.weatherData.properties.timeseries[i].time.removeRange(0, 11).removeRange(2, 9)
                         Text(text = "kl. $time", fontSize = 30.sp)
-                        Text(text = vm.weatherData.properties.timeseries[i].data.instant.details.air_temperature.toString(), fontSize = 50.sp)
+                        Text(text = vm.weatherData.properties.timeseries[i].data.instant.details.air_temperature.roundToInt().toString() + "°C", fontSize = 50.sp)
                     }
                 }
             }
