@@ -29,8 +29,8 @@ class HomeViewModel : ViewModel(){
     var responseStatus = false
 
     // bare midlertidige hardkodede koordinater for MVP-en
-    val lat = 58.7753
-    val lon = 5.90566
+    val lat = -1.2863
+    val lon = 36.8172
 
     //var weatherUiState by mutableStateOf(weatherUiState) //the same as weatherData
 

@@ -124,9 +124,14 @@ fun HomeScreen(vm: HomeViewModel = viewModel()){
         val sted = geocoder.getFromLocation(vm.lat, vm.lon, 1);
         Text(text = "Været", fontSize = 60.sp, fontWeight = FontWeight.Bold)
         if (sted != null) {
-            Text(text = sted[0].subAdminArea + ", "+sted[0].countryName, fontSize = 30.sp)
+            var kommune = sted[0].subAdminArea + ", "
+            if(sted[0].subAdminArea == null){
+                kommune = ""
+            }
+            val land = sted[0].countryName
+            Text(text =  kommune + land, fontSize = 30.sp)
         }
-        Text(text = vm.weatherData.properties.timeseries[0].data.instant.details.air_temperature.roundToInt().toString() + "°C", fontSize = 50.sp)
+        Text(text = vm.weatherData.properties.timeseries[0].data.instant.details.air_temperature.roundToInt().toString() + "°C", fontSize = 50.sp, fontWeight = Bold)
 
         val iconName = weatherConstants[vm.weatherData.properties.timeseries[0].data.next_1_hours.summary.symbol_code]
         val svgImageUrl = "https://raw.githubusercontent.com/nrkno/yr-weather-symbols/master/symbols/lightmode/$iconName.svg"
