@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -139,15 +141,31 @@ fun HomeScreen(vm: HomeViewModel = viewModel()){
 
         // Will only show alerts and take up space on screen if there are any active alerts in the area
         if (vm.alertsData.features.isNotEmpty()) {
-        Column(
-            modifier = Modifier
-                .padding(top = 30.dp)
-        ) {
-        Text(text = "Farevarsler", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-        for (feature in vm.alertsData.features) {
-            Text(text = feature.properties.title + " - " + feature.properties.description)
-            Text(text = feature.properties.consequences)
-        }
+            LazyColumn(
+                modifier = Modifier.padding(top = 30.dp)
+            ) {
+                item {
+                    Text(
+                        text = "Farevarsler",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+                items(vm.alertsData.features) { feature ->
+                    Column(
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    ) {
+                        Text(
+                            text = "${feature.properties.title} - ${feature.properties.description}",
+                            modifier = Modifier.padding(bottom = 4.dp)
+                        )
+                        Text(
+                            text = feature.properties.consequences,
+                            modifier = Modifier.padding(bottom = 4.dp)
+                        )
+                    }
+                }
             }
         }
 
