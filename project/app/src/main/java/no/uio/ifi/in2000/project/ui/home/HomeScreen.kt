@@ -150,17 +150,18 @@ fun HomeScreen(vm: HomeViewModel = viewModel()){
                     ) {
                         val time: String = vm.weatherData.properties.timeseries[i].time.removeRange(0, 11).removeRange(2, 9)
                         Text(text = "kl. $time", fontSize = 30.sp)
+                        val iconName2 = weatherConstants[vm.weatherData.properties.timeseries[i].data.next_1_hours.summary.symbol_code]
+                        val svgImageUrl2 = "https://raw.githubusercontent.com/nrkno/yr-weather-symbols/master/symbols/lightmode/$iconName2.svg"
                         AsyncImage(
                             modifier = Modifier
                                 .size(70.dp),
                             model = ImageRequest.Builder(LocalContext.current)
-                                .data(svgImageUrl)
+                                .data(svgImageUrl2)
                                 .decoderFactory(SvgDecoder.Factory())
                                 .build(),
                             contentDescription = "Weather icon"
                         )
                         Text(text = vm.weatherData.properties.timeseries[i].data.instant.details.air_temperature.roundToInt().toString() + "°C", fontSize = 30.sp, fontWeight = Bold)
-
                     }
                 }
             }
