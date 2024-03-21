@@ -5,7 +5,9 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -16,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -147,24 +150,6 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
         val svgImageUrl =
             "https://raw.githubusercontent.com/nrkno/yr-weather-symbols/master/symbols/shadows/$iconName.svg"
 
-        // Will only show alerts and take up space on screen if there are any active alerts in the area
-        if (vm.alertsData.features.isNotEmpty()) {
-            Text(
-                text = "Farevarsler",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(bottom = 8.dp)
-
-            )
-                Column(modifier = Modifier.padding(top = 30.dp)) {
-                    for (feature in vm.alertsData.features) {
-                        Text(text = feature.properties.title + " - " + feature.properties.description)
-                        Text(text = feature.properties.consequences)
-                    }
-
-                }
-
-        }
 
             AsyncImage(
                 modifier = Modifier
@@ -175,6 +160,30 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     .build(),
                 contentDescription = "Weather icon"
             )
+
+        // Will only show alerts and take up space on screen if there are any active alerts in the area
+        if (vm.alertsData.features.isNotEmpty()) {
+            Text(
+                text = "Farevarsler",
+                fontSize = 30.sp,
+                fontWeight = Bold,
+                modifier = Modifier.padding(top = 30.dp)
+
+            )
+            Column(
+                modifier = Modifier
+                    .padding(top = 30.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            )
+            {
+                for (feature in vm.alertsData.features) {
+                    Text(text = feature.properties.eventAwarenessName, fontWeight = Bold)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(text = feature.properties.instruction)
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+            }
+        }
 
             Row(modifier = Modifier.horizontalScroll(scrollState)) {
                 if (!vm.responseStatus) {
@@ -213,3 +222,4 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
             }
         }
     }
+
