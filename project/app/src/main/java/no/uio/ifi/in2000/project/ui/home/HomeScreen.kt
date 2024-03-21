@@ -20,6 +20,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
+import kotlin.math.roundToInt
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
