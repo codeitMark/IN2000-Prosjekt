@@ -141,17 +141,15 @@ fun HomeScreen(vm: HomeViewModel = viewModel()){
 
         // Will only show alerts and take up space on screen if there are any active alerts in the area
         if (vm.alertsData.features.isNotEmpty()) {
+            Text(
+                text = "Farevarsler",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
             LazyColumn(
                 modifier = Modifier.padding(top = 30.dp)
             ) {
-                item {
-                    Text(
-                        text = "Farevarsler",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                }
                 items(vm.alertsData.features) { feature ->
                     Column(
                         modifier = Modifier.padding(bottom = 16.dp)
