@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.project.ui.home
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -53,8 +52,8 @@ class HomeViewModel : ViewModel(){
         private set
 
     // bare midlertidige hardkodede koordinater for MVP-en
-    val lat = 58.7753
-    val lon = 5.90566
+    val lat = 59.2819
+    val lon = 5.30772
     val lang = "no"
 
     init {
