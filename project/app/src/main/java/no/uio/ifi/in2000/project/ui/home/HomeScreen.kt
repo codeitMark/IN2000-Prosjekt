@@ -128,7 +128,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
     ) {
         //null check for null-safety
         if (vm.weatherData == null || vm.alertsData == null){
-            Text("Unable to get data.", fontSize = 50.sp, fontWeight = Bold)
+            Text("Unable to get data.", fontSize = 35.sp, fontWeight = Bold)
         } else {
             if (!vm.responseStatus) {
                 Text(text = "Loading...", fontSize = 50.sp, fontWeight = Bold)
