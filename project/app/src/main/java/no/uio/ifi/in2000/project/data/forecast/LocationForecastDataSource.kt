@@ -24,6 +24,8 @@ import no.uio.ifi.in2000.project.model.forecast.Units
 
 
 data class LocationForecastDataSource(private val path: String = "https://gw-uio.intark.uh-it.no/in2000/") {
+    var authorized = false
+    var connected = false
     private val client = HttpClient(CIO){
         install(ContentNegotiation){
             gson()
@@ -34,30 +36,24 @@ data class LocationForecastDataSource(private val path: String = "https://gw-uio
         }
     }
 
-    private val emptyResponse = LocationForecastResponse("empty", Geometry("empty", emptyList()), Properties(
-        Meta("empty", Units("empty", "empty", "empty", "empty", "empty", "empty", "empty")),
-        listOf(
-            TimeSeries("empty", Data(
-                Instant(Instant_Details(0.toFloat(), 0.toFloat(), 0.toFloat(), 0.toFloat(), 0.toFloat(), 0.toFloat())), NextHours(
-            Summary("empty"), NextHours_Details(0.toFloat())
-        ), NextHours(Summary("empty"), NextHours_Details(0.toFloat())), NextHours(Summary("empty"), NextHours_Details(0.toFloat()))
-            )
-            )
-        )
-    )
-    )
-
-    suspend fun getWeather(lat: Double, lon: Double): LocationForecastResponse {
+    suspend fun getWeather(lat: Double, lon: Double): LocationForecastResponse? {
         return try {
             val httpResponse = client.get("weatherapi/locationforecast/2.0/compact?lat=$lat&lon=$lon")
+            connected = true
             //Log.i("LocationForecastDataSource", "response ${httpResponse.status.value}")
             //val response = httpResponse.body<LocationForecastResponse>()
             //return response
-            httpResponse.body<LocationForecastResponse>() //Samme som det kommentert over
+            if (httpResponse.status.value == 200){
+                authorized = true
+                httpResponse.body<LocationForecastResponse>() //Samme som det kommentert over
+            } else{
+                null
+            }
         } catch (e: Exception){
-            Log.w("LocationForecastDataSource", "Error getting weather data! No internet connection?") //i = info, w = warning, e = error
-            Log.e("LocationForecastDataSource", "$e")
-            emptyResponse
+            //No internet connection because other errors will return an empty list of the respective Response data class.
+            //Log.w("LocationForecastDataSource", "Error getting weather data! No internet connection?") //i = info, w = warning, e = error
+            //Log.e("LocationForecastDataSource", "$e")
+            null
         }
     }
 }

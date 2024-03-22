@@ -19,29 +19,24 @@ import org.junit.Test
 //NOTAT: Husk å kommentere vekk logcat! Du kan ikke teste med jUnit4 med Logcat i koden fordi det ikke er en native java metode.
 //Husk å lage flere tester: En for å teste internett. En for å teste om det ikke kommer noe! (responskode 401 (unauthorized) eller noe lignende.
 class LocationForecastDataSourceTest {
+    private val lat = 58.7753
+    private val lon = 5.9056
+    private val source = LocationForecastDataSource()
     @Test
-    fun test_getWeather(){
-        val lat = 58.7753
-        val lon = 5.9056
-        val emptyResponseTest = LocationForecastResponse("empty", Geometry("empty", emptyList()), Properties(
-            Meta("empty", Units("empty", "empty", "empty", "empty", "empty", "empty", "empty")),
-            listOf(
-                TimeSeries("empty", Data(
-                    Instant(Instant_Details(0.toFloat(), 0.toFloat(), 0.toFloat(), 0.toFloat(), 0.toFloat(), 0.toFloat())), NextHours(
-                        Summary("empty"), NextHours_Details(0.toFloat())
-                    ), NextHours(Summary("empty"), NextHours_Details(0.toFloat())), NextHours(
-                        Summary("empty"), NextHours_Details(0.toFloat())
-                    )
-                )
-                )
-            )
-        )
-        )
+    fun test_getWeatherConnection(){
         runBlocking {
-            val source = LocationForecastDataSource()
             val weatherData = source.getWeather(lat, lon)
             println(weatherData)
-            assert(weatherData != emptyResponseTest)
+            assert(source.connected)
+        }
+    }
+
+    @Test
+    fun test_getWeatherAccess(){
+        runBlocking {
+            val weatherData = source.getWeather(lat, lon)
+            println(weatherData)
+            assert(source.authorized)
         }
     }
 }

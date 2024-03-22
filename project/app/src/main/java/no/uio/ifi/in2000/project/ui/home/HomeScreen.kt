@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -127,68 +126,70 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
         //verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Været", fontSize = 60.sp, fontWeight = FontWeight.Bold)
+        //null check for null-safety
+        if (vm.weatherData == null || vm.alertsData == null){
+            Text("Unable to get data.", fontSize = 50.sp, fontWeight = Bold)
+        } else {
+            if (!vm.responseStatus) {
+                Text(text = "Loading...", fontSize = 50.sp, fontWeight = Bold)
+            } else {
+                Text(text = "Været", fontSize = 60.sp, fontWeight = Bold)
 
-        val geocoder = Geocoder(LocalContext.current)
-        val sted = geocoder.getFromLocation(vm.lat, vm.lon, 1)
-        //ignore deprecated. There is a new method but it requires API Level 33 and above, which does not align with our minimum (API Level 24).
-        if (sted != null) {
-            var kommune = sted[0].subAdminArea + ", "
-            if (sted[0].subAdminArea == null) {
-                kommune = ""
-            }
-            val land = sted[0].countryName
-            Text(text = kommune + land, fontSize = 30.sp)
-        }
-        Text(
-            text = "${vm.weatherData.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C",
-            fontSize = 50.sp
-        )
-
-        val iconName =
-            weatherConstants[vm.weatherData.properties.timeseries[0].data.next_1_hours.summary.symbol_code]
-        val svgImageUrl =
-            "https://raw.githubusercontent.com/nrkno/yr-weather-symbols/master/symbols/shadows/$iconName.svg"
-
-
-            AsyncImage(
-                modifier = Modifier
-                    .size(280.dp),
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(svgImageUrl)
-                    .decoderFactory(SvgDecoder.Factory())
-                    .build(),
-                contentDescription = "Weather icon"
-            )
-
-        // Will only show alerts and take up space on screen if there are any active alerts in the area
-        if (vm.alertsData.features.isNotEmpty()) {
-            Text(
-                text = "Farevarsler",
-                fontSize = 30.sp,
-                fontWeight = Bold,
-                modifier = Modifier.padding(top = 30.dp)
-
-            )
-            Column(
-                modifier = Modifier
-                    .padding(top = 30.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            )
-            {
-                for (feature in vm.alertsData.features) {
-                    Text(text = feature.properties.eventAwarenessName, fontWeight = Bold)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(text = feature.properties.instruction)
-                    Spacer(modifier = Modifier.height(20.dp))
+                val geocoder = Geocoder(LocalContext.current)
+                val sted = geocoder.getFromLocation(vm.lat, vm.lon, 1)
+                //ignore deprecated. There is a new method but it requires API Level 33 and above, which does not align with our minimum (API Level 24).
+                if (sted != null) {
+                    var kommune = sted[0].subAdminArea + ", "
+                    if (sted[0].subAdminArea == null) {
+                        kommune = ""
+                    }
+                    val land = sted[0].countryName
+                    Text(text = kommune + land, fontSize = 30.sp)
                 }
-            }
-        }
+                Text(
+                    text = "${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C",
+                    fontSize = 50.sp
+                )
 
-            Row(modifier = Modifier.horizontalScroll(scrollState)) {
-                if (!vm.responseStatus) {
-                    Text(text = "Loading...", fontSize = 50.sp)
-                } else {
+                val iconName = weatherConstants[vm.weatherData!!.properties.timeseries[0].data.next_1_hours.summary.symbol_code]
+
+                val svgImageUrl = "https://raw.githubusercontent.com/nrkno/yr-weather-symbols/master/symbols/shadows/$iconName.svg"
+
+                    AsyncImage(
+                        modifier = Modifier
+                            .size(280.dp),
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(svgImageUrl)
+                            .decoderFactory(SvgDecoder.Factory())
+                            .build(),
+                        contentDescription = "Weather icon"
+                    )
+
+                // Will only show alerts and take up space on screen if there are any active alerts in the area
+                if (vm.alertsData!!.features.isNotEmpty()) {
+                    Text(
+                        text = "Farevarsler",
+                        fontSize = 30.sp,
+                        fontWeight = Bold,
+                        modifier = Modifier.padding(top = 30.dp)
+
+                    )
+                    Column(
+                        modifier = Modifier
+                            .padding(top = 30.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    )
+                    {
+                        for (feature in vm.alertsData!!.features) {
+                            Text(text = feature.properties.eventAwarenessName, fontWeight = Bold)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(text = feature.properties.instruction)
+                            Spacer(modifier = Modifier.height(20.dp))
+                        }
+                    }
+                }
+
+                Row(modifier = Modifier.horizontalScroll(scrollState)) {
                     for (i in 2..14) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -196,11 +197,11 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             modifier = Modifier.size(120.dp, 250.dp)
                         ) {
                             val time: String =
-                                vm.weatherData.properties.timeseries[i].time.removeRange(0, 11)
+                                vm.weatherData!!.properties.timeseries[i].time.removeRange(0, 11)
                                     .removeRange(2, 9)
                             Text(text = "kl. $time", fontSize = 30.sp)
                             val smallIconName =
-                                weatherConstants[vm.weatherData.properties.timeseries[i].data.next_1_hours.summary.symbol_code]
+                                weatherConstants[vm.weatherData!!.properties.timeseries[i].data.next_1_hours.summary.symbol_code]
                             val smallSvgImageUrl =
                                 "https://raw.githubusercontent.com/nrkno/yr-weather-symbols/master/symbols/shadows/$smallIconName.svg"
                             AsyncImage(
@@ -210,11 +211,11 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                     .decoderFactory(SvgDecoder.Factory())
                                     .build(),
                                 contentDescription = "Weather icon",
-                            )
+                                )
                             Text(
-                                text = "${vm.weatherData.properties.timeseries[i].data.instant.details.air_temperature.roundToInt()}°C",
+                                text = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature.roundToInt()}°C",
                                 fontSize = 30.sp,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = Bold
                             )
                         }
                     }
@@ -222,4 +223,5 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
             }
         }
     }
+}
 

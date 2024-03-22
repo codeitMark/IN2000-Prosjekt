@@ -11,6 +11,7 @@ import no.uio.ifi.in2000.project.data.alerts.MetAlertsDataSource
 import no.uio.ifi.in2000.project.data.alerts.MetAlertsRepository
 import no.uio.ifi.in2000.project.data.forecast.LocationForecastDataSource
 import no.uio.ifi.in2000.project.data.forecast.LocationForecastRepository
+import no.uio.ifi.in2000.project.model.alerts.Feature
 import no.uio.ifi.in2000.project.model.alerts.MetAlertsResponse
 import no.uio.ifi.in2000.project.model.forecast.Data
 import no.uio.ifi.in2000.project.model.forecast.Geometry
@@ -25,30 +26,50 @@ import no.uio.ifi.in2000.project.model.forecast.Summary
 import no.uio.ifi.in2000.project.model.forecast.TimeSeries
 import no.uio.ifi.in2000.project.model.forecast.Units
 
-//data class weatherUiState(val data: LocationForecastResponse)
 
 class HomeViewModel : ViewModel(){
-    private val locationForecastRep = LocationForecastRepository(LocationForecastDataSource())
-    private val metAlertsRep = MetAlertsRepository(MetAlertsDataSource())
+    private val locationForecastRep = LocationForecastRepository()
+    private val metAlertsRep = MetAlertsRepository()
+
     var responseStatus by mutableStateOf(false) //made mutableStateOf so HomeScreen updates if responseStatus changes. Without this it will NOT update since the combination of weatherData and alertsData in init takes too long.
 
-    //var weatherUiState by mutableStateOf(weatherUiState) //the same as weatherData
-
-
-    private val locationForecastEmptyResponse = LocationForecastResponse("empty", Geometry("empty", emptyList()), Properties(
-        Meta("empty", Units("empty", "empty", "empty", "empty", "empty", "empty", "empty")),
-        listOf(TimeSeries("empty", Data(Instant(Instant_Details(0.toFloat(), 0.toFloat(), 0.toFloat(), 0.toFloat(), 0.toFloat(), 0.toFloat())), NextHours(
-            Summary("empty"), NextHours_Details(0.toFloat())
-        ), NextHours(Summary("empty"), NextHours_Details(0.toFloat())), NextHours(Summary("empty"), NextHours_Details(0.toFloat())))))
-    )) //Used as a placeholder for weatherData's content (mutableStateOf)
-
-    private val metAlertsEmptyResponse = MetAlertsResponse(emptyList(), "empty", "empty", "empty") //Used as a placeholder for alertsData's content (mutableStateOf)
-
-    var weatherData by mutableStateOf(locationForecastEmptyResponse)
+    // Filled with placeholders. This is because we have to create an instance of the class.
+    var weatherData: LocationForecastResponse? by mutableStateOf(
+        LocationForecastResponse(
+        String(),
+            Geometry(
+                String(),
+                listOf()),
+            Properties(
+                Meta(String(),
+                    Units(String(), String(), String(), String(), String(), String(), String())),
+                listOf(
+                    TimeSeries(
+                    String(),
+                        Data(
+                            Instant(
+                                Instant_Details(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f)
+                            ),
+                            NextHours(
+                                Summary(String()),
+                                NextHours_Details(0.0f)
+                            ),
+                            NextHours(
+                                Summary(String()),
+                                NextHours_Details(0.0f)),
+                            NextHours(Summary(String()),
+                                NextHours_Details(0.0f)
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
         private set
     //private set gjør at variabelen kan kun endres inni klassen. Dette sørger for at det ikke kan endres av noe fra HomeScreen/utenfor HVM.
 
-    var alertsData by mutableStateOf(metAlertsEmptyResponse)
+    var alertsData: MetAlertsResponse? by mutableStateOf(MetAlertsResponse(listOf(), String(), String(), String()))
         private set
 
     // bare midlertidige hardkodede koordinater for MVP-en
