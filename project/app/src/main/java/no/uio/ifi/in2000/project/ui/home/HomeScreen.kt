@@ -119,6 +119,26 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
         "heavysnow" to "50"
     )
 
+    val countyNumbers = mapOf(
+        "Oslo" to "03",
+        "Østfold" to "31",
+        "Akershus" to "32",
+        "Buskerud" to "33",
+        "Innlandet" to "34",
+        "Vestfold" to "39",
+        "Telemark" to "40",
+        "Agder" to "42",
+        "Rogaland" to "11",
+        "Vestland" to "46",
+        "Møre og Romsdal" to "15",
+        "Trøndelag" to "50",
+        "Nordland" to "18",
+        "Troms" to "55",
+        "Finmark" to "56",
+        "Svalbard" to "21",
+        "Jan Mayen" to "22"
+    )
+
     Column(
         modifier = Modifier
             .fillMaxSize()
