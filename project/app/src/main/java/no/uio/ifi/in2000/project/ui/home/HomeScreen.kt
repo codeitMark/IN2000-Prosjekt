@@ -143,8 +143,12 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     if (sted[0].subAdminArea == null) {
                         kommune = ""
                     }
+                    var fylke = sted[0].adminArea + ", "
+                    if (sted[0].adminArea == null) {
+                        fylke = ""
+                    }
                     val land = sted[0].countryName
-                    Text(text = kommune + land, fontSize = 30.sp)
+                    Text(text = kommune + fylke + land, fontSize = 30.sp)
                 }
                 Text(
                     text = "${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C",
