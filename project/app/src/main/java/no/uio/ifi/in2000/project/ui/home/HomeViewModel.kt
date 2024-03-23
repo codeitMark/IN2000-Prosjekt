@@ -75,6 +75,9 @@ class HomeViewModel : ViewModel(){
     var locationForecastIcons: MutableList<String> = mutableListOf<String>()
         private set
 
+    var metAlertsIcons: MutableList<String>? = mutableListOf<String>()
+        private set
+
     // Placeholdere for innholdet. Disse må være initialisert, derfor er det placeholdere.
     //Parametere for LocationForecast
     var lat = 0.0
@@ -91,6 +94,7 @@ class HomeViewModel : ViewModel(){
             locationForecastIcons = locationForecastRep.fetchLocationForecastIcons(weatherData)
             alertsData = metAlertsRep.fetchAlerts(county, lang)
             sortedAlerts = metAlertsRep.sortAlerts(alertsData)
+            metAlertsIcons = metAlertsRep.fetchAlertIcons(alertsData)
             responseStatus = true
             if (!initialized){
                 initialized = true

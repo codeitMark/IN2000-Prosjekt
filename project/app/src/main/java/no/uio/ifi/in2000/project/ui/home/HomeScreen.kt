@@ -182,22 +182,31 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     if (vm.alertsData!!.features.isNotEmpty()) {
                         Text(
                             text = "Farevarsler",
-                            fontSize = 30.sp,
+                            fontSize = 20.sp,
                             fontWeight = Bold,
                             modifier = Modifier.padding(top = 30.dp)
     
                         )
                         Column(
-                            modifier = Modifier
-                                .padding(top = 30.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         )
                         {
+                            var i = 0 //noe hardkodet teller for metAlertsIcons. Mulig med bedre løsning, men kan ta tid å finne.
                             vm.sortedAlerts.forEach { //drop for løkke, make map then set of eventawarenessname and instruction. compare feature with feature? if already in there or smth like that. this processing should happen in ViewModel. Map is already unique by default :)
+                                AsyncImage(
+                                    modifier = Modifier
+                                        .size(125.dp).padding(top = 20.dp, bottom = 20.dp),
+                                    model = ImageRequest.Builder(LocalContext.current)
+                                        .data(vm.metAlertsIcons!![i])
+                                        .decoderFactory(SvgDecoder.Factory())
+                                        .build(),
+                                    contentDescription = "Icon for an alert."
+                                )
                                 Text(text = it.key, fontWeight = Bold)
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(text = it.value)
                                 Spacer(modifier = Modifier.height(20.dp))
+                                i++
                             }
                         }
                     }
