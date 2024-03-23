@@ -55,7 +55,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
     var addressList: List<Address>?
     var address: Address?
 
-    val locations = listOf("Oslo", "Trondheim", "Moss", "Ski", "Lillestrøm", "Gjesdal", "Drammen", "Bergen")
+    val locations = listOf("Oslo", "Trondheim", "Moss", "Ski", "Lillestrøm", "Gjesdal", "Drammen", "Bergen", "Finnmark")
 
     //Should be in Repository, temporary solution!
     val countyNumbers = mapOf(
@@ -73,7 +73,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
         "Trøndelag" to "50",
         "Nordland" to "18",
         "Troms" to "55",
-        "Finmark" to "56",
+        "Finnmark" to "56",
         "Svalbard" to "21",
         "Jan Mayen" to "22"
     )
