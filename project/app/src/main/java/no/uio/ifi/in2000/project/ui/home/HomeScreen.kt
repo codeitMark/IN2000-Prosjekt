@@ -192,7 +192,8 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         )
                         {
                             var i = 0 //noe hardkodet teller for metAlertsIcons. Mulig med bedre løsning, men kan ta tid å finne.
-                            vm.sortedAlerts.forEach { //drop for løkke, make map then set of eventawarenessname and instruction. compare feature with feature? if already in there or smth like that. this processing should happen in ViewModel. Map is already unique by default :)
+                            // vm.sortedAlerts.forEach //Bruk denne for å fjerne duplikater. Problem: I tilfellet det er duplikater, vil vm.metAlertsIcons[i] vise feil ikoner. Det vil iterere over ikonene som om det ikke er duplikater = gust gust vs. gust flood (filtered). Den første vil vise riktige ikoner. Den andre vil vise gust gust fortsatt.
+                            vm.alertsData!!.features.forEach{ //drop for løkke, make map then set of eventawarenessname and instruction. compare feature with feature? if already in there or smth like that. this processing should happen in ViewModel. Map is already unique by default :)
                                 AsyncImage(
                                     modifier = Modifier
                                         .size(125.dp).padding(top = 20.dp, bottom = 20.dp),
@@ -202,9 +203,9 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                         .build(),
                                     contentDescription = "Icon for an alert."
                                 )
-                                Text(text = it.key, fontWeight = Bold)
+                                Text(text = it.properties.eventAwarenessName, fontWeight = Bold) //Tidligere it.key (med vm.sortedAlerts.forEach)
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text(text = it.value)
+                                Text(text = it.properties.instruction) //Tidligere it.value (med vm.sortedalerts.forEach)
                                 Spacer(modifier = Modifier.height(20.dp))
                                 i++
                             }
