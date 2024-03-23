@@ -24,6 +24,27 @@ class MetAlertsRepository() {
         "Jan Mayen" to "22"
     )
 
+    //consider another solution, enum data classes? no idea.
+    private val alertIcons = mapOf(
+        "Avalanches" to "icon-warning-avalanches",
+        "BlowingSnow" to "icon-warning-snow",
+        "DrivingConditions" to "icon-warning-drivingconditions",
+        "Flood" to "icon-warning-flood",
+        "ForestFire" to "icon-warning-forestfire",
+        "Gale" to "icon-warning-wind",
+        "Ice" to "icon-warning-ice",
+        "Icing" to "icon-warning-generic",
+        "Landslide" to "icon-warning-landslide",
+        "PolarLow" to "icon-warning-polarlow",
+        "Rain" to "icon-warning-rain",
+        "RainFlood" to "icon-warning-rainflood",
+        "Snow" to "icon-warning-snow",
+        "StormSurge" to "icon-warning-stormsurge",
+        "Lightning" to "icon-warning-lightning",
+        "Wind" to "icon-warning-wind",
+        "Unknown" to "icon-warning-generic"
+    )
+
     suspend fun fetchAlerts(county: String, lang: String): MetAlertsResponse? {
         return metAlertsSource.getAlerts(countyNumbers[county]!!, lang)
     }

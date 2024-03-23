@@ -168,18 +168,11 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         text = "${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C",
                         fontSize = 50.sp
                     )
-    
-                    val iconName =
-                        vm.weatherData!!.properties.timeseries[0].data.next_1_hours.summary.symbol_code
-    
-                    val svgImageUrl =
-                        "https://raw.githubusercontent.com/metno/weathericons/89e3173756248b4696b9b10677b66c4ef435db53/weather/svg/$iconName.svg"
-    
                     AsyncImage(
                         modifier = Modifier
                             .size(280.dp),
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data(svgImageUrl)
+                            .data(vm.locationForecastIcons[0])
                             .decoderFactory(SvgDecoder.Factory())
                             .build(),
                         contentDescription = "Weather icon"
@@ -220,14 +213,10 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                     vm.weatherData!!.properties.timeseries[i].time.removeRange(0, 11)
                                         .removeRange(2, 9)
                                 Text(text = "kl. $time", fontSize = 30.sp)
-                                val smallIconName =
-                                    vm.weatherData!!.properties.timeseries[i].data.next_1_hours.summary.symbol_code
-                                val smallSvgImageUrl =
-                                    "https://raw.githubusercontent.com/metno/weathericons/89e3173756248b4696b9b10677b66c4ef435db53/weather/svg/$smallIconName.svg"
                                 AsyncImage(
                                     modifier = Modifier.size(70.dp),
                                     model = ImageRequest.Builder(LocalContext.current)
-                                        .data(smallSvgImageUrl)
+                                        .data(vm.locationForecastIcons[i])
                                         .decoderFactory(SvgDecoder.Factory())
                                         .build(),
                                     contentDescription = "Weather icon",

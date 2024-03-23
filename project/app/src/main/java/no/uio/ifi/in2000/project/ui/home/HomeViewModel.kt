@@ -72,6 +72,9 @@ class HomeViewModel : ViewModel(){
     var sortedAlerts: LinkedHashMap<String, String> = LinkedHashMap()
         private set
 
+    var locationForecastIcons: MutableList<String> = mutableListOf<String>()
+        private set
+
     // Placeholdere for innholdet. Disse må være initialisert, derfor er det placeholdere.
     //Parametere for LocationForecast
     var lat = 0.0
@@ -85,6 +88,7 @@ class HomeViewModel : ViewModel(){
     fun loadData(lat: Double, lon: Double, county:String, lang: String){
         viewModelScope.launch(Dispatchers.IO){
             weatherData = locationForecastRep.fetchWeather(lat, lon)
+            locationForecastIcons = locationForecastRep.fetchLocationForecastIcons(weatherData)
             alertsData = metAlertsRep.fetchAlerts(county, lang)
             sortedAlerts = metAlertsRep.sortAlerts(alertsData)
             responseStatus = true
