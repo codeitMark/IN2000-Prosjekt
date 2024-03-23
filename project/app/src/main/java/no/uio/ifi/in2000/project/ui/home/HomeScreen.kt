@@ -185,10 +185,10 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             horizontalAlignment = Alignment.CenterHorizontally
                         )
                         {
-                            for (feature in vm.alertsData!!.features) {
-                                Text(text = feature.properties.eventAwarenessName, fontWeight = Bold)
+                            vm.sortedAlerts.forEach { //drop for løkke, make map then set of eventawarenessname and instruction. compare feature with feature? if already in there or smth like that. this processing should happen in ViewModel. Map is already unique by default :)
+                                Text(text = it.key, fontWeight = Bold)
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text(text = feature.properties.instruction)
+                                Text(text = it.value)
                                 Spacer(modifier = Modifier.height(20.dp))
                             }
                         }

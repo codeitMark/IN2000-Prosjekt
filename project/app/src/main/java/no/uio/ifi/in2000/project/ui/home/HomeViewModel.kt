@@ -7,11 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import no.uio.ifi.in2000.project.data.alerts.MetAlertsDataSource
 import no.uio.ifi.in2000.project.data.alerts.MetAlertsRepository
-import no.uio.ifi.in2000.project.data.forecast.LocationForecastDataSource
 import no.uio.ifi.in2000.project.data.forecast.LocationForecastRepository
-import no.uio.ifi.in2000.project.model.alerts.Feature
 import no.uio.ifi.in2000.project.model.alerts.MetAlertsResponse
 import no.uio.ifi.in2000.project.model.forecast.Data
 import no.uio.ifi.in2000.project.model.forecast.Geometry
@@ -72,7 +69,10 @@ class HomeViewModel : ViewModel(){
     var alertsData: MetAlertsResponse? by mutableStateOf(MetAlertsResponse(listOf(), String(), String(), String()))
         private set
 
-    // bare midlertidige hardkodede koordinater for MVP-en
+    var sortedAlerts: LinkedHashMap<String, String> = LinkedHashMap()
+        private set
+
+    // Placeholdere for innholdet. Disse må være initialisert, derfor er det placeholdere.
     var lat = 0.0
     var lon = 0.0
     var lang = ""
@@ -82,6 +82,7 @@ class HomeViewModel : ViewModel(){
         viewModelScope.launch(Dispatchers.IO){
             weatherData = locationForecastRep.fetchWeather(lat, lon)
             alertsData = metAlertsRep.fetchAlerts(lat, lon, lang)
+            sortedAlerts = metAlertsRep.sortAlerts(alertsData)
             responseStatus = true
             if (!initialized){
                 initialized = true

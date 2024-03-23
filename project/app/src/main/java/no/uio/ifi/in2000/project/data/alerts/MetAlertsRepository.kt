@@ -8,4 +8,11 @@ class MetAlertsRepository() {
     suspend fun fetchAlerts(lat: Double, lon: Double, lang: String): MetAlertsResponse? {
         return metAlertsSource.getAlerts(lat, lon, lang)
     }
+    suspend fun sortAlerts(alerts: MetAlertsResponse?): LinkedHashMap<String, String>{
+        val map = LinkedHashMap<String, String>()
+        alerts?.features?.forEach{
+            map[it.properties.eventAwarenessName] = it.properties.instruction
+        }
+        return map
+    }
 }
