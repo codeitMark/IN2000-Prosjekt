@@ -88,8 +88,9 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                 locations.forEach { by ->
                     DropdownMenuItem(text = {Text(by)},
                         onClick = {
-                            valgtOmråde = by //Antar at vi er i Norge. Kom i Danmark med Strømmen... ???
+                            valgtOmråde = by
                             expandedBy = false
+                            //Antar at vi er i Norge. Kom i Danmark med Strømmen... ???
                             addressList = geocoder.getFromLocationName("$valgtOmråde, Norway", 1) //deprecated in API Level 33.
                             if (addressList != null && addressList!!.isNotEmpty()){
                                 address = addressList?.get(0)
@@ -124,7 +125,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                 språk.forEach {
                     DropdownMenuItem(text = {Text(it)}, //Står no "no" og "en", kan alltid lage noe Map for å skrive "Norsk" og "Engelsk" som valgene
                         onClick = {
-                            valgtSpråk = it //Antar at vi er i Norge. Kom i Danmark med Strømmen... ???
+                            valgtSpråk = it
                             expandedSpråk = false
                             vm.lang = it
                             vm.loadData(vm.lat, vm.lon, vm.county, vm.lang)
