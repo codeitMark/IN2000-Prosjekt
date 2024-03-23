@@ -45,17 +45,24 @@ import kotlin.math.roundToInt
 fun HomeScreen(vm: HomeViewModel = viewModel()) {
     val scrollState = rememberScrollState()
     val scrollStateVertical = rememberScrollState()
-    var expanded by remember {
+    var expandedBy by remember {
+        mutableStateOf(false)
+    }
+    var expandedSpråk by remember{
         mutableStateOf(false)
     }
     var valgtOmråde by remember {
         mutableStateOf("")
+    }
+    var valgtSpråk by remember{
+        mutableStateOf("no") //Default value will be "no", norsk.
     }
     val geocoder = Geocoder(LocalContext.current, Locale.getDefault())
     var addressList: List<Address>?
     var address: Address?
 
     val locations = listOf("Oslo", "Trondheim", "Moss", "Ski", "Lillestrøm", "Gjesdal", "Drammen", "Bergen", "Finnmark", "Porsanger")
+    val språk = listOf("no", "en")
 
     Column(
         modifier = Modifier
@@ -64,8 +71,8 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
         //verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ExposedDropdownMenuBox(expanded = expanded,
-            onExpandedChange = { expanded = !expanded }) {
+        ExposedDropdownMenuBox(expanded = expandedBy,
+            onExpandedChange = { expandedBy = !expandedBy }) {
             TextField(
                 modifier = Modifier
                     .menuAnchor()
@@ -73,28 +80,54 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                 value = valgtOmråde,
                 onValueChange = {},
                 readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedBy) },
                 label = { Text("Velg by!") })
 
-            ExposedDropdownMenu(expanded = expanded,
-                onDismissRequest = { expanded = false }) {
+            ExposedDropdownMenu(expanded = expandedBy,
+                onDismissRequest = { expandedBy = false }) {
                 locations.forEach { by ->
-                    DropdownMenuItem(text = { Text("$by") },
+                    DropdownMenuItem(text = {Text(by)},
                         onClick = {
                             valgtOmråde = by //Antar at vi er i Norge. Kom i Danmark med Strømmen... ???
-                            expanded = false
+                            expandedBy = false
                             addressList = geocoder.getFromLocationName("$valgtOmråde, Norway", 1) //deprecated in API Level 33.
                             if (addressList != null && addressList!!.isNotEmpty()){
                                 address = addressList?.get(0)
                                 vm.lat = address!!.latitude
                                 vm.lon = address!!.longitude
                                 vm.county = address!!.adminArea
-                                vm.lang = "no" //bare hardkodet inn, kan alltid legge til noe for å bytte mellom no og en. Kun egentlig for MetAlerts da.
+                                vm.lang = valgtSpråk
                                 vm.loadData(vm.lat, vm.lon, vm.county, vm.lang)
                                 Log.i("HOMESCREEN", "addressList: $addressList")
                             } else{
                                 Log.w("HOMESCREEN", "addressList is null or empty! addressList: $addressList")
                             }
+                        }
+                    )
+                }
+            }
+        }
+        ExposedDropdownMenuBox(expanded = expandedSpråk,
+            onExpandedChange = { expandedSpråk = !expandedSpråk }) {
+            TextField(
+                modifier = Modifier
+                    .menuAnchor()
+                    .padding(top = 20.dp),
+                value = valgtSpråk,
+                onValueChange = {},
+                readOnly = true,
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSpråk) },
+                label = { Text("Velg språk!") })
+
+            ExposedDropdownMenu(expanded = expandedSpråk,
+                onDismissRequest = { expandedSpråk = false }) {
+                språk.forEach {
+                    DropdownMenuItem(text = {Text(it)}, //Står no "no" og "en", kan alltid lage noe Map for å skrive "Norsk" og "Engelsk" som valgene
+                        onClick = {
+                            valgtSpråk = it //Antar at vi er i Norge. Kom i Danmark med Strømmen... ???
+                            expandedSpråk = false
+                            vm.lang = it
+                            vm.loadData(vm.lat, vm.lon, vm.county, vm.lang)
                         }
                     )
                 }
