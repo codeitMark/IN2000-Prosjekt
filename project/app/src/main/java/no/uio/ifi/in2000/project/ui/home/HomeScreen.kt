@@ -120,6 +120,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
             }
         }
         if (vm.initialized) {
+            //null check for null-safety
             if (vm.weatherData == null || vm.alertsData == null) {
                 Text("Unable to get data.", fontSize = 35.sp, fontWeight = Bold)
             } else {
@@ -227,7 +228,6 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                 }
             }
         }
-        //null check for null-safety
     }
 }
 
