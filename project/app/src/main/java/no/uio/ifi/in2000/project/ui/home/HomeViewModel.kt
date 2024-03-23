@@ -73,15 +73,19 @@ class HomeViewModel : ViewModel(){
         private set
 
     // bare midlertidige hardkodede koordinater for MVP-en
-    val lat = 58.7753
-    val lon = 5.90566
-    val lang = "no"
+    var lat = 0.0
+    var lon = 0.0
+    var lang = ""
+    var initialized by mutableStateOf(false)
 
-    init {
+    fun loadData(lat: Double, lon: Double, lang: String){
         viewModelScope.launch(Dispatchers.IO){
             weatherData = locationForecastRep.fetchWeather(lat, lon)
             alertsData = metAlertsRep.fetchAlerts(lat, lon, lang)
             responseStatus = true
+            if (!initialized){
+                initialized = true
+            }
             //Log.i("HOMEVIEWMODEL INIT", "Initiated.")
             //weatherUiState = weatherUiState.copy(weather = weather) //same functionality as weatherData = locationForecastRep.fetchWeather(lat, lon)
         }
