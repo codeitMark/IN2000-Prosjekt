@@ -108,8 +108,9 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 address = addressList?.get(0)
                                 vm.lat = address!!.latitude
                                 vm.lon = address!!.longitude
+                                vm.county = countyNumbers[address!!.adminArea].toString()
                                 vm.lang = "no" //bare hardkodet inn, kan alltid legge til noe for å bytte mellom no og en. Kun egentlig for MetAlerts da.
-                                vm.loadData(vm.lat, vm.lon, vm.lang)
+                                vm.loadData(vm.lat, vm.lon, vm.county, vm.lang)
                                 Log.i("HOMESCREEN", "addressList: $addressList")
                             } else{
                                 Log.w("HOMESCREEN", "addressList is null or empty! addressList: $addressList")

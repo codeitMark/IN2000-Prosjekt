@@ -5,8 +5,8 @@ import no.uio.ifi.in2000.project.model.alerts.MetAlertsResponse
 class MetAlertsRepository() {
     private val metAlertsSource = MetAlertsDataSource()
 
-    suspend fun fetchAlerts(lat: Double, lon: Double, lang: String): MetAlertsResponse? {
-        return metAlertsSource.getAlerts(lat, lon, lang)
+    suspend fun fetchAlerts(county: String, lang: String): MetAlertsResponse? {
+        return metAlertsSource.getAlerts(county, lang)
     }
     suspend fun sortAlerts(alerts: MetAlertsResponse?): LinkedHashMap<String, String>{
         val map = LinkedHashMap<String, String>()

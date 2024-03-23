@@ -73,15 +73,19 @@ class HomeViewModel : ViewModel(){
         private set
 
     // Placeholdere for innholdet. Disse må være initialisert, derfor er det placeholdere.
+    //Parametere for LocationForecast
     var lat = 0.0
     var lon = 0.0
+
+    //Parametere for MetAlerts
+    var county = ""
     var lang = ""
     var initialized by mutableStateOf(false)
 
-    fun loadData(lat: Double, lon: Double, lang: String){
+    fun loadData(lat: Double, lon: Double, county:String, lang: String){
         viewModelScope.launch(Dispatchers.IO){
             weatherData = locationForecastRep.fetchWeather(lat, lon)
-            alertsData = metAlertsRep.fetchAlerts(lat, lon, lang)
+            alertsData = metAlertsRep.fetchAlerts(county, lang)
             sortedAlerts = metAlertsRep.sortAlerts(alertsData)
             responseStatus = true
             if (!initialized){
