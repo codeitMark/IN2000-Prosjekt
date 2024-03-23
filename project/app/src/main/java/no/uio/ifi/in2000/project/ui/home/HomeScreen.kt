@@ -57,27 +57,6 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
 
     val locations = listOf("Oslo", "Trondheim", "Moss", "Ski", "Lillestrøm", "Gjesdal", "Drammen", "Bergen", "Finnmark", "Porsanger")
 
-    //Should be in Repository, temporary solution!
-    val countyNumbers = mapOf(
-        "Oslo" to "03",
-        "Østfold" to "31",
-        "Akershus" to "32",
-        "Buskerud" to "33",
-        "Innlandet" to "34",
-        "Vestfold" to "39",
-        "Telemark" to "40",
-        "Agder" to "42",
-        "Rogaland" to "11",
-        "Vestland" to "46",
-        "Møre og Romsdal" to "15",
-        "Trøndelag" to "50",
-        "Nordland" to "18",
-        "Troms" to "55",
-        "Finnmark" to "56",
-        "Svalbard" to "21",
-        "Jan Mayen" to "22"
-    )
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -109,7 +88,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 address = addressList?.get(0)
                                 vm.lat = address!!.latitude
                                 vm.lon = address!!.longitude
-                                vm.county = countyNumbers[address!!.adminArea].toString()
+                                vm.county = address!!.adminArea
                                 vm.lang = "no" //bare hardkodet inn, kan alltid legge til noe for å bytte mellom no og en. Kun egentlig for MetAlerts da.
                                 vm.loadData(vm.lat, vm.lon, vm.county, vm.lang)
                                 Log.i("HOMESCREEN", "addressList: $addressList")
