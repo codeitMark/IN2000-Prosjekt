@@ -141,6 +141,7 @@ class HomeViewModel : ViewModel(){
     var initialized by mutableStateOf(false)
 
     private fun getTimeOnly(dateTimeString: String): String {
+        // Litt risky måte å hente ut kun tidspunktet på
         return dateTimeString.substring(11, 16)
     }
 

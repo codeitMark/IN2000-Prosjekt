@@ -180,9 +180,9 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     )
 
                     val sunriseTime = vm.sunriseTime
-                    Text(text = "Soloppgang: $sunriseTime", fontSize = 20.sp)
+                    Text(text = "Soloppgang: kl. $sunriseTime", fontSize = 20.sp)
                     val sunsetTime = vm.sunsetTime
-                    Text(text = "Solnedgang: $sunsetTime", fontSize = 20.sp)
+                    Text(text = "Solnedgang: kl. $sunsetTime", fontSize = 20.sp)
                     }
     
                     // Will only show alerts and take up space on screen if there are any active alerts in the area
