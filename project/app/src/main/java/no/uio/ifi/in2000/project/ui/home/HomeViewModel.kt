@@ -34,33 +34,38 @@ class HomeViewModel : ViewModel(){
     // Filled with placeholders. This is because we have to create an instance of the class.
     var weatherData: LocationForecastResponse? by mutableStateOf(
         LocationForecastResponse(
-        String(),
-            Geometry(
-                String(),
-                listOf()),
-            Properties(
-                Meta(String(),
-                    Units(String(), String(), String(), String(), String(), String(), String())),
-                listOf(
-                    TimeSeries(
-                    String(),
-                        Data(
-                            Instant(
-                                Instant_Details(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f)
-                            ),
-                            NextHours(
-                                Summary(String()),
-                                NextHours_Details(0.0f)
-                            ),
-                            NextHours(
-                                Summary(String()),
-                                NextHours_Details(0.0f)),
-                            NextHours(Summary(String()),
-                                NextHours_Details(0.0f)
-                            )
-                        )
+            type = String(), geometry = Geometry(
+                type = String(),
+                coordinates = listOf()
+            ), properties = Properties(
+                meta = Meta(
+                    updated_at = String(), units = Units(
+                        air_pressure_at_sea_level = String(),
+                        air_temperature = String(),
+                        air_temperature_max = String(),
+                        air_temperature_min = String(),
+                        air_temperature_percentile_10 = String(),
+                        air_temperature_percentile_90 = String(),
+                        cloud_area_fraction = String(),
+                        cloud_area_fraction_high = String(),
+                        cloud_area_fraction_low = String(),
+                        cloud_area_fraction_medium = String(),
+                        dew_point_temperature = String(),
+                        fog_area_fraction = String(),
+                        precipitation_amount = String(),
+                        precipitation_amount_max = String(),
+                        precipitation_amount_min = String(),
+                        probability_of_precipitation = String(),
+                        probability_of_thunder = String(),
+                        relative_humidity = String(),
+                        ultraviolet_index_clear_sky = String(),
+                        wind_from_direction = String(),
+                        wind_speed = String(),
+                        wind_speed_of_gust = String(),
+                        wind_speed_percentile_10 = String(),
+                        wind_speed_percentile_90 = String()
                     )
-                )
+                ), timeseries = listOf()
             )
         )
     )
