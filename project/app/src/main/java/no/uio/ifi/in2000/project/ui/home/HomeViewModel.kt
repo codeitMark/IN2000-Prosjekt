@@ -88,35 +88,36 @@ class HomeViewModel : ViewModel(){
     var metAlertsIcons: MutableList<String>? = mutableListOf<String>()
         private set
 
+    // Filled with placeholders. This is because we have to create an instance of the class.
     var sunrise: SunriseResponse? by mutableStateOf(
         SunriseResponse(
-            type = "",
-            geometry = SunriseGeometry(
-                type = "",
-                coordinates = listOf()
+            String(),
+            SunriseGeometry(
+                String(),
+                listOf()
             ),
-            time = When(
-                interval = listOf()
+            When(
+                listOf()
             ),
-            properties = SunriseProperties(
-                body = "",
-                sunrise = Sunrise(
-                    time = "",
-                    azimuth = 0.0
+            SunriseProperties(
+                String(),
+                Sunrise(
+                    String(),
+                    0.0
                 ),
-                sunset = Sunset(
-                    time = "",
-                    azimuth = 0.0
+                Sunset(
+                    String(),
+                    0.0
                 ),
-                solarnoon = SolarNoon(
-                    time = "",
-                    discCentreElevation = 0.0,
-                    visible = false
+                SolarNoon(
+                    String(),
+                    0.0,
+                    false
                 ),
-                solarmidnight = SolarMidnight(
-                    time = "",
-                    discCentreElevation = 0.0,
-                    visible = false
+                SolarMidnight(
+                    String(),
+                    0.0,
+                    false
                 )
             )
         )
