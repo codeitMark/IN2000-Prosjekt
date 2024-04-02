@@ -71,6 +71,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
         //verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(text = "SEARCHBAR")
         ExposedDropdownMenuBox(expanded = expandedBy,
             onExpandedChange = { expandedBy = !expandedBy }) {
             TextField(
@@ -196,7 +197,8 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             vm.alertsData!!.features.forEach{ //drop for løkke, make map then set of eventawarenessname and instruction. compare feature with feature? if already in there or smth like that. this processing should happen in ViewModel. Map is already unique by default :)
                                 AsyncImage(
                                     modifier = Modifier
-                                        .size(125.dp).padding(top = 20.dp, bottom = 20.dp),
+                                        .size(125.dp)
+                                        .padding(top = 20.dp, bottom = 20.dp),
                                     model = ImageRequest.Builder(LocalContext.current)
                                         .data(vm.metAlertsIcons!![i])
                                         .decoderFactory(SvgDecoder.Factory())
