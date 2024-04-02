@@ -178,6 +178,17 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             .build(),
                         contentDescription = "Weather icon"
                     )
+
+                    val sunriseTime = vm.sunrise?.properties?.sunrise?.time
+                    val sunsetTime = vm.sunrise?.properties?.sunset?.time
+
+                    // Vise tidspunkt for soloppgang og solnedgang her
+                    if (vm.sunrise?.properties?.sunrise?.time != null && vm.sunrise?.properties?.sunset?.time != null) {
+                        Text(text = "Soloppgang: ${vm.sunrise?.properties?.sunrise?.time}", fontSize = 20.sp)
+                        Text(text = "Solnedgang: ${vm.sunrise?.properties?.sunset?.time}", fontSize = 20.sp)
+                    }
+
+                    Log.d("HOMESCREEN", "Soloppgang: $sunriseTime + Solnedgang: $sunsetTime")
     
                     // Will only show alerts and take up space on screen if there are any active alerts in the area
                     if (vm.alertsData!!.features.isNotEmpty()) {

@@ -1,9 +1,24 @@
 package no.uio.ifi.in2000.project.data.sunrise
 
+import android.util.Log
+import no.uio.ifi.in2000.project.model.sunrise.SunriseResponse
+
 class SunriseRepository() {
     private val sunriseDataSource = SunriseDataSource()
 
-    suspend fun fetchSunrise(lat: Double, lon: Double) {
-        sunriseDataSource.getSunrise(lat, lon)
+    suspend fun fetchSunrise(lat: Double, lon: Double): SunriseResponse? {
+        return sunriseDataSource.getSunrise(lat, lon)
+    }
+
+    suspend fun fetchSunriseTime(response: SunriseResponse?, lat: Double, lon: Double): String? {
+        val sunriseTime = response?.properties?.sunrise?.time
+        Log.d("SUNRISE_REPOSITORY", "Sunrise time: $sunriseTime")
+        return sunriseTime
+    }
+
+    suspend fun fetchSunsetTime(response: SunriseResponse?, lat: Double, lon: Double): String? {
+        val sunsetTime = response?.properties?.sunset?.time
+        Log.d("SUNSET_REPOSITORY", "Sunset time: $sunsetTime")
+        return sunsetTime
     }
 }

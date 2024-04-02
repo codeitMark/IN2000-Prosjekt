@@ -9,7 +9,7 @@ import no.uio.ifi.in2000.project.model.sunrise.SunriseResponse
 import java.text.SimpleDateFormat
 import java.util.Date
 
-data class SunriseDataSource(private val path: String  = "https://api.met.no/weatherapi/sunrise/3.0/") {
+data class SunriseDataSource(private var path: String = "") {
 
     private val client = HttpClient {
         install(ContentNegotiation) {
@@ -21,7 +21,8 @@ data class SunriseDataSource(private val path: String  = "https://api.met.no/wea
         val currentDate = getCurrentDate()
 
         return try {
-            val httpResponse = client.get("https://api.met.no/weatherapi/sunrise/3.0/sun?/$lat&lon=$lon&date=$currentDate")
+            // kan fikse på tidssoner senere, satte den til norsk tid inntil videre
+            val httpResponse = client.get("https://api.met.no/weatherapi/sunrise/3.0/sun?lat=$lat&lon=$lon&date=$currentDate&offset=+02:00")
             httpResponse.body<SunriseResponse>()
         } catch (e: Exception) {
             null
@@ -30,7 +31,7 @@ data class SunriseDataSource(private val path: String  = "https://api.met.no/wea
 
     private fun getCurrentDate(): String {
         val currentDate = Date()
-        val formatter = SimpleDateFormat("yyyy-mm-dd")
+        val formatter = SimpleDateFormat("yyyy-MM-dd")
         return formatter.format(currentDate)
     }
 }

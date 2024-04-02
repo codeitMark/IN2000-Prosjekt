@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.project.data.alerts.MetAlertsRepository
 import no.uio.ifi.in2000.project.data.forecast.LocationForecastRepository
+import no.uio.ifi.in2000.project.data.sunrise.SunriseRepository
 import no.uio.ifi.in2000.project.model.alerts.MetAlertsResponse
 import no.uio.ifi.in2000.project.model.forecast.Data
 import no.uio.ifi.in2000.project.model.forecast.Geometry
@@ -23,11 +24,19 @@ import no.uio.ifi.in2000.project.model.forecast.Properties
 import no.uio.ifi.in2000.project.model.forecast.Summary
 import no.uio.ifi.in2000.project.model.forecast.TimeSeries
 import no.uio.ifi.in2000.project.model.forecast.Units
-
+import no.uio.ifi.in2000.project.model.sunrise.SolarMidnight
+import no.uio.ifi.in2000.project.model.sunrise.SolarNoon
+import no.uio.ifi.in2000.project.model.sunrise.Sunrise
+import no.uio.ifi.in2000.project.model.sunrise.SunriseResponse
+import no.uio.ifi.in2000.project.model.sunrise.Sunset
+import no.uio.ifi.in2000.project.model.sunrise.When
+import no.uio.ifi.in2000.project.model.sunrise.Geometry as SunriseGeometry
+import no.uio.ifi.in2000.project.model.sunrise.Properties as SunriseProperties
 
 class HomeViewModel : ViewModel(){
     private val locationForecastRep = LocationForecastRepository()
     private val metAlertsRep = MetAlertsRepository()
+    private val sunriseRep = SunriseRepository()
 
     var responseStatus by mutableStateOf(false) //made mutableStateOf so HomeScreen updates if responseStatus changes. Without this it will NOT update since the combination of weatherData and alertsData in init takes too long.
 
@@ -79,6 +88,40 @@ class HomeViewModel : ViewModel(){
     var metAlertsIcons: MutableList<String>? = mutableListOf<String>()
         private set
 
+    var sunrise: SunriseResponse? by mutableStateOf(
+        SunriseResponse(
+            type = "",
+            geometry = SunriseGeometry(
+                type = "",
+                coordinates = listOf()
+            ),
+            time = When(
+                interval = listOf()
+            ),
+            properties = SunriseProperties(
+                body = "",
+                sunrise = Sunrise(
+                    time = "",
+                    azimuth = 0.0
+                ),
+                sunset = Sunset(
+                    time = "",
+                    azimuth = 0.0
+                ),
+                solarnoon = SolarNoon(
+                    time = "",
+                    discCentreElevation = 0.0,
+                    visible = false
+                ),
+                solarmidnight = SolarMidnight(
+                    time = "",
+                    discCentreElevation = 0.0,
+                    visible = false
+                )
+            )
+        )
+    )
+
     // Placeholdere for innholdet. Disse må være initialisert, derfor er det placeholdere.
     //Parametere for LocationForecast
     var lat = 0.0
@@ -98,6 +141,10 @@ class HomeViewModel : ViewModel(){
             Log.d("VIEWMODEL_HOMESCREEN", "API-kall alerts")
             sortedAlerts = metAlertsRep.sortAlerts(alertsData)
             metAlertsIcons = metAlertsRep.fetchAlertIcons(alertsData)
+
+            sunrise = sunriseRep.fetchSunrise(lat, lon)
+            Log.d("VIEWMODEL_HOMESCREEN", "API-kall sunrise")
+
             responseStatus = true
             if (!initialized){
                 initialized = true
