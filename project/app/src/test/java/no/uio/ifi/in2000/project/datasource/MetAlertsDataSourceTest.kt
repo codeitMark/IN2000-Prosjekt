@@ -6,7 +6,7 @@ import no.uio.ifi.in2000.project.model.alerts.MetAlertsResponse
 import org.junit.Test
 
 class MetAlertsDataSourceTest {
-    private val county = "Oslo"
+    private val county = "03" // Oslo
     private val lang = "no"
     private val source = MetAlertsDataSource()
     @Test

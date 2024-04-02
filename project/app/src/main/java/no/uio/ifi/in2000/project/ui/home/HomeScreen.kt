@@ -45,17 +45,24 @@ import kotlin.math.roundToInt
 fun HomeScreen(vm: HomeViewModel = viewModel()) {
     val scrollState = rememberScrollState()
     val scrollStateVertical = rememberScrollState()
-    var expanded by remember {
+    var expandedBy by remember {
+        mutableStateOf(false)
+    }
+    var expandedSpråk by remember{
         mutableStateOf(false)
     }
     var valgtOmråde by remember {
         mutableStateOf("")
+    }
+    var valgtSpråk by remember{
+        mutableStateOf("no") //Default value will be "no", norsk.
     }
     val geocoder = Geocoder(LocalContext.current, Locale.getDefault())
     var addressList: List<Address>?
     var address: Address?
 
     val locations = listOf("Oslo", "Trondheim", "Moss", "Ski", "Lillestrøm", "Gjesdal", "Drammen", "Bergen", "Finnmark", "Porsanger")
+    val språk = listOf("no", "en")
 
     Column(
         modifier = Modifier
@@ -64,8 +71,8 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
         //verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        ExposedDropdownMenuBox(expanded = expanded,
-            onExpandedChange = { expanded = !expanded }) {
+        ExposedDropdownMenuBox(expanded = expandedBy,
+            onExpandedChange = { expandedBy = !expandedBy }) {
             TextField(
                 modifier = Modifier
                     .menuAnchor()
@@ -73,28 +80,55 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                 value = valgtOmråde,
                 onValueChange = {},
                 readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedBy) },
                 label = { Text("Velg by!") })
 
-            ExposedDropdownMenu(expanded = expanded,
-                onDismissRequest = { expanded = false }) {
+            ExposedDropdownMenu(expanded = expandedBy,
+                onDismissRequest = { expandedBy = false }) {
                 locations.forEach { by ->
-                    DropdownMenuItem(text = { Text("$by") },
+                    DropdownMenuItem(text = {Text(by)},
                         onClick = {
-                            valgtOmråde = by //Antar at vi er i Norge. Kom i Danmark med Strømmen... ???
-                            expanded = false
+                            valgtOmråde = by
+                            expandedBy = false
+                            //Antar at vi er i Norge. Kom i Danmark med Strømmen... ???
                             addressList = geocoder.getFromLocationName("$valgtOmråde, Norway", 1) //deprecated in API Level 33.
                             if (addressList != null && addressList!!.isNotEmpty()){
                                 address = addressList?.get(0)
                                 vm.lat = address!!.latitude
                                 vm.lon = address!!.longitude
                                 vm.county = address!!.adminArea
-                                vm.lang = "no" //bare hardkodet inn, kan alltid legge til noe for å bytte mellom no og en. Kun egentlig for MetAlerts da.
+                                vm.lang = valgtSpråk
                                 vm.loadData(vm.lat, vm.lon, vm.county, vm.lang)
                                 Log.i("HOMESCREEN", "addressList: $addressList")
                             } else{
                                 Log.w("HOMESCREEN", "addressList is null or empty! addressList: $addressList")
                             }
+                        }
+                    )
+                }
+            }
+        }
+        ExposedDropdownMenuBox(expanded = expandedSpråk,
+            onExpandedChange = { expandedSpråk = !expandedSpråk }) {
+            TextField(
+                modifier = Modifier
+                    .menuAnchor()
+                    .padding(top = 20.dp),
+                value = valgtSpråk,
+                onValueChange = {},
+                readOnly = true,
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSpråk) },
+                label = { Text("Velg språk!") })
+
+            ExposedDropdownMenu(expanded = expandedSpråk,
+                onDismissRequest = { expandedSpråk = false }) {
+                språk.forEach {
+                    DropdownMenuItem(text = {Text(it)}, //Står no "no" og "en", kan alltid lage noe Map for å skrive "Norsk" og "Engelsk" som valgene
+                        onClick = {
+                            valgtSpråk = it
+                            expandedSpråk = false
+                            vm.lang = it
+                            vm.loadData(vm.lat, vm.lon, vm.county, vm.lang)
                         }
                     )
                 }
@@ -134,18 +168,11 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         text = "${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C",
                         fontSize = 50.sp
                     )
-    
-                    val iconName =
-                        vm.weatherData!!.properties.timeseries[0].data.next_1_hours.summary.symbol_code
-    
-                    val svgImageUrl =
-                        "https://raw.githubusercontent.com/metno/weathericons/89e3173756248b4696b9b10677b66c4ef435db53/weather/svg/$iconName.svg"
-    
                     AsyncImage(
                         modifier = Modifier
                             .size(280.dp),
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data(svgImageUrl)
+                            .data(vm.locationForecastIcons[0])
                             .decoderFactory(SvgDecoder.Factory())
                             .build(),
                         contentDescription = "Weather icon"
@@ -155,22 +182,32 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     if (vm.alertsData!!.features.isNotEmpty()) {
                         Text(
                             text = "Farevarsler",
-                            fontSize = 30.sp,
+                            fontSize = 20.sp,
                             fontWeight = Bold,
                             modifier = Modifier.padding(top = 30.dp)
     
                         )
                         Column(
-                            modifier = Modifier
-                                .padding(top = 30.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         )
                         {
-                            vm.sortedAlerts.forEach { //drop for løkke, make map then set of eventawarenessname and instruction. compare feature with feature? if already in there or smth like that. this processing should happen in ViewModel. Map is already unique by default :)
-                                Text(text = it.key, fontWeight = Bold)
+                            var i = 0 //noe hardkodet teller for metAlertsIcons. Mulig med bedre løsning, men kan ta tid å finne.
+                            // vm.sortedAlerts.forEach //Bruk denne for å fjerne duplikater. Problem: I tilfellet det er duplikater, vil vm.metAlertsIcons[i] vise feil ikoner. Det vil iterere over ikonene som om det ikke er duplikater = gust gust vs. gust flood (filtered). Den første vil vise riktige ikoner. Den andre vil vise gust gust fortsatt.
+                            vm.alertsData!!.features.forEach{ //drop for løkke, make map then set of eventawarenessname and instruction. compare feature with feature? if already in there or smth like that. this processing should happen in ViewModel. Map is already unique by default :)
+                                AsyncImage(
+                                    modifier = Modifier
+                                        .size(125.dp).padding(top = 20.dp, bottom = 20.dp),
+                                    model = ImageRequest.Builder(LocalContext.current)
+                                        .data(vm.metAlertsIcons!![i])
+                                        .decoderFactory(SvgDecoder.Factory())
+                                        .build(),
+                                    contentDescription = "Icon for an alert."
+                                )
+                                Text(text = it.properties.eventAwarenessName, fontWeight = Bold) //Tidligere it.key (med vm.sortedAlerts.forEach)
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text(text = it.value)
+                                Text(text = it.properties.instruction) //Tidligere it.value (med vm.sortedalerts.forEach)
                                 Spacer(modifier = Modifier.height(20.dp))
+                                i++
                             }
                         }
                     }
@@ -186,14 +223,10 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                     vm.weatherData!!.properties.timeseries[i].time.removeRange(0, 11)
                                         .removeRange(2, 9)
                                 Text(text = "kl. $time", fontSize = 30.sp)
-                                val smallIconName =
-                                    vm.weatherData!!.properties.timeseries[i].data.next_1_hours.summary.symbol_code
-                                val smallSvgImageUrl =
-                                    "https://raw.githubusercontent.com/metno/weathericons/89e3173756248b4696b9b10677b66c4ef435db53/weather/svg/$smallIconName.svg"
                                 AsyncImage(
                                     modifier = Modifier.size(70.dp),
                                     model = ImageRequest.Builder(LocalContext.current)
-                                        .data(smallSvgImageUrl)
+                                        .data(vm.locationForecastIcons[i])
                                         .decoderFactory(SvgDecoder.Factory())
                                         .build(),
                                     contentDescription = "Weather icon",
