@@ -205,7 +205,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 )
                                 Text(text = it.properties.eventAwarenessName, fontWeight = Bold) //Tidligere it.key (med vm.sortedAlerts.forEach)
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text(text = it.properties.instruction) //Tidligere it.value (med vm.sortedalerts.forEach)
+                                Text(text = it.properties.instruction, modifier = Modifier.padding(14.dp)) //Tidligere it.value (med vm.sortedalerts.forEach)
                                 Spacer(modifier = Modifier.height(20.dp))
                                 i++
                             }
