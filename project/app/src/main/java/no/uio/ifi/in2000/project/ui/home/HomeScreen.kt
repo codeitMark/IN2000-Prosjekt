@@ -18,6 +18,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -57,12 +58,18 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
     var valgtSpråk by remember{
         mutableStateOf("no") //Default value will be "no", norsk.
     }
+    var valgtTemperatur by remember{
+        mutableStateOf("Celsius") //Default value will be Celsius. Can choose Fahrenheit.
+    }
     val geocoder = Geocoder(LocalContext.current, Locale.getDefault())
     var addressList: List<Address>?
     var address: Address?
 
     val locations = listOf("Oslo", "Trondheim", "Moss", "Ski", "Lillestrøm", "Gjesdal", "Drammen", "Bergen", "Finnmark", "Porsanger")
     val språk = listOf("no", "en")
+    var switchChecked by remember{
+        mutableStateOf(false)
+    }
 
     Column(
         modifier = Modifier
@@ -71,6 +78,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
         //verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Switch(checked = switchChecked, onCheckedChange = {switchChecked = !switchChecked})
         ExposedDropdownMenuBox(expanded = expandedBy,
             onExpandedChange = { expandedBy = !expandedBy }) {
             TextField(
@@ -196,7 +204,8 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             vm.alertsData!!.features.forEach{ //drop for løkke, make map then set of eventawarenessname and instruction. compare feature with feature? if already in there or smth like that. this processing should happen in ViewModel. Map is already unique by default :)
                                 AsyncImage(
                                     modifier = Modifier
-                                        .size(125.dp).padding(top = 20.dp, bottom = 20.dp),
+                                        .size(125.dp)
+                                        .padding(top = 20.dp, bottom = 20.dp),
                                     model = ImageRequest.Builder(LocalContext.current)
                                         .data(vm.metAlertsIcons!![i])
                                         .decoderFactory(SvgDecoder.Factory())
