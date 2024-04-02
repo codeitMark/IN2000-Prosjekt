@@ -11,17 +11,10 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.project.data.alerts.MetAlertsRepository
 import no.uio.ifi.in2000.project.data.forecast.LocationForecastRepository
 import no.uio.ifi.in2000.project.model.alerts.MetAlertsResponse
-import no.uio.ifi.in2000.project.model.forecast.Data
 import no.uio.ifi.in2000.project.model.forecast.Geometry
-import no.uio.ifi.in2000.project.model.forecast.Instant
-import no.uio.ifi.in2000.project.model.forecast.Instant_Details
 import no.uio.ifi.in2000.project.model.forecast.LocationForecastResponse
 import no.uio.ifi.in2000.project.model.forecast.Meta
-import no.uio.ifi.in2000.project.model.forecast.NextHours
-import no.uio.ifi.in2000.project.model.forecast.NextHours_Details
 import no.uio.ifi.in2000.project.model.forecast.Properties
-import no.uio.ifi.in2000.project.model.forecast.Summary
-import no.uio.ifi.in2000.project.model.forecast.TimeSeries
 import no.uio.ifi.in2000.project.model.forecast.Units
 
 

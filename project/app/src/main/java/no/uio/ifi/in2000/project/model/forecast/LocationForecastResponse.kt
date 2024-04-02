@@ -65,9 +65,9 @@ data class TimeSeries(
 @Serializable
 data class Data(
     val instant: Instant,
-    val next_12_hours: NextHours,
-    val next_1_hours: NextHours,
-    val next_6_hours: NextHours
+    val next_12_hours: NextHours_12,
+    val next_1_hours: NextHours_1,
+    val next_6_hours: NextHours_6
 )
 
 @Serializable
@@ -97,24 +97,54 @@ data class Instant_Details(
 )
 
 @Serializable
-data class NextHours(
+data class NextHours_12(
+    val summary: Summary_12,
+    val details: NextHours_12_Details
+)
+
+@Serializable
+data class NextHours_12_Details(
+    val probability_of_precipitation: Float
+)
+
+@Serializable
+data class NextHours_1(
     val summary: Summary,
-    val details: NextHours_Details
+    val details: NextHours_1_Details
 )
 
 @Serializable
-data class Summary(
-    val symbol_code: String,
-    val symbol_confidence: String
-)
-
-@Serializable
-data class NextHours_Details(
+data class NextHours_1_Details(
     val precipitation_amount: Float,
     val precipitation_amount_max: Float,
     val precipitation_amount_min: Float,
     val probability_of_precipitation: Float,
-    val probability_of_thunder: Float,
+    val probability_of_thunder: Float
+)
+
+@Serializable
+data class NextHours_6(
+    val summary: Summary,
+    val details: NextHours_6_Details
+)
+
+@Serializable
+data class NextHours_6_Details(
     val air_temperature_max: Float,
-    val air_temperature_min: Float
+    val air_temperature_min: Float,
+    val precipitation_amount: Float,
+    val precipitation_amount_max: Float,
+    val precipitation_amount_min: Float,
+    val probability_of_precipitation: Float
+)
+
+@Serializable
+data class Summary(
+    val symbol_code: String
+)
+
+@Serializable
+data class Summary_12(
+    val symbol_code: String,
+    val symbol_confidence: String
 )
