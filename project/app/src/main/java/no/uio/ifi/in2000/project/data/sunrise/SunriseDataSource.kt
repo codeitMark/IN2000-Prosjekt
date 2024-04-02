@@ -30,8 +30,9 @@ data class SunriseDataSource(private var path: String = "") {
     }
 
     private fun getCurrentDate(): String {
-        val currentDate = Date()
-        val formatter = SimpleDateFormat("yyyy-MM-dd")
+        //val currentDate = LocalDateTime.now().format(formatter) //Used method below due to this being API-level 26+. Our minimum is API-level 24.
+        val currentDate = Date() //gets current date
+        val formatter = SimpleDateFormat("yyyy-MM-dd") //formats date.
         return formatter.format(currentDate)
     }
 }
