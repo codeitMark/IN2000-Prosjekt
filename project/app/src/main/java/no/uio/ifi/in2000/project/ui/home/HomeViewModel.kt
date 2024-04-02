@@ -123,6 +123,13 @@ class HomeViewModel : ViewModel(){
         )
     )
 
+    var sunriseTime by mutableStateOf("")
+        private set
+
+    var sunsetTime by mutableStateOf("")
+        private set
+
+
     // Placeholdere for innholdet. Disse må være initialisert, derfor er det placeholdere.
     //Parametere for LocationForecast
     var lat = 0.0
@@ -132,6 +139,10 @@ class HomeViewModel : ViewModel(){
     var county = ""
     var lang = ""
     var initialized by mutableStateOf(false)
+
+    private fun getTimeOnly(dateTimeString: String): String {
+        return dateTimeString.substring(11, 16)
+    }
 
     fun loadData(lat: Double, lon: Double, county:String, lang: String){
         viewModelScope.launch(Dispatchers.IO){
@@ -144,6 +155,12 @@ class HomeViewModel : ViewModel(){
             metAlertsIcons = metAlertsRep.fetchAlertIcons(alertsData)
 
             sunrise = sunriseRep.fetchSunrise(lat, lon)
+            sunrise?.let {
+                sunriseTime = getTimeOnly(it.properties.sunrise.time)
+                sunsetTime = getTimeOnly(it.properties.sunset.time)
+                Log.d("SunriseTime", "Sunrise Time: $sunriseTime")
+                Log.d("SunsetTime", "Sunset Time: $sunsetTime")
+            }
             Log.d("VIEWMODEL_HOMESCREEN", "API-kall sunrise")
 
             responseStatus = true
