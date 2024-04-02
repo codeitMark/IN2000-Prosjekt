@@ -71,7 +71,6 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
         //verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "SEARCHBAR")
         ExposedDropdownMenuBox(expanded = expandedBy,
             onExpandedChange = { expandedBy = !expandedBy }) {
             TextField(
