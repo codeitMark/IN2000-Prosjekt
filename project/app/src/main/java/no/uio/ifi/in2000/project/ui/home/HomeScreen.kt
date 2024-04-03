@@ -177,7 +177,60 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             .build(),
                         contentDescription = "Weather icon"
                     )
-    
+/*
+                    if (vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky > 3.0){
+                        AsyncImage(
+                            modifier = Modifier
+                                .size(280.dp),
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-yellow.svg")
+                                .decoderFactory(SvgDecoder.Factory())
+                                .build(),
+                            contentDescription = "Weather icon"
+                        )
+                    }
+*/
+                    Text(
+                        text = "UV styrke: ${vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky}",
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(top = 30.dp)
+                    )
+
+                    if (vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky >= 3.0 && vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky < 6.0){
+                        AsyncImage(
+                            modifier = Modifier
+                                .size(280.dp),
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-yellow.svg")
+                                .decoderFactory(SvgDecoder.Factory())
+                                .build(),
+                            contentDescription = "Weather icon"
+                        )
+                        Text(text = "Husk å ta på solkrem hvis du skal være ute lenge!")
+                    } else if (vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky >= 6.0 && vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky < 8.0){
+                        AsyncImage(
+                            modifier = Modifier
+                                .size(280.dp),
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-orange.svg")
+                                .decoderFactory(SvgDecoder.Factory())
+                                .build(),
+                            contentDescription = "Weather icon"
+                        )
+                        Text(text = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola.")
+                    } else if (vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky >= 8.0){
+                        AsyncImage(
+                            modifier = Modifier
+                                .size(280.dp),
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-red.svg")
+                                .decoderFactory(SvgDecoder.Factory())
+                                .build(),
+                            contentDescription = "Weather icon"
+                        )
+                        Text(text = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola. IKKE GÅ UT LMFAOOOO!!!")
+                    }
+
                     // Will only show alerts and take up space on screen if there are any active alerts in the area
                     if (vm.alertsData!!.features.isNotEmpty()) {
                         Text(
@@ -196,7 +249,8 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             vm.alertsData!!.features.forEach{ //drop for løkke, make map then set of eventawarenessname and instruction. compare feature with feature? if already in there or smth like that. this processing should happen in ViewModel. Map is already unique by default :)
                                 AsyncImage(
                                     modifier = Modifier
-                                        .size(125.dp).padding(top = 20.dp, bottom = 20.dp),
+                                        .size(125.dp)
+                                        .padding(top = 20.dp, bottom = 20.dp),
                                     model = ImageRequest.Builder(LocalContext.current)
                                         .data(vm.metAlertsIcons!![i])
                                         .decoderFactory(SvgDecoder.Factory())
@@ -217,7 +271,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center,
-                                modifier = Modifier.size(120.dp, 250.dp)
+                                modifier = Modifier.size(120.dp, 280.dp)
                             ) {
                                 val time: String =
                                     vm.weatherData!!.properties.timeseries[i].time.removeRange(0, 11)
@@ -235,6 +289,11 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                     text = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature.roundToInt()}°C",
                                     fontSize = 30.sp,
                                     fontWeight = Bold
+                                )
+                                Text(
+                                    text = "UV styrke: ${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky}",
+                                    fontSize = 20.sp,
+                                    modifier = Modifier.padding(start = 23.dp)
                                 )
                             }
                         }
