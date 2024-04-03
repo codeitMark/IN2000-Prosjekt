@@ -186,7 +186,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-yellow.svg")
                                 .decoderFactory(SvgDecoder.Factory())
                                 .build(),
-                            contentDescription = "Weather icon"
+                            contentDescription = "UV-strength Icon"
                         )
                     }
 */
@@ -199,36 +199,36 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     if (vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky >= 3.0 && vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky < 6.0){
                         AsyncImage(
                             modifier = Modifier
-                                .size(280.dp),
+                                .size(140.dp),
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-yellow.svg")
                                 .decoderFactory(SvgDecoder.Factory())
                                 .build(),
-                            contentDescription = "Weather icon"
+                            contentDescription = "UV-strength icon"
                         )
-                        Text(text = "Husk å ta på solkrem hvis du skal være ute lenge!")
+                        Text(text = "Husk å ta på solkrem hvis du skal være ute lenge!", modifier = Modifier.padding(14.dp))
                     } else if (vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky >= 6.0 && vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky < 8.0){
                         AsyncImage(
                             modifier = Modifier
-                                .size(280.dp),
+                                .size(140.dp),
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-orange.svg")
                                 .decoderFactory(SvgDecoder.Factory())
                                 .build(),
-                            contentDescription = "Weather icon"
+                            contentDescription = "UV-strength icon"
                         )
-                        Text(text = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola.")
+                        Text(text = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola.", modifier = Modifier.padding(14.dp))
                     } else if (vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky >= 8.0){
                         AsyncImage(
                             modifier = Modifier
-                                .size(280.dp),
+                                .size(140.dp),
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-red.svg")
                                 .decoderFactory(SvgDecoder.Factory())
                                 .build(),
-                            contentDescription = "Weather icon"
+                            contentDescription = "UV-strength icon"
                         )
-                        Text(text = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.")
+                        Text(text = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.", modifier = Modifier.padding(14.dp))
                     }
 
                     // Will only show alerts and take up space on screen if there are any active alerts in the area
@@ -298,9 +298,9 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                             .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-yellow.svg")
                                             .decoderFactory(SvgDecoder.Factory())
                                             .build(),
-                                        contentDescription = "Weather icon"
+                                        contentDescription = "UV-strength icon."
                                     )
-                                    //Text(text = "Husk å ta på solkrem hvis du skal være ute lenge!")
+                                    //Text(text = "Husk å ta på solkrem hvis du skal være ute lenge!", modifier = Modifier.padding(14.dp))
                                 } else if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 6.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 8.0){
                                     AsyncImage(
                                         modifier = Modifier
@@ -309,9 +309,9 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                             .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-orange.svg")
                                             .decoderFactory(SvgDecoder.Factory())
                                             .build(),
-                                        contentDescription = "Weather icon"
+                                        contentDescription = "UV-strength icon."
                                     )
-                                    //Text(text = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola.")
+                                    //Text(text = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola.", modifier = Modifier.padding(14.dp))
                                 } else if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 8.0){
                                     AsyncImage(
                                         modifier = Modifier
@@ -320,9 +320,9 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                             .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-red.svg")
                                             .decoderFactory(SvgDecoder.Factory())
                                             .build(),
-                                        contentDescription = "Weather icon"
+                                        contentDescription = "UV-strength icon."
                                     )
-                                    //Text(text = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.")
+                                    //Text(text = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.", modifier = Modifier.padding(14.dp))
                                 }
                                 Text(
                                     text = "UV styrke: ${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky}",
