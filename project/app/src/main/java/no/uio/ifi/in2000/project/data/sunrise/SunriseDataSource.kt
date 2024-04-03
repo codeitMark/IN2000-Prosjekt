@@ -3,17 +3,25 @@ package no.uio.ifi.in2000.project.data.sunrise
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
+import io.ktor.client.request.header
 import io.ktor.serialization.gson.gson
 import no.uio.ifi.in2000.project.model.sunrise.SunriseResponse
 import java.text.SimpleDateFormat
 import java.util.Date
 
-data class SunriseDataSource(private var path: String = "") {
+data class SunriseDataSource(private var path: String = "https://gw-uio.intark.uh-it.no/in2000/") {
+    var authorized = false
+    var connected = false
 
     private val client = HttpClient {
         install(ContentNegotiation) {
             gson()
+        }
+        defaultRequest {
+            url(path)
+            header("X-Gravitee-Api-Key", "2da3279c-ee4c-4d21-955e-d13822ff578c")
         }
     }
 
@@ -22,8 +30,14 @@ data class SunriseDataSource(private var path: String = "") {
 
         return try {
             // kan fikse på tidssoner senere, satte den til norsk tid inntil videre
-            val httpResponse = client.get("https://api.met.no/weatherapi/sunrise/3.0/sun?lat=$lat&lon=$lon&date=$currentDate&offset=+02:00")
-            httpResponse.body<SunriseResponse>()
+            val httpResponse = client.get("weatherapi/sunrise/3.0/sun?lat=$lat&lon=$lon&date=$currentDate&offset=+02:00")
+            connected = true //test connection
+            if (httpResponse.status.value == 200) {
+                authorized = true //test authorized (something would be wrong with Api-key if not)
+                httpResponse.body<SunriseResponse>()
+            } else{
+                null
+            }
         } catch (e: Exception) {
             null
         }
