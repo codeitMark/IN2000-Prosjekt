@@ -122,6 +122,7 @@ class HomeViewModel : ViewModel(){
             )
         )
     )
+        private set
 
     var sunriseTime by mutableStateOf("")
         private set
