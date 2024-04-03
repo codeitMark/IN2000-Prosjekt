@@ -61,15 +61,16 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
     var valgtTemperatur by remember{
         mutableStateOf("Celsius") //Default value will be Celsius. Can choose Fahrenheit.
     }
+    var switchChecked by remember{
+        mutableStateOf(false)
+    }
+
     val geocoder = Geocoder(LocalContext.current, Locale.getDefault())
     var addressList: List<Address>?
     var address: Address?
 
     val locations = listOf("Oslo", "Trondheim", "Moss", "Ski", "Lillestrøm", "Gjesdal", "Drammen", "Bergen", "Finnmark", "Porsanger")
     val språk = listOf("no", "en")
-    var switchChecked by remember{
-        mutableStateOf(false)
-    }
 
     Column(
         modifier = Modifier
@@ -77,10 +78,10 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
             .verticalScroll(scrollStateVertical),
         //verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    ) {//Can add row for design !!!
         Switch(checked = switchChecked, onCheckedChange = {switchChecked = !switchChecked
             valgtTemperatur = if (valgtTemperatur == "Celsius"){
-                "Fahrenheit"
+                "Fahrenheit" //add this to viewmodel so we can process this in repo?
             } else{
                 "Celsius"
             }
@@ -179,10 +180,17 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         val land = sted[0].countryName
                         Text(text = kommune + lokalBy + fylke + land, fontSize = 30.sp)
                     }
-                    Text(
-                        text = "${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C",
-                        fontSize = 50.sp
-                    )
+                    if (valgtTemperatur == "Celsius"){
+                        Text(
+                            text = "${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C",
+                            fontSize = 50.sp
+                        )
+                    } else if (valgtTemperatur == "Fahrenheit"){
+                        Text(
+                            text = "${(vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature*1.8+32).roundToInt()}°F",
+                            fontSize = 50.sp
+                        )
+                    }
                     AsyncImage(
                         modifier = Modifier
                             .size(280.dp),
@@ -247,11 +255,19 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                         .build(),
                                     contentDescription = "Weather icon",
                                 )
-                                Text(
-                                    text = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature.roundToInt()}°C",
-                                    fontSize = 30.sp,
-                                    fontWeight = Bold
-                                )
+                                if (valgtTemperatur == "Celsius"){
+                                    Text(
+                                        text = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature.roundToInt()}°C",
+                                        fontSize = 30.sp,
+                                        fontWeight = Bold
+                                    )
+                                } else if (valgtTemperatur == "Fahrenheit"){
+                                    Text(
+                                        text = "${(vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature*1.8+32).roundToInt()}°F",
+                                        fontSize = 30.sp,
+                                        fontWeight = Bold
+                                    )
+                                }
                             }
                         }
                     }
