@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -30,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -79,14 +81,6 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
         //verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {//Can add row for design !!!
-        Switch(checked = switchChecked, onCheckedChange = {switchChecked = !switchChecked
-            valgtTemperatur = if (valgtTemperatur == "Celsius"){
-                "Fahrenheit" //add this to viewmodel so we can process this in repo?
-            } else{
-                "Celsius"
-            }
-            Log.i("TEMPERATUR", valgtTemperatur)
-        })
         ExposedDropdownMenuBox(expanded = expandedBy,
             onExpandedChange = { expandedBy = !expandedBy }) {
             TextField(
@@ -148,6 +142,21 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         }
                     )
                 }
+            }
+        }
+        Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+            Column(modifier = Modifier.fillMaxWidth().padding(8.dp).weight(1f), horizontalAlignment = Alignment.Start) {
+                Text(modifier = Modifier.padding(8.dp), text = "Celsius/Fahrenheit")
+            }
+            Column(modifier = Modifier.fillMaxWidth().padding(8.dp).weight(1f), horizontalAlignment = Alignment.End) {
+                Switch(checked = switchChecked, onCheckedChange = {switchChecked = !switchChecked
+                    valgtTemperatur = if (valgtTemperatur == "Celsius"){
+                        "Fahrenheit" //add this to viewmodel so we can process this in repo?
+                    } else{
+                        "Celsius"
+                    }
+                    Log.i("TEMPERATUR", valgtTemperatur)
+                })
             }
         }
         if (vm.initialized) {
