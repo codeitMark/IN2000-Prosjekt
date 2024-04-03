@@ -10,13 +10,13 @@ class SunriseRepository() {
         return sunriseDataSource.getSunrise(lat, lon)
     }
 
-    suspend fun fetchSunriseTime(response: SunriseResponse?, lat: Double, lon: Double): String? {
+    suspend fun fetchSunriseTime(response: SunriseResponse?): String? {
         val sunriseTime = response?.properties?.sunrise?.time
         Log.d("SUNRISE_REPOSITORY", "Sunrise time: $sunriseTime")
         return sunriseTime
     }
 
-    suspend fun fetchSunsetTime(response: SunriseResponse?, lat: Double, lon: Double): String? {
+    suspend fun fetchSunsetTime(response: SunriseResponse?): String? {
         val sunsetTime = response?.properties?.sunset?.time
         Log.d("SUNSET_REPOSITORY", "Sunset time: $sunsetTime")
         return sunsetTime

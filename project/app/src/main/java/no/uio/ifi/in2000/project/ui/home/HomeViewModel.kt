@@ -156,8 +156,8 @@ class HomeViewModel : ViewModel(){
             metAlertsIcons = metAlertsRep.fetchAlertIcons(alertsData)
 
             sunrise = sunriseRep.fetchSunrise(lat, lon)
-            sunriseTime = sunriseRep.fetchSunriseTime(sunrise, lat, lon)?.let { getTimeOnly(it) }.toString()
-            sunsetTime = sunriseRep.fetchSunsetTime(sunrise, lat, lon)?.let { getTimeOnly(it) }.toString()
+            sunriseTime = sunriseRep.fetchSunriseTime(sunrise)?.let { getTimeOnly(it) }.toString()
+            sunsetTime = sunriseRep.fetchSunsetTime(sunrise)?.let { getTimeOnly(it) }.toString()
             Log.d("VIEWMODEL_HOMESCREEN", "API-kall sunrise")
 
             responseStatus = true
