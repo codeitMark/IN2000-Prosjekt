@@ -10,6 +10,7 @@ import io.ktor.serialization.gson.gson
 import no.uio.ifi.in2000.project.model.sunrise.SunriseResponse
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 data class SunriseDataSource(private var path: String = "https://gw-uio.intark.uh-it.no/in2000/") {
     var authorized = false
@@ -46,7 +47,7 @@ data class SunriseDataSource(private var path: String = "https://gw-uio.intark.u
     private fun getCurrentDate(): String {
         //val currentDate = LocalDateTime.now().format(formatter) //Used method below due to this being API-level 26+. Our minimum is API-level 24.
         val currentDate = Date() //gets current date
-        val formatter = SimpleDateFormat("yyyy-MM-dd") //formats date.
+        val formatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()) //formats date.
         return formatter.format(currentDate)
     }
 }
