@@ -78,7 +78,14 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
         //verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Switch(checked = switchChecked, onCheckedChange = {switchChecked = !switchChecked})
+        Switch(checked = switchChecked, onCheckedChange = {switchChecked = !switchChecked
+            valgtTemperatur = if (valgtTemperatur == "Celsius"){
+                "Fahrenheit"
+            } else{
+                "Celsius"
+            }
+            Log.i("TEMPERATUR", valgtTemperatur)
+        })
         ExposedDropdownMenuBox(expanded = expandedBy,
             onExpandedChange = { expandedBy = !expandedBy }) {
             TextField(
