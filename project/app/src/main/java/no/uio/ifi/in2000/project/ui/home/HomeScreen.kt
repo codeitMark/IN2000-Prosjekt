@@ -228,7 +228,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 .build(),
                             contentDescription = "Weather icon"
                         )
-                        Text(text = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola. IKKE GÅ UT LMFAOOOO!!!")
+                        Text(text = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.")
                     }
 
                     // Will only show alerts and take up space on screen if there are any active alerts in the area
@@ -290,6 +290,40 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                     fontSize = 30.sp,
                                     fontWeight = Bold
                                 )
+                                if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 3.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 6.0){
+                                    AsyncImage(
+                                        modifier = Modifier
+                                            .size(40.dp),
+                                        model = ImageRequest.Builder(LocalContext.current)
+                                            .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-yellow.svg")
+                                            .decoderFactory(SvgDecoder.Factory())
+                                            .build(),
+                                        contentDescription = "Weather icon"
+                                    )
+                                    //Text(text = "Husk å ta på solkrem hvis du skal være ute lenge!")
+                                } else if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 6.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 8.0){
+                                    AsyncImage(
+                                        modifier = Modifier
+                                            .size(40.dp),
+                                        model = ImageRequest.Builder(LocalContext.current)
+                                            .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-orange.svg")
+                                            .decoderFactory(SvgDecoder.Factory())
+                                            .build(),
+                                        contentDescription = "Weather icon"
+                                    )
+                                    //Text(text = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola.")
+                                } else if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 8.0){
+                                    AsyncImage(
+                                        modifier = Modifier
+                                            .size(40.dp),
+                                        model = ImageRequest.Builder(LocalContext.current)
+                                            .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-red.svg")
+                                            .decoderFactory(SvgDecoder.Factory())
+                                            .build(),
+                                        contentDescription = "Weather icon"
+                                    )
+                                    //Text(text = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.")
+                                }
                                 Text(
                                     text = "UV styrke: ${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky}",
                                     fontSize = 20.sp,
