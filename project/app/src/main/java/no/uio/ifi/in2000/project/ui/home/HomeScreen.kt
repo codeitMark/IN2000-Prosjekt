@@ -280,36 +280,6 @@ fun AutoComplete() {
         "Orangutan",
         "Polar Bear",
         "Grizzly Bear",
-        "Sloth",
-        "Kangaroo",
-        "Koala",
-        "Panda",
-        "Gorilla",
-        "Hippopotamus",
-        "Rhinoceros",
-        "Orangutan",
-        "Polar Bear",
-        "Grizzly Bear",
-        "Sloth",
-        "Kangaroo",
-        "Koala",
-        "Panda",
-        "Gorilla",
-        "Hippopotamus",
-        "Rhinoceros",
-        "Orangutan",
-        "Polar Bear",
-        "Grizzly Bear",
-        "Sloth",
-        "Kangaroo",
-        "Koala",
-        "Panda",
-        "Gorilla",
-        "Hippopotamus",
-        "Rhinoceros",
-        "Orangutan",
-        "Polar Bear",
-        "Grizzly Bear",
         "Sloth"
     )
 
@@ -347,13 +317,6 @@ fun AutoComplete() {
             )
     ) {
 
-        Text(
-            modifier = Modifier.padding(start = 3.dp, bottom = 2.dp),
-            text = "Animals",
-            fontSize = 16.sp,
-            color = Color.Black,
-            fontWeight = FontWeight.Medium
-        )
 
         Column(modifier = Modifier.fillMaxWidth()) {
 
