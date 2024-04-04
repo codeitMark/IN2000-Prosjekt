@@ -177,26 +177,14 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             .build(),
                         contentDescription = "Weather icon"
                     )
-/*
-                    if (vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky > 3.0){
-                        AsyncImage(
-                            modifier = Modifier
-                                .size(280.dp),
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-yellow.svg")
-                                .decoderFactory(SvgDecoder.Factory())
-                                .build(),
-                            contentDescription = "UV-strength Icon"
-                        )
-                    }
-*/
+                    val uvStyrkeNå = vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky
                     Text(
-                        text = "UV styrke: ${vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky}",
+                        text = "UV styrke: $uvStyrkeNå",
                         fontSize = 20.sp,
                         modifier = Modifier.padding(top = 30.dp)
                     )
 
-                    if (vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky >= 3.0 && vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky < 6.0){
+                    if (uvStyrkeNå >= 3.0 && uvStyrkeNå < 6.0){
                         AsyncImage(
                             modifier = Modifier
                                 .size(140.dp),
@@ -207,7 +195,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             contentDescription = "UV-strength icon"
                         )
                         Text(text = "Husk å ta på solkrem hvis du skal være ute lenge!", modifier = Modifier.padding(14.dp))
-                    } else if (vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky >= 6.0 && vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky < 8.0){
+                    } else if (uvStyrkeNå >= 6.0 && uvStyrkeNå < 8.0){
                         AsyncImage(
                             modifier = Modifier
                                 .size(140.dp),
@@ -218,7 +206,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             contentDescription = "UV-strength icon"
                         )
                         Text(text = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola.", modifier = Modifier.padding(14.dp))
-                    } else if (vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky >= 8.0){
+                    } else if (uvStyrkeNå >= 8.0){
                         AsyncImage(
                             modifier = Modifier
                                 .size(140.dp),
