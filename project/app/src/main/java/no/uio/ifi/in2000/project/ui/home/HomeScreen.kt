@@ -1,8 +1,5 @@
 package no.uio.ifi.in2000.project.ui.home
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -25,8 +22,6 @@ import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -38,7 +33,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -49,37 +43,24 @@ import android.location.Geocoder
 import android.util.Log
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
+import no.uio.ifi.in2000.project.model.search.ApiProperties
 import java.util.Locale
 import kotlin.math.roundToInt
 
@@ -117,8 +98,25 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
     ) {
         Text(text = "SEARCHBAR")
 
-        AutoComplete()
+        AutoComplete(vm)
+        /*
 
+        vm.loadSuggestions("Osl")
+
+        vm.suggestions?.forEach { item ->
+            Text(text = item.formatted)
+        }
+
+         */
+
+        //vm.suggestions?.get(0)?.let { Text(text = it.formatted) }
+        //Text(text = vm.suggestions!![0].formatted)
+
+        Column {
+            DisplayItems(items = vm.suggestions)
+        }
+
+        Text(text = "----------------")
 
         ExposedDropdownMenuBox(expanded = expandedSpråk,
             onExpandedChange = { expandedSpråk = !expandedSpråk }) {
@@ -140,7 +138,8 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             valgtSpråk = it
                             expandedSpråk = false
                             vm.lang = it
-                            vm.loadData(vm.lat, vm.lon, vm.county, vm.lang)
+                            //vm.loadData(vm.lat, vm.lon, vm.county, vm.lang)
+                            vm.loadData(vm.lat, vm.lon)
                         }
                     )
                 }
@@ -189,7 +188,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             .build(),
                         contentDescription = "Weather icon"
                     )
-    
+
                     // Will only show alerts and take up space on screen if there are any active alerts in the area
                     if (vm.alertsData!!.features.isNotEmpty()) {
                         Text(
@@ -197,7 +196,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             fontSize = 20.sp,
                             fontWeight = Bold,
                             modifier = Modifier.padding(top = 30.dp)
-    
+
                         )
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally
@@ -224,7 +223,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             }
                         }
                     }
-    
+
                     Row(modifier = Modifier.horizontalScroll(scrollState)) {
                         for (i in 2..14) {
                             Column(
@@ -258,31 +257,25 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
     }
 }
 
+@Composable
+fun DisplayItems(items: List<ApiProperties>?) {
+    Column {
+        items?.forEach { item ->
+            Text(text = item.formatted)
+        }
+    }
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AutoComplete() {
+fun AutoComplete(vm: HomeViewModel) {
 
-    val animals = listOf(
-        "Lion",
-        "Tiger",
-        "Leopard",
-        "Cheetah",
-        "Giraffe",
-        "Elephant",
-        "Zebra",
-        "Kangaroo",
-        "Koala",
-        "Panda",
-        "Gorilla",
-        "Hippopotamus",
-        "Rhinoceros",
-        "Orangutan",
-        "Polar Bear",
-        "Grizzly Bear",
-        "Sloth"
-    )
-
+    val items = vm.suggestions
+    val sug = mutableListOf<String>()
+    items.forEach { item ->
+        sug.add(item.formatted)
+    }
 
     var category by remember {
         mutableStateOf("")
@@ -337,6 +330,7 @@ fun AutoComplete() {
                     onValueChange = {
                         category = it
                         expanded = true
+                        vm.loadSuggestions(it)
                     },
                     placeholder = { Text("Enter any Animals Name") },
                     colors = TextFieldDefaults.textFieldColors(
@@ -381,7 +375,7 @@ fun AutoComplete() {
 
                         if (category.isNotEmpty()) {
                             items(
-                                animals.filter {
+                                sug.filter {
                                     it.lowercase()
                                         .contains(category.lowercase()) || it.lowercase()
                                         .contains("others")
@@ -390,30 +384,24 @@ fun AutoComplete() {
                             ) {
                                 ItemsCategory(title = it) { title ->
                                     category = title
-                                    expanded = false
+                                    expanded = true
                                 }
                             }
                         } else {
                             items(
-                                animals.sorted()
+                                sug.sorted()
                             ) {
                                 ItemsCategory(title = it) { title ->
                                     category = title
-                                    expanded = false
+                                    expanded = true
                                 }
                             }
                         }
-
                     }
-
                 }
             }
-
         }
-
     }
-
-
 }
 
 @Composable

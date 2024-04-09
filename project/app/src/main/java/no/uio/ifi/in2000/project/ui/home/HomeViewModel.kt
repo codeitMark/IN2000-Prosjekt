@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.project.data.alerts.MetAlertsRepository
 import no.uio.ifi.in2000.project.data.forecast.LocationForecastRepository
+import no.uio.ifi.in2000.project.data.search.SearchRepository
 import no.uio.ifi.in2000.project.model.alerts.MetAlertsResponse
 import no.uio.ifi.in2000.project.model.forecast.Data
 import no.uio.ifi.in2000.project.model.forecast.Geometry
@@ -23,11 +24,14 @@ import no.uio.ifi.in2000.project.model.forecast.Properties
 import no.uio.ifi.in2000.project.model.forecast.Summary
 import no.uio.ifi.in2000.project.model.forecast.TimeSeries
 import no.uio.ifi.in2000.project.model.forecast.Units
+import no.uio.ifi.in2000.project.model.search.ApiProperties
+import no.uio.ifi.in2000.project.model.search.AutoCompleteResponse
 
 
 class HomeViewModel : ViewModel(){
     private val locationForecastRep = LocationForecastRepository()
     private val metAlertsRep = MetAlertsRepository()
+    private val searchRep = SearchRepository()
 
     var responseStatus by mutableStateOf(false) //made mutableStateOf so HomeScreen updates if responseStatus changes. Without this it will NOT update since the combination of weatherData and alertsData in init takes too long.
 
@@ -79,6 +83,9 @@ class HomeViewModel : ViewModel(){
     var metAlertsIcons: MutableList<String>? = mutableListOf<String>()
         private set
 
+    var suggestions by mutableStateOf<List<ApiProperties>>(emptyList())
+        private set
+
     // Placeholdere for innholdet. Disse må være initialisert, derfor er det placeholdere.
     //Parametere for LocationForecast
     var lat = 0.0
@@ -89,15 +96,33 @@ class HomeViewModel : ViewModel(){
     var lang = ""
     var initialized by mutableStateOf(false)
 
-    fun loadData(lat: Double, lon: Double, county:String, lang: String){
+    fun loadSuggestions(text: String) {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = searchRep.fetchSuggestions(text)
+            var items = response?.features
+            val list = mutableListOf<ApiProperties>()
+            if (items != null) {
+                for (item in items) {
+                    list.add(item.properties)
+                }
+            }
+            suggestions = list
+
+        }
+    }
+
+    //fun loadData(lat: Double, lon: Double, county:String, lang: String){
+    //Tester uten alerts
+    fun loadData(lat: Double, lon: Double){
         viewModelScope.launch(Dispatchers.IO){
             weatherData = locationForecastRep.fetchWeather(lat, lon)
             Log.d("VIEWMODEL_HOMESCREEN", "API-kall weather") //sjekker antall API-kall vi gjør gjennom ViewModel. Vi fetcher ikke flere ganger, så det gir mening.
             locationForecastIcons = locationForecastRep.fetchLocationForecastIcons(weatherData)
-            alertsData = metAlertsRep.fetchAlerts(county, lang)
-            Log.d("VIEWMODEL_HOMESCREEN", "API-kall alerts")
-            sortedAlerts = metAlertsRep.sortAlerts(alertsData)
-            metAlertsIcons = metAlertsRep.fetchAlertIcons(alertsData)
+            //alertsData = metAlertsRep.fetchAlerts(county, lang)
+            //Log.d("VIEWMODEL_HOMESCREEN", "API-kall alerts")
+            //sortedAlerts = metAlertsRep.sortAlerts(alertsData)
+            //metAlertsIcons = metAlertsRep.fetchAlertIcons(alertsData)
             responseStatus = true
             if (!initialized){
                 initialized = true
