@@ -86,6 +86,15 @@ class HomeViewModel : ViewModel(){
     var suggestions by mutableStateOf<List<ApiProperties>>(emptyList())
         private set
 
+    var currentFormatted by mutableStateOf("")
+        private set
+
+    var currentLat by mutableStateOf(0.0)
+        private set
+
+    var currentLon by mutableStateOf(0.0)
+        private set
+
     // Placeholdere for innholdet. Disse må være initialisert, derfor er det placeholdere.
     //Parametere for LocationForecast
     var lat = 0.0
@@ -108,7 +117,6 @@ class HomeViewModel : ViewModel(){
                 }
             }
             suggestions = list
-
         }
     }
 
@@ -130,5 +138,27 @@ class HomeViewModel : ViewModel(){
             //Log.i("HOMEVIEWMODEL INIT", "Initiated.")
             //weatherUiState = weatherUiState.copy(weather = weather) //same functionality as weatherData = locationForecastRep.fetchWeather(lat, lon)
         }
+    }
+
+    fun loadCurrent(text: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = searchRep.fetchSuggestions(text)
+            var items = response?.features
+            val list = mutableListOf<ApiProperties>()
+            if (items != null) {
+                for (item in items) {
+                    list.add(item.properties)
+                }
+            }
+            suggestions = list
+
+            currentFormatted = suggestions[0].formatted
+            currentLat = suggestions[0].lat
+            currentLon = suggestions[0].lon
+
+            loadData(currentLat, currentLon)
+            //Log.d("TestSearch1000", "After Assigning values")
+        }
+
     }
 }

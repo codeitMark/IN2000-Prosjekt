@@ -382,7 +382,7 @@ fun AutoComplete(vm: HomeViewModel) {
                                 }
                                     .sorted()
                             ) {
-                                ItemsCategory(title = it) { title ->
+                                ItemsCategory(vm, title = it) { title ->
                                     category = title
                                     expanded = true
                                 }
@@ -391,7 +391,7 @@ fun AutoComplete(vm: HomeViewModel) {
                             items(
                                 sug.sorted()
                             ) {
-                                ItemsCategory(title = it) { title ->
+                                ItemsCategory(vm, title = it) { title ->
                                     category = title
                                     expanded = true
                                 }
@@ -406,6 +406,7 @@ fun AutoComplete(vm: HomeViewModel) {
 
 @Composable
 fun ItemsCategory(
+    vm: HomeViewModel,
     title: String,
     onSelect: (String) -> Unit
 ) {
@@ -415,6 +416,8 @@ fun ItemsCategory(
             .fillMaxWidth()
             .clickable {
                 onSelect(title)
+                vm.loadCurrent(title)
+                //Log.d("TestSearch1000", "Clickable")
             }
             .padding(10.dp)
     ) {
