@@ -332,7 +332,7 @@ fun AutoComplete(vm: HomeViewModel) {
                         expanded = true
                         vm.loadSuggestions(it)
                     },
-                    placeholder = { Text("Enter any Animals Name") },
+                    placeholder = { Text("Enter any Location") },
                     colors = TextFieldDefaults.textFieldColors(
                         containerColor = Color.Transparent,
                         focusedIndicatorColor = Color.Transparent,
