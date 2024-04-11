@@ -37,7 +37,7 @@ data class SunriseDataSource(private var path: String = "https://gw-uio.intark.u
 
         return try {
             // kan fikse på tidssoner senere, satte den til norsk tid inntil videre
-            val httpResponse = client.get("weatherapi/sunrise/3.0/sun?lat=$lat&lon=$lon&date=$currentDate&offset=+$timeZoneOffset")
+            val httpResponse = client.get("weatherapi/sunrise/3.0/sun?lat=$lat&lon=$lon&date=$currentDate&offset=+02:00")
             connected = true //test connection
             if (httpResponse.status.value == 200) {
                 authorized = true //test authorized (something would be wrong with Api-key if not)
