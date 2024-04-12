@@ -11,7 +11,7 @@ import no.uio.ifi.in2000.project.model.sunrise.SunriseResponse
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlin.math.roundToInt
+import kotlin.math.ceil
 
 data class SunriseDataSource(private var path: String = "https://gw-uio.intark.uh-it.no/in2000/") {
     var authorized = false
@@ -54,7 +54,7 @@ data class SunriseDataSource(private var path: String = "https://gw-uio.intark.u
     }
 
     private fun getTimeZone(lon: Double): String {
-        val timeZoneHours = (lon / 15).roundToInt() //Longtitude delt på 15 gir antall timer forskjell fra GMT/UTC
+        val timeZoneHours = ceil(lon / 15).toInt() //Longtitude delt på 15 gir antall timer forskjell fra GMT/UTC
 
         // Formater timer på riktig måte
         val formattedHours = String.format("%02d", timeZoneHours)
