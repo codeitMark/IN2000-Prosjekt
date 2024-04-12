@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.project.data.sunrise
 
-import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -12,6 +11,7 @@ import no.uio.ifi.in2000.project.model.sunrise.SunriseResponse
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import kotlin.math.roundToInt
 
 data class SunriseDataSource(private var path: String = "https://gw-uio.intark.uh-it.no/in2000/") {
     var authorized = false
@@ -30,14 +30,10 @@ data class SunriseDataSource(private var path: String = "https://gw-uio.intark.u
     suspend fun getSunrise(lat: Double, lon: Double): SunriseResponse? {
         val currentDate = getCurrentDate()
         val timeZone = getTimeZone(lon)
-        val timeZoneHours = timeZone / 60 // Beregn timer fra minutter
-        val timeZoneMinutes = timeZone % 60 // Beregn gjenværende minutter
-        val timeZoneOffset = String.format("%02d:%02d", timeZoneHours, timeZoneMinutes)
-        Log.d("DataSource", timeZone.toString())
 
         return try {
             // kan fikse på tidssoner senere, satte den til norsk tid inntil videre
-            val httpResponse = client.get("weatherapi/sunrise/3.0/sun?lat=$lat&lon=$lon&date=$currentDate&offset=+02:00")
+            val httpResponse = client.get("weatherapi/sunrise/3.0/sun?lat=$lat&lon=$lon&date=$currentDate&offset=+$timeZone")
             connected = true //test connection
             if (httpResponse.status.value == 200) {
                 authorized = true //test authorized (something would be wrong with Api-key if not)
@@ -57,7 +53,11 @@ data class SunriseDataSource(private var path: String = "https://gw-uio.intark.u
         return formatter.format(currentDate)
     }
 
-    private fun getTimeZone(lon: Double): Int {
-        return (lon / 15).toInt()
+    private fun getTimeZone(lon: Double): String {
+        val timeZoneHours = (lon / 15).roundToInt() //Longtitude delt på 15 gir antall timer forskjell fra GMT/UTC
+
+        // Formater timer på riktig måte
+        val formattedHours = String.format("%02d", timeZoneHours)
+        return "$formattedHours:00" // Returnerer timer med minutter satt til 00
     }
 }
