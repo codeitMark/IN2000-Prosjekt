@@ -101,8 +101,6 @@ class HomeViewModel : ViewModel(){
     var lon = 0.0
 
     //Parametere for MetAlerts
-    var county = ""
-    var lang = ""
     var initialized by mutableStateOf(false)
 
     fun loadSuggestions(text: String) {
@@ -127,10 +125,10 @@ class HomeViewModel : ViewModel(){
             weatherData = locationForecastRep.fetchWeather(lat, lon)
             Log.d("VIEWMODEL_HOMESCREEN", "API-kall weather") //sjekker antall API-kall vi gjør gjennom ViewModel. Vi fetcher ikke flere ganger, så det gir mening.
             locationForecastIcons = locationForecastRep.fetchLocationForecastIcons(weatherData)
-            //alertsData = metAlertsRep.fetchAlerts(county, lang)
-            //Log.d("VIEWMODEL_HOMESCREEN", "API-kall alerts")
-            //sortedAlerts = metAlertsRep.sortAlerts(alertsData)
-            //metAlertsIcons = metAlertsRep.fetchAlertIcons(alertsData)
+            alertsData = metAlertsRep.fetchAlerts(lat, lon)
+            Log.d("VIEWMODEL_HOMESCREEN", "API-kall alerts")
+            sortedAlerts = metAlertsRep.sortAlerts(alertsData)
+            metAlertsIcons = metAlertsRep.fetchAlertIcons(alertsData)
             responseStatus = true
             if (!initialized){
                 initialized = true
@@ -155,9 +153,10 @@ class HomeViewModel : ViewModel(){
             currentFormatted = suggestions[0].formatted
             currentLat = suggestions[0].lat
             currentLon = suggestions[0].lon
+            Log.d("TestSearch1000", "LAT: $currentLat --- LON: $currentLon")
 
             loadData(currentLat, currentLon)
-            //Log.d("TestSearch1000", "After Assigning values")
+            //loadData(59.9133301, 10.7389701)
         }
 
     }

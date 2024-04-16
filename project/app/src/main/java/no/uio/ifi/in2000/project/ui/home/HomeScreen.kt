@@ -70,24 +70,6 @@ import kotlin.math.roundToInt
 fun HomeScreen(vm: HomeViewModel = viewModel()) {
     val scrollState = rememberScrollState()
     val scrollStateVertical = rememberScrollState()
-    var expandedBy by remember {
-        mutableStateOf(false)
-    }
-    var expandedSpråk by remember{
-        mutableStateOf(false)
-    }
-    var valgtOmråde by remember {
-        mutableStateOf("")
-    }
-    var valgtSpråk by remember{
-        mutableStateOf("no") //Default value will be "no", norsk.
-    }
-    val geocoder = Geocoder(LocalContext.current, Locale.getDefault())
-    var addressList: List<Address>?
-    var address: Address?
-
-    val locations = listOf("Oslo", "Trondheim", "Moss", "Ski", "Lillestrøm", "Gjesdal", "Drammen", "Bergen", "Finnmark", "Porsanger")
-    val språk = listOf("no", "en")
 
     Column(
         modifier = Modifier
@@ -99,52 +81,14 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
         Text(text = "SEARCHBAR")
 
         AutoComplete(vm)
+
         /*
-
-        vm.loadSuggestions("Osl")
-
-        vm.suggestions?.forEach { item ->
-            Text(text = item.formatted)
-        }
-
-         */
-
-        //vm.suggestions?.get(0)?.let { Text(text = it.formatted) }
-        //Text(text = vm.suggestions!![0].formatted)
-
+        For å vise resultater fra API kall dersom dropdown ikke kommer opp
         Column {
             DisplayItems(items = vm.suggestions)
         }
+         */
 
-        Text(text = "----------------")
-
-        ExposedDropdownMenuBox(expanded = expandedSpråk,
-            onExpandedChange = { expandedSpråk = !expandedSpråk }) {
-            TextField(
-                modifier = Modifier
-                    .menuAnchor()
-                    .padding(top = 20.dp),
-                value = valgtSpråk,
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSpråk) },
-                label = { Text("Velg språk!") })
-
-            ExposedDropdownMenu(expanded = expandedSpråk,
-                onDismissRequest = { expandedSpråk = false }) {
-                språk.forEach {
-                    DropdownMenuItem(text = {Text(it)}, //Står no "no" og "en", kan alltid lage noe Map for å skrive "Norsk" og "Engelsk" som valgene
-                        onClick = {
-                            valgtSpråk = it
-                            expandedSpråk = false
-                            vm.lang = it
-                            //vm.loadData(vm.lat, vm.lon, vm.county, vm.lang)
-                            vm.loadData(vm.lat, vm.lon)
-                        }
-                    )
-                }
-            }
-        }
         if (vm.initialized) {
             //null check for null-safety
             if (vm.weatherData == null || vm.alertsData == null) {
@@ -154,27 +98,9 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     Text(text = "Loading...", fontSize = 50.sp, fontWeight = Bold)
                 } else {
                     Text(text = "Været", fontSize = 60.sp, fontWeight = Bold)
-                    val sted = geocoder.getFromLocation(vm.lat, vm.lon, 1)
-                    //ignore deprecated. There is a new method but it requires API Level 33 and above, which does not align with our minimum (API Level 24).
-                    if (sted != null) {
-                        var kommune = sted[0].subAdminArea + ", "
-                        Log.i("KOMMUNE", kommune) //kaller på dette 3 ganger, interessant! Må løses :)
-                        if (sted[0].subAdminArea == null) {
-                            kommune = ""
-                        }
-                        var lokalBy = sted[0].locality + ", "
-                        Log.i("LOKALBY", lokalBy)
-                        if (sted[0].locality == null || sted[0].subAdminArea != null){
-                            lokalBy = ""
-                        }
-                        var fylke = sted[0].adminArea + ", "
-                        Log.i("FYLKE", fylke)
-                        if (sted[0].adminArea == null || sted[0].subAdminArea != null || sted[0].locality != null) { //viser kun fylke om det er den eneste.
-                            fylke = ""
-                        }
-                        val land = sted[0].countryName
-                        Text(text = kommune + lokalBy + fylke + land, fontSize = 30.sp)
-                    }
+
+                    Text(text = vm.currentFormatted, fontSize = 30.sp)
+
                     Text(
                         text = "${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C",
                         fontSize = 50.sp
