@@ -38,22 +38,27 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
-import android.location.Address
-import android.location.Geocoder
-import android.util.Log
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -61,7 +66,6 @@ import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import no.uio.ifi.in2000.project.model.search.ApiProperties
-import java.util.Locale
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -80,7 +84,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
     ) {
         Text(text = "SEARCHBAR")
 
-        AutoComplete(vm)
+        SearchBar(vm)
 
         /*
         For å vise resultater fra API kall dersom dropdown ikke kommer opp
@@ -193,9 +197,9 @@ fun DisplayItems(items: List<ApiProperties>?) {
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
-fun AutoComplete(vm: HomeViewModel) {
+fun SearchBar(vm: HomeViewModel) {
 
     val items = vm.suggestions
     val sug = mutableListOf<String>()
@@ -215,12 +219,13 @@ fun AutoComplete(vm: HomeViewModel) {
         mutableStateOf(Size.Zero)
     }
 
-    var expanded by remember {
-        mutableStateOf(false)
-    }
+
     val interactionSource = remember {
         MutableInteractionSource()
     }
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
     // Category Field
     Column(
@@ -231,7 +236,7 @@ fun AutoComplete(vm: HomeViewModel) {
                 interactionSource = interactionSource,
                 indication = null,
                 onClick = {
-                    expanded = false
+                    vm.expanded = false
                 }
             )
     ) {
@@ -249,13 +254,23 @@ fun AutoComplete(vm: HomeViewModel) {
                             color = Color.Black,
                             shape = RoundedCornerShape(15.dp)
                         )
+                        .focusRequester(vm.focusRequester)
+                        .onKeyEvent { event ->
+                            if (event.type == KeyEventType.KeyUp && event.key == Key.Enter) {
+                                vm.expanded = false
+                                keyboardController?.hide()
+                                true
+                            } else {
+                                false
+                            }
+                        }
                         .onGloballyPositioned { coordinates ->
                             textFieldSize = coordinates.size.toSize()
                         },
                     value = category,
                     onValueChange = {
                         category = it
-                        expanded = true
+                        vm.expanded = true
                         vm.loadSuggestions(it)
                     },
                     placeholder = { Text("Enter any Location") },
@@ -275,7 +290,7 @@ fun AutoComplete(vm: HomeViewModel) {
                     ),
                     singleLine = true,
                     trailingIcon = {
-                        IconButton(onClick = { expanded = !expanded }) {
+                        IconButton(onClick = { vm.expanded = !vm.expanded }) {
                             Icon(
                                 modifier = Modifier.size(24.dp),
                                 imageVector = Icons.Rounded.KeyboardArrowDown,
@@ -287,7 +302,7 @@ fun AutoComplete(vm: HomeViewModel) {
                 )
             }
 
-            AnimatedVisibility(visible = expanded) {
+            AnimatedVisibility(visible = vm.expanded) {
                 Card(
                     modifier = Modifier
                         .padding(horizontal = 5.dp)
@@ -296,7 +311,7 @@ fun AutoComplete(vm: HomeViewModel) {
                 ) {
 
                     LazyColumn(
-                        modifier = Modifier.heightIn(max = 150.dp),
+                        modifier = Modifier.heightIn(max = 850.dp),
                     ) {
 
                         if (category.isNotEmpty()) {
@@ -308,18 +323,18 @@ fun AutoComplete(vm: HomeViewModel) {
                                 }
                                     .sorted()
                             ) {
-                                ItemsCategory(vm, title = it) { title ->
+                                DropdownRow(vm, focusManager, keyboardController, title = it) { title ->
                                     category = title
-                                    expanded = true
+                                    vm.expanded = true
                                 }
                             }
                         } else {
                             items(
                                 sug.sorted()
                             ) {
-                                ItemsCategory(vm, title = it) { title ->
+                                DropdownRow(vm, focusManager, keyboardController, title = it) { title ->
                                     category = title
-                                    expanded = true
+                                    vm.expanded = true
                                 }
                             }
                         }
@@ -330,9 +345,12 @@ fun AutoComplete(vm: HomeViewModel) {
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun ItemsCategory(
+fun DropdownRow(
     vm: HomeViewModel,
+    fm: FocusManager,
+    kb: SoftwareKeyboardController?,
     title: String,
     onSelect: (String) -> Unit
 ) {
@@ -343,7 +361,9 @@ fun ItemsCategory(
             .clickable {
                 onSelect(title)
                 vm.loadCurrent(title)
-                //Log.d("TestSearch1000", "Clickable")
+                vm.expanded = false
+                kb?.hide()
+                fm.clearFocus()
             }
             .padding(10.dp)
     ) {

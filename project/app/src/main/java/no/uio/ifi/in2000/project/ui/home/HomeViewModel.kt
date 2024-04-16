@@ -3,7 +3,10 @@ package no.uio.ifi.in2000.project.ui.home
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -94,6 +97,11 @@ class HomeViewModel : ViewModel(){
 
     var currentLon by mutableStateOf(0.0)
         private set
+
+    var expanded by mutableStateOf(false)
+
+    val focusRequester by mutableStateOf(FocusRequester())
+
 
     // Placeholdere for innholdet. Disse må være initialisert, derfor er det placeholdere.
     //Parametere for LocationForecast
