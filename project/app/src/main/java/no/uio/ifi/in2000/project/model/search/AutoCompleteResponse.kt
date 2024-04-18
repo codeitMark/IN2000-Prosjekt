@@ -30,7 +30,14 @@ data class ApiGeoJsonFeature(
 data class ApiProperties(
     val formatted: String,
     val lon: Double,
-    val lat: Double
+    val lat: Double,
+    val timezone: ApiTimezoneList
+)
+
+@Serializable
+data class ApiTimezoneList(
+    val offset_STD: String,
+    val offset_DST: String
 )
 
 @Serializable

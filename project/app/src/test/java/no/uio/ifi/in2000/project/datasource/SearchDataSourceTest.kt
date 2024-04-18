@@ -5,7 +5,7 @@ import no.uio.ifi.in2000.project.data.search.SearchDataSource
 import org.junit.Test
 
 class SearchDataSourceTest {
-    private val location = "Osl"
+    private val location = "Oslo, Norway"
     private val source = SearchDataSource()
     @Test
     fun test_getConnection(){

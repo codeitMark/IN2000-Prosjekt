@@ -30,7 +30,7 @@ data class SearchDataSource(private val path: String = "https://api.geoapify.com
             connected = true
             if (httpResponse.status.value == 200){
                 authorized = true
-                Log.d("TestSearch1000", "Api kall med teksten: $text")
+                //Log.d("TestSearch1000", "Api kall med teksten: $text") //Kommentert ut for at test ikke skal returnere null
                 httpResponse.body<AutoCompleteResponse>() //Samme som det kommentert over
             } else{
                 null //Innholdet blir null uansett, bare at man får LocationForecastResponse objekt med parameterne null. Enklere å bare gjøre det til null tidlig nå, så slipper vi å lage en if-sjekk senere for om det det som er inni er null.
