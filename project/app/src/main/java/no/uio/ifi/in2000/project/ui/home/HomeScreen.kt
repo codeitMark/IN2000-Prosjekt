@@ -43,7 +43,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -75,6 +78,19 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
     val scrollState = rememberScrollState()
     val scrollStateVertical = rememberScrollState()
 
+    var expandedSpråk by remember{
+        mutableStateOf(false)
+    }
+
+    val språk = LinkedHashMap<String, String>()
+    språk["no"] = "Norsk"
+    språk["en"] = "English"
+
+    var valgtSpråk by remember{
+        mutableStateOf("Norsk") //Default value will be "no", norsk.
+    }
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -82,6 +98,32 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
         //verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        ExposedDropdownMenuBox(expanded = expandedSpråk,
+            onExpandedChange = { expandedSpråk = !expandedSpråk }) {
+            TextField(
+                modifier = Modifier
+                    .menuAnchor()
+                    .padding(top = 20.dp),
+                value = valgtSpråk,
+                onValueChange = {},
+                readOnly = true,
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSpråk) },
+                label = { Text("Velg språk!") })
+
+            ExposedDropdownMenu(expanded = expandedSpråk,
+                onDismissRequest = { expandedSpråk = false }) {
+                språk.forEach {
+                    DropdownMenuItem(text = {Text(it.value)},
+                        onClick = {
+                            valgtSpråk = it.value
+                            expandedSpråk = false
+                            vm.lang = it.key
+                            vm.loadData(vm.lang, vm.lat, vm.lon)
+                        }
+                    )
+                }
+            }
+        }
         SearchBar(vm)
 
         /*

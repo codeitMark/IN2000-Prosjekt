@@ -23,10 +23,10 @@ data class MetAlertsDataSource(private val path: String = "https://gw-uio.intark
         }
     }
     
-    suspend fun getAlerts(lat: Double, lon: Double): MetAlertsResponse? { //finnes mange andre parametere, la til lang!
+    suspend fun getAlerts(lang: String, lat: Double, lon: Double): MetAlertsResponse? { //finnes mange andre parametere, la til lang!
         return try {
             //val httpResponse = client.get("weatherapi/metalerts/2.0/current.json") //Guaranteed to have data
-            val httpResponse = client.get("weatherapi/metalerts/2.0/current.json?lang=no&lat=$lat&lon=$lon") //Most likely no warnings. (Minimal data)
+            val httpResponse = client.get("weatherapi/metalerts/2.0/current.json?lang=$lang&lat=$lat&lon=$lon") //Most likely no warnings. (Minimal data)
             //Log.i("LocationForecastDataSource", "response ${httpResponse.status.value}")
             connected = true
             if (httpResponse.status.value == 200){

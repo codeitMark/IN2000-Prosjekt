@@ -109,6 +109,7 @@ class HomeViewModel : ViewModel(){
     var lon = 0.0
 
     //Parametere for MetAlerts
+    var lang = "no"
     var initialized by mutableStateOf(false)
 
     fun loadSuggestions(text: String) {
@@ -128,12 +129,12 @@ class HomeViewModel : ViewModel(){
 
     //fun loadData(lat: Double, lon: Double, county:String, lang: String){
     //Tester uten alerts
-    fun loadData(lat: Double, lon: Double){
+    fun loadData(lang: String, lat: Double, lon: Double){
         viewModelScope.launch(Dispatchers.IO){
             weatherData = locationForecastRep.fetchWeather(lat, lon)
             Log.d("VIEWMODEL_HOMESCREEN", "API-kall weather") //sjekker antall API-kall vi gjør gjennom ViewModel. Vi fetcher ikke flere ganger, så det gir mening.
             locationForecastIcons = locationForecastRep.fetchLocationForecastIcons(weatherData)
-            alertsData = metAlertsRep.fetchAlerts(lat, lon)
+            alertsData = metAlertsRep.fetchAlerts(lang, lat, lon)
             Log.d("VIEWMODEL_HOMESCREEN", "API-kall alerts")
             sortedAlerts = metAlertsRep.sortAlerts(alertsData)
             metAlertsIcons = metAlertsRep.fetchAlertIcons(alertsData)
@@ -159,11 +160,11 @@ class HomeViewModel : ViewModel(){
             suggestions = list
 
             currentFormatted = suggestions[0].formatted
-            currentLat = suggestions[0].lat
-            currentLon = suggestions[0].lon
-            Log.d("TestSearch1000", "LAT: $currentLat --- LON: $currentLon")
+            lat = suggestions[0].lat
+            lon = suggestions[0].lon
+            Log.d("TestSearch1000", "LAT: $lat --- LON: $lon")
 
-            loadData(currentLat, currentLon)
+            loadData(lang, lat, lon)
             //loadData(59.9133301, 10.7389701)
         }
 

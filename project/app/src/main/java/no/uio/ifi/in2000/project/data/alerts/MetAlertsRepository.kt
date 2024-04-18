@@ -27,8 +27,8 @@ class MetAlertsRepository() {
         "unknown" to "icon-warning-generic"
     )
 
-    suspend fun fetchAlerts(lat: Double, lon: Double): MetAlertsResponse? {
-        return metAlertsSource.getAlerts(lat, lon)
+    suspend fun fetchAlerts(lang: String, lat: Double, lon: Double): MetAlertsResponse? {
+        return metAlertsSource.getAlerts(lang, lat, lon)
     }
     suspend fun sortAlerts(alerts: MetAlertsResponse?): LinkedHashMap<String, String>{ //Problemet med dette er at man mister varsler om det er samme varsel med ulik nivå (farge).
         val map = LinkedHashMap<String, String>()
