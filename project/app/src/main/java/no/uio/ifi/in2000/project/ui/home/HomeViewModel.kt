@@ -155,9 +155,9 @@ class HomeViewModel : ViewModel(){
     var initialized by mutableStateOf(false)
 
     //Parameter for Sunrise
-    var timeZone = "+00:00"
-    var name = "" //For timeZone objekt. Sjekker om stedet er i DST eller STD.
-    var DST = false
+    private var timeZone = "+00:00"
+    private var name = "" //For timeZone objekt. Sjekker om stedet er i DST eller STD.
+    private var dst = false
 
     private fun getTimeOnly(dateTimeString: String): String {
         // Litt risky måte å hente ut kun tidspunktet på
@@ -219,7 +219,7 @@ class HomeViewModel : ViewModel(){
             lat = suggestions[0].lat
             lon = suggestions[0].lon
             sjekkDST(name)
-            timeZone = if (DST){
+            timeZone = if (dst){
                 suggestions[0].timezone.offset_DST //Daylight Saving Time. Sommertid.
             } else{
                 suggestions[0].timezone.offset_STD //Standard Time. Norge er i DST, mens steder som New Zealand er i STD.
@@ -247,9 +247,9 @@ class HomeViewModel : ViewModel(){
         }
     }
 
-    fun sjekkDST(sted: String){
+    private fun sjekkDST(sted: String){
         val tz = TimeZone.getTimeZone(name)
         val currentDate = Date()
-        DST = tz.inDaylightTime(currentDate)
+        dst = tz.inDaylightTime(currentDate)
     }
 }
