@@ -1,18 +1,18 @@
 package no.uio.ifi.in2000.project.ui.home
 
+import android.icu.util.TimeZone
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.project.data.alerts.MetAlertsRepository
 import no.uio.ifi.in2000.project.data.forecast.LocationForecastRepository
+import no.uio.ifi.in2000.project.data.sunrise.SunriseRepository
 import no.uio.ifi.in2000.project.data.search.SearchRepository
 import no.uio.ifi.in2000.project.model.alerts.MetAlertsResponse
 import no.uio.ifi.in2000.project.model.forecast.Geometry
@@ -20,13 +20,22 @@ import no.uio.ifi.in2000.project.model.forecast.LocationForecastResponse
 import no.uio.ifi.in2000.project.model.forecast.Meta
 import no.uio.ifi.in2000.project.model.forecast.Properties
 import no.uio.ifi.in2000.project.model.forecast.Units
+import no.uio.ifi.in2000.project.model.sunrise.SolarMidnight
+import no.uio.ifi.in2000.project.model.sunrise.SolarNoon
+import no.uio.ifi.in2000.project.model.sunrise.Sunrise
+import no.uio.ifi.in2000.project.model.sunrise.SunriseResponse
+import no.uio.ifi.in2000.project.model.sunrise.Sunset
+import no.uio.ifi.in2000.project.model.sunrise.When
+import no.uio.ifi.in2000.project.model.sunrise.Geometry as SunriseGeometry
+import no.uio.ifi.in2000.project.model.sunrise.Properties as SunriseProperties
 import no.uio.ifi.in2000.project.model.search.ApiProperties
-import no.uio.ifi.in2000.project.model.search.AutoCompleteResponse
+import java.util.Date
 
 
 class HomeViewModel : ViewModel(){
     private val locationForecastRep = LocationForecastRepository()
     private val metAlertsRep = MetAlertsRepository()
+    private val sunriseRep = SunriseRepository()
     private val searchRep = SearchRepository()
 
     var responseStatus by mutableStateOf(false) //made mutableStateOf so HomeScreen updates if responseStatus changes. Without this it will NOT update since the combination of weatherData and alertsData in init takes too long.
@@ -84,6 +93,47 @@ class HomeViewModel : ViewModel(){
     var metAlertsIcons: MutableList<String>? = mutableListOf<String>()
         private set
 
+    // Filled with placeholders. This is because we have to create an instance of the class.
+    var sunrise: SunriseResponse? by mutableStateOf(
+        SunriseResponse(
+            String(),
+            SunriseGeometry(
+                String(),
+                listOf()
+            ),
+            When(
+                listOf()
+            ),
+            SunriseProperties(
+                String(),
+                Sunrise(
+                    String(),
+                    0.0
+                ),
+                Sunset(
+                    String(),
+                    0.0
+                ),
+                SolarNoon(
+                    String(),
+                    0.0,
+                    false
+                ),
+                SolarMidnight(
+                    String(),
+                    0.0,
+                    false
+                )
+            )
+        )
+    )
+        private set
+
+    var sunriseTime by mutableStateOf("")
+        private set
+
+    var sunsetTime by mutableStateOf("")
+        private set
     var suggestions by mutableStateOf<List<ApiProperties>>(emptyList())
         private set
 
@@ -104,11 +154,22 @@ class HomeViewModel : ViewModel(){
     var lang = "no"
     var initialized by mutableStateOf(false)
 
+    //Parameter for Sunrise
+    var timeZone = "+00:00"
+    var offset = 0
+    private var name = "" //For timeZone objekt. Sjekker om stedet er i DST eller STD.
+    private var dst = false
+
+    private fun getTimeOnly(dateTimeString: String): String {
+        // Litt risky måte å hente ut kun tidspunktet på
+        return dateTimeString.substring(11, 16)
+    }
+
     fun loadSuggestions(text: String) {
 
         viewModelScope.launch(Dispatchers.IO) {
             val response = searchRep.fetchSuggestions(text)
-            var items = response?.features
+            val items = response?.features
             val list = mutableListOf<ApiProperties>()
             if (items != null) {
                 for (item in items) {
@@ -120,12 +181,18 @@ class HomeViewModel : ViewModel(){
     }
 
     //fun loadData(lat: Double, lon: Double, county:String, lang: String){
-    //Tester uten alerts
-    fun loadData(lang: String, lat: Double, lon: Double){
+    //Tester uten alerts (Lite sannsynlig for at det er alerts)
+    fun loadData(lang: String, lat: Double, lon: Double, timeZone: String){
         viewModelScope.launch(Dispatchers.IO){
             weatherData = locationForecastRep.fetchWeather(lat, lon)
             Log.d("VIEWMODEL_HOMESCREEN", "API-kall weather") //sjekker antall API-kall vi gjør gjennom ViewModel. Vi fetcher ikke flere ganger, så det gir mening.
             locationForecastIcons = locationForecastRep.fetchLocationForecastIcons(weatherData)
+            sunrise = sunriseRep.fetchSunrise(lat, lon, timeZone)
+            sunriseTime = sunriseRep.fetchSunriseTime(sunrise)?.let { getTimeOnly(it) }.toString()
+            sunsetTime = sunriseRep.fetchSunsetTime(sunrise)?.let { getTimeOnly(it) }.toString()
+            Log.d("VIEWMODEL_HOMESCREEN", "API-kall sunrise")
+
+            responseStatus = true
             loadAlerts(lang, lat, lon)
             if (!initialized){
                 initialized = true
@@ -138,7 +205,7 @@ class HomeViewModel : ViewModel(){
     fun loadCurrent(text: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val response = searchRep.fetchSuggestions(text)
-            var items = response?.features
+            val items = response?.features
             val list = mutableListOf<ApiProperties>()
             if (items != null) {
                 for (item in items) {
@@ -147,12 +214,23 @@ class HomeViewModel : ViewModel(){
             }
             suggestions = list
 
+            //kræsjer hawaiian isles. Trenger vi null-safety sjekk?
             currentFormatted = suggestions[0].formatted
+            name = suggestions[0].timezone.name
             lat = suggestions[0].lat
             lon = suggestions[0].lon
+            sjekkDST(name)
+            if (dst){
+                timeZone = suggestions[0].timezone.offset_DST //Daylight Saving Time. Sommertid.
+                offset = suggestions[0].timezone.offset_DST_seconds/60/60
+            } else{
+                timeZone = suggestions[0].timezone.offset_STD //Standard Time. Norge er i DST, mens steder som New Zealand er i STD.
+                offset = suggestions[0].timezone.offset_STD_seconds/60/60
+            }
             Log.d("TestSearch1000", "LAT: $lat --- LON: $lon")
+            Log.i("timeZonesjekk", timeZone)
 
-            loadData(lang, lat, lon)
+            loadData(lang, lat, lon, timeZone)
             //loadData(59.9133301, 10.7389701)
         }
     }
@@ -170,5 +248,11 @@ class HomeViewModel : ViewModel(){
             metAlertsIcons = metAlertsRep.fetchAlertIcons(alertsData)
             responseStatus = true
         }
+    }
+
+    private fun sjekkDST(sted: String){
+        val tz = TimeZone.getTimeZone(name)
+        val currentDate = Date()
+        dst = tz.inDaylightTime(currentDate)
     }
 }

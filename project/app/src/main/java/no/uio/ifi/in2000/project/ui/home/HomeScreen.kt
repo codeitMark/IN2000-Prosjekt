@@ -80,15 +80,15 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
     val scrollState = rememberScrollState()
     val scrollStateVertical = rememberScrollState()
 
-    var expandedSpråk by remember{
+    var expandedSpråk by remember {
         mutableStateOf(false)
     }
 
-    var switchChecked by remember{
+    var switchChecked by remember {
         mutableStateOf(false)
     }
 
-    var valgtTemperatur by remember{
+    var valgtTemperatur by remember {
         mutableStateOf("Celsius") //Default value will be Celsius. Can choose Fahrenheit.
     }
 
@@ -96,7 +96,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
     språk["no"] = "Norsk"
     språk["en"] = "English"
 
-    var valgtSpråk by remember{
+    var valgtSpråk by remember {
         mutableStateOf("Norsk") //Default value will be "no", norsk.
     }
 
@@ -123,7 +123,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
             ExposedDropdownMenu(expanded = expandedSpråk,
                 onDismissRequest = { expandedSpråk = false }) {
                 språk.forEach {
-                    DropdownMenuItem(text = {Text(it.value)},
+                    DropdownMenuItem(text = { Text(it.value) },
                         onClick = {
                             valgtSpråk = it.value
                             expandedSpråk = false
@@ -143,14 +143,21 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
         }
          */
         Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
-            Column(modifier = Modifier.fillMaxWidth().padding(8.dp).weight(1f), horizontalAlignment = Alignment.Start) {
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(8.dp).weight(1f),
+                horizontalAlignment = Alignment.Start
+            ) {
                 Text(modifier = Modifier.padding(8.dp), text = "Celsius/Fahrenheit")
             }
-            Column(modifier = Modifier.fillMaxWidth().padding(8.dp).weight(1f), horizontalAlignment = Alignment.End) {
-                Switch(checked = switchChecked, onCheckedChange = {switchChecked = !switchChecked
-                    valgtTemperatur = if (valgtTemperatur == "Celsius"){
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(8.dp).weight(1f),
+                horizontalAlignment = Alignment.End
+            ) {
+                Switch(checked = switchChecked, onCheckedChange = {
+                    switchChecked = !switchChecked
+                    valgtTemperatur = if (valgtTemperatur == "Celsius") {
                         "Fahrenheit" //add this to viewmodel so we can process this in repo?
-                    } else{
+                    } else {
                         "Celsius"
                     }
                     Log.i("TEMPERATUR", valgtTemperatur)
@@ -170,14 +177,14 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
 
                     Text(text = vm.currentFormatted, fontSize = 30.sp)
 
-                    if (valgtTemperatur == "Celsius"){
+                    if (valgtTemperatur == "Celsius") {
                         Text(
                             text = "${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C",
                             fontSize = 50.sp
                         )
-                    } else if (valgtTemperatur == "Fahrenheit"){
+                    } else if (valgtTemperatur == "Fahrenheit") {
                         Text(
-                            text = "${(vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature*1.8+32).roundToInt()}°F",
+                            text = "${(vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F",
                             fontSize = 50.sp
                         )
                     }
@@ -191,14 +198,15 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         contentDescription = "Weather icon"
                     )
 
-                    val uvStyrkeNå = vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky
+                    val uvStyrkeNå =
+                        vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky
                     Text(
                         text = "UV styrke: $uvStyrkeNå",
                         fontSize = 20.sp,
                         modifier = Modifier.padding(top = 30.dp)
                     )
 
-                    if (uvStyrkeNå >= 3.0 && uvStyrkeNå < 6.0){
+                    if (uvStyrkeNå >= 3.0 && uvStyrkeNå < 6.0) {
                         AsyncImage(
                             modifier = Modifier
                                 .size(140.dp),
@@ -208,8 +216,11 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 .build(),
                             contentDescription = "UV-strength icon"
                         )
-                        Text(text = "Husk å ta på solkrem hvis du skal være ute lenge!", modifier = Modifier.padding(14.dp))
-                    } else if (uvStyrkeNå >= 6.0 && uvStyrkeNå < 8.0){
+                        Text(
+                            text = "Husk å ta på solkrem hvis du skal være ute lenge!",
+                            modifier = Modifier.padding(14.dp)
+                        )
+                    } else if (uvStyrkeNå >= 6.0 && uvStyrkeNå < 8.0) {
                         AsyncImage(
                             modifier = Modifier
                                 .size(140.dp),
@@ -219,8 +230,11 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 .build(),
                             contentDescription = "UV-strength icon"
                         )
-                        Text(text = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola.", modifier = Modifier.padding(14.dp))
-                    } else if (uvStyrkeNå >= 8.0){
+                        Text(
+                            text = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola.",
+                            modifier = Modifier.padding(14.dp)
+                        )
+                    } else if (uvStyrkeNå >= 8.0) {
                         AsyncImage(
                             modifier = Modifier
                                 .size(140.dp),
@@ -230,8 +244,16 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 .build(),
                             contentDescription = "UV-strength icon"
                         )
-                        Text(text = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.", modifier = Modifier.padding(14.dp))
+                        Text(
+                            text = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.",
+                            modifier = Modifier.padding(14.dp)
+                        )
                     }
+
+                    val sunriseTime = vm.sunriseTime
+                    Text(text = "Soloppgang: kl. $sunriseTime", fontSize = 20.sp)
+                    val sunsetTime = vm.sunsetTime
+                    Text(text = "Solnedgang: kl. $sunsetTime", fontSize = 20.sp)
 
                     // Will only show alerts and take up space on screen if there are any active alerts in the area
                     if (vm.alertsData!!.features.isNotEmpty()) {
@@ -246,9 +268,10 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             horizontalAlignment = Alignment.CenterHorizontally
                         )
                         {
-                            var i = 0 //noe hardkodet teller for metAlertsIcons. Mulig med bedre løsning, men kan ta tid å finne.
+                            var i =
+                                0 //noe hardkodet teller for metAlertsIcons. Mulig med bedre løsning, men kan ta tid å finne.
                             // vm.sortedAlerts.forEach //Bruk denne for å fjerne duplikater. Problem: I tilfellet det er duplikater, vil vm.metAlertsIcons[i] vise feil ikoner. Det vil iterere over ikonene som om det ikke er duplikater = gust gust vs. gust flood (filtered). Den første vil vise riktige ikoner. Den andre vil vise gust gust fortsatt.
-                            vm.alertsData!!.features.forEach{ //drop for løkke, make map then set of eventawarenessname and instruction. compare feature with feature? if already in there or smth like that. this processing should happen in ViewModel. Map is already unique by default :)
+                            vm.alertsData!!.features.forEach { //drop for løkke, make map then set of eventawarenessname and instruction. compare feature with feature? if already in there or smth like that. this processing should happen in ViewModel. Map is already unique by default :)
                                 AsyncImage(
                                     modifier = Modifier
                                         .size(125.dp)
@@ -259,9 +282,15 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                         .build(),
                                     contentDescription = "Icon for an alert."
                                 )
-                                Text(text = it.properties.eventAwarenessName, fontWeight = Bold) //Tidligere it.key (med vm.sortedAlerts.forEach)
+                                Text(
+                                    text = it.properties.eventAwarenessName,
+                                    fontWeight = Bold
+                                ) //Tidligere it.key (med vm.sortedAlerts.forEach)
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text(text = it.properties.instruction, modifier = Modifier.padding(14.dp)) //Tidligere it.value (med vm.sortedalerts.forEach)
+                                Text(
+                                    text = it.properties.instruction,
+                                    modifier = Modifier.padding(14.dp)
+                                ) //Tidligere it.value (med vm.sortedalerts.forEach)
                                 Spacer(modifier = Modifier.height(20.dp))
                                 i++
                             }
@@ -269,15 +298,22 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     }
 
                     Row(modifier = Modifier.horizontalScroll(scrollState)) {
-                        for (i in 2..14) {
+                        for (i in 1..13) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center,
                                 modifier = Modifier.size(120.dp, 280.dp)
                             ) {
-                                val time: String =
-                                    vm.weatherData!!.properties.timeseries[i].time.removeRange(0, 11)
+                                var time: Int =
+                                    vm.weatherData!!.properties.timeseries[i].time.removeRange(
+                                        0,
+                                        11
+                                    )
                                         .removeRange(2, 9)
+                                        .toInt()+vm.offset //local time since locationForecast is in UTC/STD.
+                                if (time >= 24){
+                                    time -= 24
+                                }
                                 Text(text = "kl. $time", fontSize = 30.sp)
                                 AsyncImage(
                                     modifier = Modifier.size(70.dp),
@@ -287,20 +323,20 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                         .build(),
                                     contentDescription = "Weather icon",
                                 )
-                                if (valgtTemperatur == "Celsius"){
+                                if (valgtTemperatur == "Celsius") {
                                     Text(
                                         text = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature.roundToInt()}°C",
                                         fontSize = 30.sp,
                                         fontWeight = Bold
                                     )
-                                } else if (valgtTemperatur == "Fahrenheit"){
+                                } else if (valgtTemperatur == "Fahrenheit") {
                                     Text(
-                                        text = "${(vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature*1.8+32).roundToInt()}°F",
+                                        text = "${(vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F",
                                         fontSize = 30.sp,
                                         fontWeight = Bold
                                     )
                                 }
-                                if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 3.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 6.0){
+                                if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 3.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 6.0) {
                                     AsyncImage(
                                         modifier = Modifier
                                             .size(40.dp),
@@ -311,7 +347,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                         contentDescription = "UV-strength icon."
                                     )
                                     //Text(text = "Husk å ta på solkrem hvis du skal være ute lenge!", modifier = Modifier.padding(14.dp))
-                                } else if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 6.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 8.0){
+                                } else if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 6.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 8.0) {
                                     AsyncImage(
                                         modifier = Modifier
                                             .size(40.dp),
@@ -322,7 +358,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                         contentDescription = "UV-strength icon."
                                     )
                                     //Text(text = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola.", modifier = Modifier.padding(14.dp))
-                                } else if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 8.0){
+                                } else if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 8.0) {
                                     AsyncImage(
                                         modifier = Modifier
                                             .size(40.dp),
