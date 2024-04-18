@@ -92,12 +92,6 @@ class HomeViewModel : ViewModel(){
     var currentFormatted by mutableStateOf("")
         private set
 
-    var currentLat by mutableStateOf(0.0)
-        private set
-
-    var currentLon by mutableStateOf(0.0)
-        private set
-
     var expanded by mutableStateOf(false)
 
     val focusRequester by mutableStateOf(FocusRequester())
