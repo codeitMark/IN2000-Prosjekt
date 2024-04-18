@@ -5,25 +5,6 @@ import no.uio.ifi.in2000.project.model.forecast.LocationForecastResponse
 
 class MetAlertsRepository() {
     private val metAlertsSource = MetAlertsDataSource()
-    private val countyNumbers = mapOf(
-        "Oslo" to "03",
-        "Østfold" to "31",
-        "Akershus" to "32",
-        "Buskerud" to "33",
-        "Innlandet" to "34",
-        "Vestfold" to "39",
-        "Telemark" to "40",
-        "Agder" to "42",
-        "Rogaland" to "11",
-        "Vestland" to "46",
-        "Møre og Romsdal" to "15",
-        "Trøndelag" to "50",
-        "Nordland" to "18",
-        "Troms" to "55",
-        "Finnmark" to "56",
-        "Svalbard" to "21",
-        "Jan Mayen" to "22"
-    )
 
     //consider another solution, enum data classes? no idea.
     private val alertIcons = mapOf(
@@ -46,8 +27,8 @@ class MetAlertsRepository() {
         "unknown" to "icon-warning-generic"
     )
 
-    suspend fun fetchAlerts(county: String, lang: String): MetAlertsResponse? {
-        return metAlertsSource.getAlerts(countyNumbers[county]!!, lang)
+    suspend fun fetchAlerts(lang: String, lat: Double, lon: Double): MetAlertsResponse? {
+        return metAlertsSource.getAlerts(lang, lat, lon)
     }
     suspend fun sortAlerts(alerts: MetAlertsResponse?): LinkedHashMap<String, String>{ //Problemet med dette er at man mister varsler om det er samme varsel med ulik nivå (farge).
         val map = LinkedHashMap<String, String>()
