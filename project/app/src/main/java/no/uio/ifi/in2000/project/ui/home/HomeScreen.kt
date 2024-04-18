@@ -118,7 +118,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             valgtSpråk = it.value
                             expandedSpråk = false
                             vm.lang = it.key
-                            vm.loadData(vm.lang, vm.lat, vm.lon)
+                            vm.loadAlerts(vm.lang, vm.lat, vm.lon)
                         }
                     )
                 }

@@ -134,11 +134,7 @@ class HomeViewModel : ViewModel(){
             weatherData = locationForecastRep.fetchWeather(lat, lon)
             Log.d("VIEWMODEL_HOMESCREEN", "API-kall weather") //sjekker antall API-kall vi gjør gjennom ViewModel. Vi fetcher ikke flere ganger, så det gir mening.
             locationForecastIcons = locationForecastRep.fetchLocationForecastIcons(weatherData)
-            alertsData = metAlertsRep.fetchAlerts(lang, lat, lon)
-            Log.d("VIEWMODEL_HOMESCREEN", "API-kall alerts")
-            sortedAlerts = metAlertsRep.sortAlerts(alertsData)
-            metAlertsIcons = metAlertsRep.fetchAlertIcons(alertsData)
-            responseStatus = true
+            loadAlerts(lang, lat, lon)
             if (!initialized){
                 initialized = true
             }
@@ -167,6 +163,20 @@ class HomeViewModel : ViewModel(){
             loadData(lang, lat, lon)
             //loadData(59.9133301, 10.7389701)
         }
+    }
 
+    //Seperat loadAlerts så vi slipper å kalle på LocationForecast på nytt hvis man bytter språk
+    fun loadAlerts(lang: String, lat: Double, lon: Double){
+        viewModelScope.launch(Dispatchers.IO){
+            //Prevents app from crashing. There are no locations chosen.
+            if (!initialized){
+                return@launch
+            }
+            alertsData = metAlertsRep.fetchAlerts(lang, lat, lon)
+            Log.d("VIEWMODEL_HOMESCREEN", "API-kall alerts")
+            sortedAlerts = metAlertsRep.sortAlerts(alertsData)
+            metAlertsIcons = metAlertsRep.fetchAlertIcons(alertsData)
+            responseStatus = true
+        }
     }
 }
