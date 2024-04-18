@@ -9,18 +9,7 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.serialization.gson.gson
-import no.uio.ifi.in2000.project.model.forecast.Data
-import no.uio.ifi.in2000.project.model.forecast.Geometry
-import no.uio.ifi.in2000.project.model.forecast.Instant
-import no.uio.ifi.in2000.project.model.forecast.Instant_Details
 import no.uio.ifi.in2000.project.model.forecast.LocationForecastResponse
-import no.uio.ifi.in2000.project.model.forecast.Meta
-import no.uio.ifi.in2000.project.model.forecast.NextHours
-import no.uio.ifi.in2000.project.model.forecast.NextHours_Details
-import no.uio.ifi.in2000.project.model.forecast.Properties
-import no.uio.ifi.in2000.project.model.forecast.Summary
-import no.uio.ifi.in2000.project.model.forecast.TimeSeries
-import no.uio.ifi.in2000.project.model.forecast.Units
 
 
 data class LocationForecastDataSource(private val path: String = "https://gw-uio.intark.uh-it.no/in2000/") {
@@ -38,7 +27,7 @@ data class LocationForecastDataSource(private val path: String = "https://gw-uio
 
     suspend fun getWeather(lat: Double, lon: Double): LocationForecastResponse? {
         return try {
-            val httpResponse = client.get("weatherapi/locationforecast/2.0/compact?lat=$lat&lon=$lon")
+            val httpResponse = client.get("weatherapi/locationforecast/2.0/complete?lat=$lat&lon=$lon")
             connected = true
             //Log.i("LocationForecastDataSource", "response ${httpResponse.status.value}")
             //val response = httpResponse.body<LocationForecastResponse>()

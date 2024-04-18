@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.project.ui.home
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -47,6 +48,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -80,6 +82,14 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
 
     var expandedSpråk by remember{
         mutableStateOf(false)
+    }
+
+    var switchChecked by remember{
+        mutableStateOf(false)
+    }
+
+    var valgtTemperatur by remember{
+        mutableStateOf("Celsius") //Default value will be Celsius. Can choose Fahrenheit.
     }
 
     val språk = LinkedHashMap<String, String>()
@@ -132,6 +142,21 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
             DisplayItems(items = vm.suggestions)
         }
          */
+        Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+            Column(modifier = Modifier.fillMaxWidth().padding(8.dp).weight(1f), horizontalAlignment = Alignment.Start) {
+                Text(modifier = Modifier.padding(8.dp), text = "Celsius/Fahrenheit")
+            }
+            Column(modifier = Modifier.fillMaxWidth().padding(8.dp).weight(1f), horizontalAlignment = Alignment.End) {
+                Switch(checked = switchChecked, onCheckedChange = {switchChecked = !switchChecked
+                    valgtTemperatur = if (valgtTemperatur == "Celsius"){
+                        "Fahrenheit" //add this to viewmodel so we can process this in repo?
+                    } else{
+                        "Celsius"
+                    }
+                    Log.i("TEMPERATUR", valgtTemperatur)
+                })
+            }
+        }
 
         if (vm.initialized) {
             //null check for null-safety
@@ -145,10 +170,17 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
 
                     Text(text = vm.currentFormatted, fontSize = 30.sp)
 
-                    Text(
-                        text = "${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C",
-                        fontSize = 50.sp
-                    )
+                    if (valgtTemperatur == "Celsius"){
+                        Text(
+                            text = "${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C",
+                            fontSize = 50.sp
+                        )
+                    } else if (valgtTemperatur == "Fahrenheit"){
+                        Text(
+                            text = "${(vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature*1.8+32).roundToInt()}°F",
+                            fontSize = 50.sp
+                        )
+                    }
                     AsyncImage(
                         modifier = Modifier
                             .size(280.dp),
@@ -158,6 +190,48 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             .build(),
                         contentDescription = "Weather icon"
                     )
+
+                    val uvStyrkeNå = vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky
+                    Text(
+                        text = "UV styrke: $uvStyrkeNå",
+                        fontSize = 20.sp,
+                        modifier = Modifier.padding(top = 30.dp)
+                    )
+
+                    if (uvStyrkeNå >= 3.0 && uvStyrkeNå < 6.0){
+                        AsyncImage(
+                            modifier = Modifier
+                                .size(140.dp),
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-yellow.svg")
+                                .decoderFactory(SvgDecoder.Factory())
+                                .build(),
+                            contentDescription = "UV-strength icon"
+                        )
+                        Text(text = "Husk å ta på solkrem hvis du skal være ute lenge!", modifier = Modifier.padding(14.dp))
+                    } else if (uvStyrkeNå >= 6.0 && uvStyrkeNå < 8.0){
+                        AsyncImage(
+                            modifier = Modifier
+                                .size(140.dp),
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-orange.svg")
+                                .decoderFactory(SvgDecoder.Factory())
+                                .build(),
+                            contentDescription = "UV-strength icon"
+                        )
+                        Text(text = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola.", modifier = Modifier.padding(14.dp))
+                    } else if (uvStyrkeNå >= 8.0){
+                        AsyncImage(
+                            modifier = Modifier
+                                .size(140.dp),
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-red.svg")
+                                .decoderFactory(SvgDecoder.Factory())
+                                .build(),
+                            contentDescription = "UV-strength icon"
+                        )
+                        Text(text = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.", modifier = Modifier.padding(14.dp))
+                    }
 
                     // Will only show alerts and take up space on screen if there are any active alerts in the area
                     if (vm.alertsData!!.features.isNotEmpty()) {
@@ -187,7 +261,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 )
                                 Text(text = it.properties.eventAwarenessName, fontWeight = Bold) //Tidligere it.key (med vm.sortedAlerts.forEach)
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text(text = it.properties.instruction) //Tidligere it.value (med vm.sortedalerts.forEach)
+                                Text(text = it.properties.instruction, modifier = Modifier.padding(14.dp)) //Tidligere it.value (med vm.sortedalerts.forEach)
                                 Spacer(modifier = Modifier.height(20.dp))
                                 i++
                             }
@@ -199,7 +273,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center,
-                                modifier = Modifier.size(120.dp, 250.dp)
+                                modifier = Modifier.size(120.dp, 280.dp)
                             ) {
                                 val time: String =
                                     vm.weatherData!!.properties.timeseries[i].time.removeRange(0, 11)
@@ -213,10 +287,57 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                         .build(),
                                     contentDescription = "Weather icon",
                                 )
+                                if (valgtTemperatur == "Celsius"){
+                                    Text(
+                                        text = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature.roundToInt()}°C",
+                                        fontSize = 30.sp,
+                                        fontWeight = Bold
+                                    )
+                                } else if (valgtTemperatur == "Fahrenheit"){
+                                    Text(
+                                        text = "${(vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature*1.8+32).roundToInt()}°F",
+                                        fontSize = 30.sp,
+                                        fontWeight = Bold
+                                    )
+                                }
+                                if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 3.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 6.0){
+                                    AsyncImage(
+                                        modifier = Modifier
+                                            .size(40.dp),
+                                        model = ImageRequest.Builder(LocalContext.current)
+                                            .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-yellow.svg")
+                                            .decoderFactory(SvgDecoder.Factory())
+                                            .build(),
+                                        contentDescription = "UV-strength icon."
+                                    )
+                                    //Text(text = "Husk å ta på solkrem hvis du skal være ute lenge!", modifier = Modifier.padding(14.dp))
+                                } else if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 6.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 8.0){
+                                    AsyncImage(
+                                        modifier = Modifier
+                                            .size(40.dp),
+                                        model = ImageRequest.Builder(LocalContext.current)
+                                            .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-orange.svg")
+                                            .decoderFactory(SvgDecoder.Factory())
+                                            .build(),
+                                        contentDescription = "UV-strength icon."
+                                    )
+                                    //Text(text = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola.", modifier = Modifier.padding(14.dp))
+                                } else if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 8.0){
+                                    AsyncImage(
+                                        modifier = Modifier
+                                            .size(40.dp),
+                                        model = ImageRequest.Builder(LocalContext.current)
+                                            .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-red.svg")
+                                            .decoderFactory(SvgDecoder.Factory())
+                                            .build(),
+                                        contentDescription = "UV-strength icon."
+                                    )
+                                    //Text(text = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.", modifier = Modifier.padding(14.dp))
+                                }
                                 Text(
-                                    text = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature.roundToInt()}°C",
-                                    fontSize = 30.sp,
-                                    fontWeight = Bold
+                                    text = "UV styrke: ${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky}",
+                                    fontSize = 20.sp,
+                                    modifier = Modifier.padding(start = 23.dp)
                                 )
                             }
                         }
@@ -270,7 +391,8 @@ fun SearchBar(vm: HomeViewModel) {
     // Category Field
     Column(
         modifier = Modifier
-            .padding(30.dp)
+            .padding(top = 30.dp)
+            .padding(horizontal = 30.dp)
             .fillMaxWidth()
             .clickable(
                 interactionSource = interactionSource,
