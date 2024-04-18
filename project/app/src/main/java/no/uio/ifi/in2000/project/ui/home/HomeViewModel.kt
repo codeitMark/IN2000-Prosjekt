@@ -4,10 +4,8 @@ import android.icu.util.TimeZone
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +29,6 @@ import no.uio.ifi.in2000.project.model.sunrise.When
 import no.uio.ifi.in2000.project.model.sunrise.Geometry as SunriseGeometry
 import no.uio.ifi.in2000.project.model.sunrise.Properties as SunriseProperties
 import no.uio.ifi.in2000.project.model.search.ApiProperties
-import no.uio.ifi.in2000.project.model.search.AutoCompleteResponse
 import java.util.Date
 
 

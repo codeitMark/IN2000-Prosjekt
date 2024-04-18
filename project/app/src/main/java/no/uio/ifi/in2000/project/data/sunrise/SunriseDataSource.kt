@@ -31,7 +31,6 @@ data class SunriseDataSource(private var path: String = "https://gw-uio.intark.u
         val currentDate = getCurrentDate()
 
         return try {
-            // kan fikse på tidssoner senere, satte den til norsk tid inntil videre
             val httpResponse = client.get("weatherapi/sunrise/3.0/sun?lat=$lat&lon=$lon&date=$currentDate&offset=$timeZone")
             connected = true //test connection
             if (httpResponse.status.value == 200) {
