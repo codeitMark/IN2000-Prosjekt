@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -18,6 +19,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -57,6 +59,13 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
     var valgtSpråk by remember{
         mutableStateOf("no") //Default value will be "no", norsk.
     }
+    var valgtTemperatur by remember{
+        mutableStateOf("Celsius") //Default value will be Celsius. Can choose Fahrenheit.
+    }
+    var switchChecked by remember{
+        mutableStateOf(false)
+    }
+
     val geocoder = Geocoder(LocalContext.current, Locale.getDefault())
     var addressList: List<Address>?
     var address: Address?
@@ -70,7 +79,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
             .verticalScroll(scrollStateVertical),
         //verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    ) {//Can add row for design !!!
         ExposedDropdownMenuBox(expanded = expandedBy,
             onExpandedChange = { expandedBy = !expandedBy }) {
             TextField(
@@ -134,6 +143,21 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                 }
             }
         }
+        Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+            Column(modifier = Modifier.fillMaxWidth().padding(8.dp).weight(1f), horizontalAlignment = Alignment.Start) {
+                Text(modifier = Modifier.padding(8.dp), text = "Celsius/Fahrenheit")
+            }
+            Column(modifier = Modifier.fillMaxWidth().padding(8.dp).weight(1f), horizontalAlignment = Alignment.End) {
+                Switch(checked = switchChecked, onCheckedChange = {switchChecked = !switchChecked
+                    valgtTemperatur = if (valgtTemperatur == "Celsius"){
+                        "Fahrenheit" //add this to viewmodel so we can process this in repo?
+                    } else{
+                        "Celsius"
+                    }
+                    Log.i("TEMPERATUR", valgtTemperatur)
+                })
+            }
+        }
         if (vm.initialized) {
             //null check for null-safety
             if (vm.weatherData == null || vm.alertsData == null) {
@@ -164,10 +188,17 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         val land = sted[0].countryName
                         Text(text = kommune + lokalBy + fylke + land, fontSize = 30.sp)
                     }
-                    Text(
-                        text = "${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C",
-                        fontSize = 50.sp
-                    )
+                    if (valgtTemperatur == "Celsius"){
+                        Text(
+                            text = "${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C",
+                            fontSize = 50.sp
+                        )
+                    } else if (valgtTemperatur == "Fahrenheit"){
+                        Text(
+                            text = "${(vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature*1.8+32).roundToInt()}°F",
+                            fontSize = 50.sp
+                        )
+                    }
                     AsyncImage(
                         modifier = Modifier
                             .size(280.dp),
@@ -273,11 +304,19 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                         .build(),
                                     contentDescription = "Weather icon",
                                 )
-                                Text(
-                                    text = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature.roundToInt()}°C",
-                                    fontSize = 30.sp,
-                                    fontWeight = Bold
-                                )
+                                if (valgtTemperatur == "Celsius"){
+                                    Text(
+                                        text = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature.roundToInt()}°C",
+                                        fontSize = 30.sp,
+                                        fontWeight = Bold
+                                    )
+                                } else if (valgtTemperatur == "Fahrenheit"){
+                                    Text(
+                                        text = "${(vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature*1.8+32).roundToInt()}°F",
+                                        fontSize = 30.sp,
+                                        fontWeight = Bold
+                                    )
+                                }
                                 if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 3.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 6.0){
                                     AsyncImage(
                                         modifier = Modifier
