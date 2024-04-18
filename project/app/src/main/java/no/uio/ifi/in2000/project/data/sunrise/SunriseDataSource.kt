@@ -27,13 +27,12 @@ data class SunriseDataSource(private var path: String = "https://gw-uio.intark.u
         }
     }
 
-    suspend fun getSunrise(lat: Double, lon: Double): SunriseResponse? {
+    suspend fun getSunrise(lat: Double, lon: Double, timeZone: String): SunriseResponse? {
         val currentDate = getCurrentDate()
-        val timeZone = getTimeZone(lon)
 
         return try {
             // kan fikse på tidssoner senere, satte den til norsk tid inntil videre
-            val httpResponse = client.get("weatherapi/sunrise/3.0/sun?lat=$lat&lon=$lon&date=$currentDate&offset=+$timeZone")
+            val httpResponse = client.get("weatherapi/sunrise/3.0/sun?lat=$lat&lon=$lon&date=$currentDate&offset=$timeZone")
             connected = true //test connection
             if (httpResponse.status.value == 200) {
                 authorized = true //test authorized (something would be wrong with Api-key if not)
@@ -53,11 +52,4 @@ data class SunriseDataSource(private var path: String = "https://gw-uio.intark.u
         return formatter.format(currentDate)
     }
 
-    private fun getTimeZone(lon: Double): String {
-        val timeZoneHours = ceil(lon / 15).toInt() //Longtitude delt på 15 gir antall timer forskjell fra GMT/UTC
-
-        // Formater timer på riktig måte
-        val formattedHours = String.format("%02d", timeZoneHours)
-        return "$formattedHours:00" // Returnerer timer med minutter satt til 00
-    }
 }

@@ -36,6 +36,7 @@ data class ApiProperties(
 
 @Serializable
 data class ApiTimezoneList(
+    val name: String,
     val offset_STD: String,
     val offset_DST: String
 )

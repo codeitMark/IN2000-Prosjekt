@@ -6,8 +6,8 @@ import no.uio.ifi.in2000.project.model.sunrise.SunriseResponse
 class SunriseRepository() {
     private val sunriseDataSource = SunriseDataSource()
 
-    suspend fun fetchSunrise(lat: Double, lon: Double): SunriseResponse? {
-        return sunriseDataSource.getSunrise(lat, lon)
+    suspend fun fetchSunrise(lat: Double, lon: Double, timeZone: String): SunriseResponse? {
+        return sunriseDataSource.getSunrise(lat, lon, timeZone)
     }
 
     suspend fun fetchSunriseTime(response: SunriseResponse?): String? {

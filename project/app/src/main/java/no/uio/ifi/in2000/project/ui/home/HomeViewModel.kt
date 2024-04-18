@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.project.ui.home
 
+import android.icu.util.TimeZone
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +32,7 @@ import no.uio.ifi.in2000.project.model.sunrise.Geometry as SunriseGeometry
 import no.uio.ifi.in2000.project.model.sunrise.Properties as SunriseProperties
 import no.uio.ifi.in2000.project.model.search.ApiProperties
 import no.uio.ifi.in2000.project.model.search.AutoCompleteResponse
+import java.util.Date
 
 
 class HomeViewModel : ViewModel(){
@@ -155,6 +157,11 @@ class HomeViewModel : ViewModel(){
     var lang = "no"
     var initialized by mutableStateOf(false)
 
+    //Parameter for Sunrise
+    var timeZone = "+00:00"
+    var name = "" //For timeZone objekt. Sjekker om stedet er i DST eller STD.
+    var DST = false
+
     private fun getTimeOnly(dateTimeString: String): String {
         // Litt risky måte å hente ut kun tidspunktet på
         return dateTimeString.substring(11, 16)
@@ -164,7 +171,7 @@ class HomeViewModel : ViewModel(){
 
         viewModelScope.launch(Dispatchers.IO) {
             val response = searchRep.fetchSuggestions(text)
-            var items = response?.features
+            val items = response?.features
             val list = mutableListOf<ApiProperties>()
             if (items != null) {
                 for (item in items) {
@@ -177,12 +184,12 @@ class HomeViewModel : ViewModel(){
 
     //fun loadData(lat: Double, lon: Double, county:String, lang: String){
     //Tester uten alerts (Lite sannsynlig for at det er alerts)
-    fun loadData(lang: String, lat: Double, lon: Double){
+    fun loadData(lang: String, lat: Double, lon: Double, timeZone: String){
         viewModelScope.launch(Dispatchers.IO){
             weatherData = locationForecastRep.fetchWeather(lat, lon)
             Log.d("VIEWMODEL_HOMESCREEN", "API-kall weather") //sjekker antall API-kall vi gjør gjennom ViewModel. Vi fetcher ikke flere ganger, så det gir mening.
             locationForecastIcons = locationForecastRep.fetchLocationForecastIcons(weatherData)
-            sunrise = sunriseRep.fetchSunrise(lat, lon)
+            sunrise = sunriseRep.fetchSunrise(lat, lon, timeZone)
             sunriseTime = sunriseRep.fetchSunriseTime(sunrise)?.let { getTimeOnly(it) }.toString()
             sunsetTime = sunriseRep.fetchSunsetTime(sunrise)?.let { getTimeOnly(it) }.toString()
             Log.d("VIEWMODEL_HOMESCREEN", "API-kall sunrise")
@@ -200,7 +207,7 @@ class HomeViewModel : ViewModel(){
     fun loadCurrent(text: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val response = searchRep.fetchSuggestions(text)
-            var items = response?.features
+            val items = response?.features
             val list = mutableListOf<ApiProperties>()
             if (items != null) {
                 for (item in items) {
@@ -209,12 +216,21 @@ class HomeViewModel : ViewModel(){
             }
             suggestions = list
 
+            //kræsjer hawaiian isles. Trenger vi null-safety sjekk?
             currentFormatted = suggestions[0].formatted
+            name = suggestions[0].timezone.name
             lat = suggestions[0].lat
             lon = suggestions[0].lon
+            sjekkDST(name)
+            timeZone = if (DST){
+                suggestions[0].timezone.offset_DST //Daylight Saving Time. Sommertid.
+            } else{
+                suggestions[0].timezone.offset_STD //Standard Time. Norge er i DST, mens steder som New Zealand er i STD.
+            }
             Log.d("TestSearch1000", "LAT: $lat --- LON: $lon")
+            Log.i("timeZonesjekk", timeZone)
 
-            loadData(lang, lat, lon)
+            loadData(lang, lat, lon, timeZone)
             //loadData(59.9133301, 10.7389701)
         }
     }
@@ -232,5 +248,11 @@ class HomeViewModel : ViewModel(){
             metAlertsIcons = metAlertsRep.fetchAlertIcons(alertsData)
             responseStatus = true
         }
+    }
+
+    fun sjekkDST(sted: String){
+        val tz = TimeZone.getTimeZone(name)
+        val currentDate = Date()
+        DST = tz.inDaylightTime(currentDate)
     }
 }
