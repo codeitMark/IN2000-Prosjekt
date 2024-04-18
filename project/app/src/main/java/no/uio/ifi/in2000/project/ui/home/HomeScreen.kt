@@ -298,18 +298,22 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     }
 
                     Row(modifier = Modifier.horizontalScroll(scrollState)) {
-                        for (i in 2..14) {
+                        for (i in 1..13) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center,
                                 modifier = Modifier.size(120.dp, 280.dp)
                             ) {
-                                val time: String =
+                                var time: Int =
                                     vm.weatherData!!.properties.timeseries[i].time.removeRange(
                                         0,
                                         11
                                     )
                                         .removeRange(2, 9)
+                                        .toInt()+vm.offset //local time since locationForecast is in UTC/STD.
+                                if (time >= 24){
+                                    time -= 24
+                                }
                                 Text(text = "kl. $time", fontSize = 30.sp)
                                 AsyncImage(
                                     modifier = Modifier.size(70.dp),

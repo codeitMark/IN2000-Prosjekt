@@ -155,7 +155,8 @@ class HomeViewModel : ViewModel(){
     var initialized by mutableStateOf(false)
 
     //Parameter for Sunrise
-    private var timeZone = "+00:00"
+    var timeZone = "+00:00"
+    var offset = 0
     private var name = "" //For timeZone objekt. Sjekker om stedet er i DST eller STD.
     private var dst = false
 
@@ -219,10 +220,12 @@ class HomeViewModel : ViewModel(){
             lat = suggestions[0].lat
             lon = suggestions[0].lon
             sjekkDST(name)
-            timeZone = if (dst){
-                suggestions[0].timezone.offset_DST //Daylight Saving Time. Sommertid.
+            if (dst){
+                timeZone = suggestions[0].timezone.offset_DST //Daylight Saving Time. Sommertid.
+                offset = suggestions[0].timezone.offset_DST_seconds/60/60
             } else{
-                suggestions[0].timezone.offset_STD //Standard Time. Norge er i DST, mens steder som New Zealand er i STD.
+                timeZone = suggestions[0].timezone.offset_STD //Standard Time. Norge er i DST, mens steder som New Zealand er i STD.
+                offset = suggestions[0].timezone.offset_STD_seconds/60/60
             }
             Log.d("TestSearch1000", "LAT: $lat --- LON: $lon")
             Log.i("timeZonesjekk", timeZone)
