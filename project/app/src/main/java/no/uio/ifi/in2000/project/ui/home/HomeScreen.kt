@@ -413,6 +413,16 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                         fontWeight = Bold
                                     )
                                 }
+                                Text(
+                                    text = "Vind: ${vm.weatherData!!.properties.timeseries[i].data.instant.details.wind_speed}m/s",
+                                    fontSize = 15.sp
+                                )
+
+                                Text(
+                                    text = "Nedbør: ${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount}mm",
+                                    fontSize = 15.sp
+                                )
+
                                 if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 3.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 6.0) {
                                     AsyncImage(
                                         modifier = Modifier
