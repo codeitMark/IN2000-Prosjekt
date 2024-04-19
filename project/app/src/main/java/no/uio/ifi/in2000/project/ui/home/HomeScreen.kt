@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -60,6 +61,7 @@ import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -73,7 +75,7 @@ import coil.request.ImageRequest
 import no.uio.ifi.in2000.project.model.search.ApiProperties
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun HomeScreen(vm: HomeViewModel = viewModel()) {
@@ -92,6 +94,9 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
         mutableStateOf("Celsius") //Default value will be Celsius. Can choose Fahrenheit.
     }
 
+    //duplicate of same thing in SearchBar()
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     val språk = LinkedHashMap<String, String>()
     språk["no"] = "Norsk"
     språk["en"] = "English"
@@ -104,7 +109,11 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(scrollStateVertical),
+            .verticalScroll(scrollStateVertical)
+            .pointerInput(Unit){detectTapGestures(onTap = { //hides keyboard when clicking out
+                keyboardController?.hide()
+                //vm.expanded = false //hides suggestions when clicking out.
+            })},
         //verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
