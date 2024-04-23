@@ -657,15 +657,10 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
 
                     // Will only show alerts and take up space on screen if there are any active alerts in the area
                     if (vm.alertsData!!.features.isNotEmpty()) {
-                        Text(
-                            text = "Farevarsler",
-                            fontSize = 20.sp,
-                            fontWeight = Bold,
-                            modifier = Modifier.padding(top = 30.dp)
-
-                        )
                         Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier
+                                .padding(30.dp)
                         )
                         {
                             var i =
@@ -813,7 +808,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             text = "Kommende dager:",
                             fontSize = 30.sp,
                             modifier = Modifier
-                                .padding(10.dp)
+                                .padding(top = 30.dp, bottom = 10.dp)
                         )
 
                         // Opprett en Calendar-instans
@@ -846,6 +841,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             // Formattert dato (ukedag, måned, dato)
                             val formattedDate = "$dayOfWeekText, $monthText $dayOfMonth"
 
+                            Line()
                             // Vis maks- og minimumstemperaturene for dagen
                             DayTemperatureItem(
                                 date = formattedDate,
@@ -854,6 +850,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 valgtTemperatur = valgtTemperatur
                             )
                         }
+                        Line()
                     }
 
 
