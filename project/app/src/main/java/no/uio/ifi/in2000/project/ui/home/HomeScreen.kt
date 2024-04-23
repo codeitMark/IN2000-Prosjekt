@@ -79,6 +79,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -1035,5 +1036,40 @@ fun SettingsCard(){
         }
     }
 }
+
+//This box component is for the hour by hour weather forecast - if you want to use it!
+@Composable
+fun BoxComponent(content: String, width: Int, height: Int){
+    Card(
+        modifier = Modifier
+            .border(
+                width = 1.dp,
+                color = Color(0xFFFFFFFF),
+                shape = RoundedCornerShape(size = 20.dp)
+            )
+            .width(width.dp)
+            .height(height.dp)
+            .background(color = Color(0xFF4A535D), shape = RoundedCornerShape(size = 20.dp)),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF4A535D)
+        ),
+        shape = RoundedCornerShape(size = 20.dp)
+    ){
+        Text(
+            text = content,
+            style = TextStyle(
+                fontSize = 15.sp,
+                //fontFamily = FontFamily(Font(R.font.inter)),
+                fontWeight = FontWeight(300),
+                color = Color(0xFFFFFFFF),
+
+                ),
+            modifier = Modifier
+                .padding(16.dp),
+            textAlign = TextAlign.Center)
+    }
+
+}
+
 
 
