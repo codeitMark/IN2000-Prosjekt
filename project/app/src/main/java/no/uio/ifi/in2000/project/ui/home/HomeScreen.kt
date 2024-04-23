@@ -264,13 +264,13 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
 
                     val vind  = vm.weatherData!!.properties.timeseries[0].data.instant.details.wind_speed
                     Text(
-                        text = "Vind: $vind m/s",
+                        text = "Vind: ${vind}m/s",
                         fontSize = 20.sp
                     )
 
                     val nedbør = vm.weatherData!!.properties.timeseries[0].data.next_1_hours.details.precipitation_amount
                     Text(
-                        text = "Nedbør: $nedbør mm",
+                        text = "Nedbør: ${nedbør}mm",
                         fontSize = 20.sp
                     )
 
