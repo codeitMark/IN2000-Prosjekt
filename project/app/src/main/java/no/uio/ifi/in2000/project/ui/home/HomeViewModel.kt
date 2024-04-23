@@ -146,6 +146,8 @@ class HomeViewModel : ViewModel(){
 
     val focusRequester by mutableStateOf(FocusRequester())
 
+    var currentTime by mutableStateOf("")
+        private set
 
     // Placeholdere for innholdet. Disse må være initialisert, derfor er det placeholdere.
     //Parametere for LocationForecast

@@ -378,6 +378,11 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         }
                     }
 
+                    Text(
+                        text = "Idag",
+                        fontSize = 30.sp,
+                    )
+
                     Row(modifier = Modifier.horizontalScroll(scrollState)) {
                         for (i in 1..13) {
                             Column(
@@ -514,6 +519,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             val maxTemp = dayData?.first?.roundToInt()
                             val minTemp = dayData?.second?.roundToInt()
 
+
                             // Formattert dato (ukedag, måned, dato)
                             val formattedDate = "$dayOfWeekText, $monthText $dayOfMonth"
 
@@ -521,7 +527,8 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             DayTemperatureItem(
                                 date = formattedDate,
                                 maxTemperature = maxTemp!!,
-                                minTemperature = minTemp!!
+                                minTemperature = minTemp!!,
+                                valgtTemperatur = valgtTemperatur
                             )
                         }
                     }
@@ -718,7 +725,7 @@ fun DropdownRow(
 }
 
 @Composable
-fun DayTemperatureItem(date: String, maxTemperature: Int, minTemperature: Int) {
+fun DayTemperatureItem(date: String, maxTemperature: Int, minTemperature: Int, valgtTemperatur: String) {
     Row(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -730,8 +737,20 @@ fun DayTemperatureItem(date: String, maxTemperature: Int, minTemperature: Int) {
             modifier = Modifier.weight(1f)
         )
         Spacer(modifier = Modifier.width(10.dp))
+        val formattedMaxTemp = if (valgtTemperatur == "Celsius") {
+            "$maxTemperature°C"
+        } else {
+            val fahrenheitMaxTemp = ((maxTemperature * 9 / 5) + 32)
+            "$fahrenheitMaxTemp°F"
+        }
+        val formattedMinTemp = if (valgtTemperatur == "Celsius") {
+            "$minTemperature°C"
+        } else {
+            val fahrenheitMinTemp = ((minTemperature * 9 / 5) + 32)
+            "$fahrenheitMinTemp°F"
+        }
         Text(
-            text = "${maxTemperature}°C / ${minTemperature}°C",
+            text = "$formattedMaxTemp / $formattedMinTemp",
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.End
         )
