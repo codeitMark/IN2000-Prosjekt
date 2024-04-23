@@ -86,6 +86,9 @@ import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import no.uio.ifi.in2000.project.model.search.ApiProperties
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
@@ -560,6 +563,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             else -> null
                         }
 
+
                     if (currentWeatherDescription != null) {
                         val weatherSentence = "Det $currentWeatherDescription"
                         Text(
@@ -775,7 +779,86 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         }
                     }
                     */
+
+                    val monthMap = mapOf(
+                        1 to "januar",
+                        2 to "februar",
+                        3 to "mars",
+                        4 to "april",
+                        5 to "mai",
+                        6 to "juni",
+                        7 to "juli",
+                        8 to "august",
+                        9 to "september",
+                        10 to "oktober",
+                        11 to "november",
+                        12 to "desember"
+                    )
+
+                    val dayOfWeekMap = mapOf(
+                        Calendar.MONDAY to "man",
+                        Calendar.TUESDAY to "tir",
+                        Calendar.WEDNESDAY to "ons",
+                        Calendar.THURSDAY to "tor",
+                        Calendar.FRIDAY to "fre",
+                        Calendar.SATURDAY to "lør",
+                        Calendar.SUNDAY to "søn"
+                    )
+
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            text = "Kommende dager:",
+                            fontSize = 30.sp,
+                            modifier = Modifier
+                                .padding(10.dp)
+                        )
+
+                        // Opprett en Calendar-instans
+                        val calendar = Calendar.getInstance()
+
+                        // Loop gjennom de neste 7 dagene
+                        repeat(7) { index ->
+                            // Beregn datoen for dagen
+                            calendar.timeInMillis = System.currentTimeMillis()
+                            calendar.add(Calendar.DATE, index)
+
+                            // Hent ukedagen
+                            val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+                            val dayOfWeekText = dayOfWeekMap[dayOfWeek]
+
+                            // Hent måneden
+                            val month = calendar.get(Calendar.MONTH) + 1
+                            val monthText = monthMap[month]
+                            val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+
+                            val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.time)
+
+                            // Hent data for den aktuelle dagen fra API-et
+                            val dayData = vm.getTemperatureForDay(vm.weatherData!!, date)
+
+                            val maxTemp = dayData?.first?.roundToInt()
+                            val minTemp = dayData?.second?.roundToInt()
+
+
+                            // Formattert dato (ukedag, måned, dato)
+                            val formattedDate = "$dayOfWeekText, $monthText $dayOfMonth"
+
+                            // Vis maks- og minimumstemperaturene for dagen
+                            DayTemperatureItem(
+                                date = formattedDate,
+                                maxTemperature = maxTemp!!,
+                                minTemperature = minTemp!!,
+                                valgtTemperatur = valgtTemperatur
+                            )
+                        }
+                    }
+
+
                 }
+
 
 
 
@@ -877,6 +960,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
             }
         }
     }
+
 
 
 
@@ -1541,6 +1625,40 @@ fun SmallBoxComponent(
         }
     }
 }
+
+@Composable
+fun DayTemperatureItem(date: String, maxTemperature: Int, minTemperature: Int, valgtTemperatur: String) {
+    Row(
+        modifier = Modifier
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(start = 25.dp, end = 25.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = date,
+            modifier = Modifier.weight(1f)
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        val formattedMaxTemp = if (valgtTemperatur == "Celsius") {
+            "$maxTemperature°C"
+        } else {
+            val fahrenheitMaxTemp = ((maxTemperature * 9 / 5) + 32)
+            "$fahrenheitMaxTemp°F"
+        }
+        val formattedMinTemp = if (valgtTemperatur == "Celsius") {
+            "$minTemperature°C"
+        } else {
+            val fahrenheitMinTemp = ((minTemperature * 9 / 5) + 32)
+            "$fahrenheitMinTemp°F"
+        }
+        Text(
+            text = "$formattedMaxTemp / $formattedMinTemp",
+            modifier = Modifier.weight(1f),
+            textAlign = TextAlign.End
+        )
+    }
+}
+
 
 
 

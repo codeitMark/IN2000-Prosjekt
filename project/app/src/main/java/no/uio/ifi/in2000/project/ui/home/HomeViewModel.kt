@@ -12,24 +12,24 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.project.data.alerts.MetAlertsRepository
 import no.uio.ifi.in2000.project.data.forecast.LocationForecastRepository
-import no.uio.ifi.in2000.project.data.sunrise.SunriseRepository
 import no.uio.ifi.in2000.project.data.search.SearchRepository
+import no.uio.ifi.in2000.project.data.sunrise.SunriseRepository
 import no.uio.ifi.in2000.project.model.alerts.MetAlertsResponse
 import no.uio.ifi.in2000.project.model.forecast.Geometry
 import no.uio.ifi.in2000.project.model.forecast.LocationForecastResponse
 import no.uio.ifi.in2000.project.model.forecast.Meta
 import no.uio.ifi.in2000.project.model.forecast.Properties
 import no.uio.ifi.in2000.project.model.forecast.Units
+import no.uio.ifi.in2000.project.model.search.ApiProperties
 import no.uio.ifi.in2000.project.model.sunrise.SolarMidnight
 import no.uio.ifi.in2000.project.model.sunrise.SolarNoon
 import no.uio.ifi.in2000.project.model.sunrise.Sunrise
 import no.uio.ifi.in2000.project.model.sunrise.SunriseResponse
 import no.uio.ifi.in2000.project.model.sunrise.Sunset
 import no.uio.ifi.in2000.project.model.sunrise.When
+import java.util.Date
 import no.uio.ifi.in2000.project.model.sunrise.Geometry as SunriseGeometry
 import no.uio.ifi.in2000.project.model.sunrise.Properties as SunriseProperties
-import no.uio.ifi.in2000.project.model.search.ApiProperties
-import java.util.Date
 
 
 class HomeViewModel : ViewModel(){
@@ -254,5 +254,35 @@ class HomeViewModel : ViewModel(){
         val tz = TimeZone.getTimeZone(name)
         val currentDate = Date()
         dst = tz.inDaylightTime(currentDate)
+    }
+
+    // Hjelpefunksjon for å hente ut maksimums- og minimumstemperaturene for en dag
+    fun getTemperatureForDay(response: LocationForecastResponse, date: String): Pair<Double?, Double?>? {
+        val timeseries = response.properties.timeseries
+
+        var maxTemp: Double? = null
+        var minTemp: Double? = null
+
+        for (item in timeseries) {
+            val dateTime = item.time.split("T")[0] // Hent bare dato-delen av tiden
+            if (dateTime == date) {
+                val next6Hours = item.data.next_6_hours
+                if (next6Hours != null) { //next_6_hours can be null, ignore warning!
+                    val tempMax = next6Hours.details.air_temperature_max.toDouble()
+                    val tempMin = next6Hours.details.air_temperature_min.toDouble()
+
+                    // Oppdater maksimumstemperaturen hvis den er høyere enn den nåværende maksimumstemperaturen
+                    if (maxTemp == null || tempMax > maxTemp) {
+                        maxTemp = tempMax
+                    }
+
+                    // Oppdater minimumstemperaturen hvis den er lavere enn den nåværende minimumstemperaturen
+                    if (minTemp == null || tempMin < minTemp) {
+                        minTemp = tempMin
+                    }
+                }
+            }
+        }
+        return Pair(maxTemp, minTemp)
     }
 }
