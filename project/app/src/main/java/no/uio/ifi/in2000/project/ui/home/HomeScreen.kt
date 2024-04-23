@@ -690,7 +690,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 formattedTime = String.format("%02d:00", time) // Formatere tiden på nytt hvis den overstiger 24 timer
                             }
 
-                            BoxComponent(
+                            BigBoxComponent(
                                 time = formattedTime, // Legger til tid som en parameter i BoxComponent
                                 temperature = if (valgtTemperatur == "Celsius") {
                                     "${vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature.roundToInt()}°C"
@@ -1358,7 +1358,7 @@ fun SettingsCard(){
 
 //This box component is for the hour by hour weather forecast - if you want to use it!
 @Composable
-fun BoxComponent(
+fun BigBoxComponent(
     time: String,
     temperature: String,
     windSpeed: String,
@@ -1439,6 +1439,49 @@ fun BoxComponent(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(8.dp)
             )
+        }
+    }
+}
+
+//Small box for the hourly forecast, only time and weather icon
+@Composable
+fun SmallBoxComponent(
+    time: String,
+    width: Int,
+    height: Int,
+    weatherIcon: @Composable () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .border(
+                width = 1.dp,
+                color = Color(0xFFFFFFFF),
+                shape = RoundedCornerShape(size = 20.dp)
+            )
+            .width(width.dp)
+            .height(height.dp)
+            .background(color = Color(0xFF4A535D), shape = RoundedCornerShape(size = 20.dp)),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFF4A535D)
+        ),
+        shape = RoundedCornerShape(size = 20.dp)
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = time,
+                style = TextStyle(
+                    fontSize = 20.sp,
+                    fontWeight = Bold,
+                    color = Color.White,
+                ),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(8.dp)
+            )
+            weatherIcon()
         }
     }
 }
