@@ -678,32 +678,42 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         }
                     }
 
+
                     Row(modifier = Modifier.horizontalScroll(scrollState)) {
                         for (i in 1..13) {
+                            val time: Int = vm.weatherData!!.properties.timeseries[i].time.removeRange(0, 11)
+                                .removeRange(2, 9).toInt() + vm.offset // Lokal tid siden locationForecast er i UTC/STD.
+                            val formattedTime = String.format("%02d:00", time) // Formatere tiden til alltid å ha to sifre
+
                             BoxComponent(
-                                text = buildString {
-                                    append("kl. ${vm.weatherData!!.properties.timeseries[i].time.removeRange(0, 11).removeRange(2, 9).toInt() + vm.offset}")
-                                    append("\n")
-                                    append("Vind: ${vm.weatherData!!.properties.timeseries[i].data.instant.details.wind_speed}m/s")
-                                    append("\n")
-                                    append("Nedbør: ${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount}mm")
-                                    append("\n")
-                                    append("UV styrke: ${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky}")
+                                time = formattedTime,
+                                temperature = if (valgtTemperatur == "Celsius") {
+                                    "${vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature.roundToInt()}°C"
+                                } else {
+                                    "${(vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F"
+                                },
+                                windSpeed = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.wind_speed}m/s",
+                                precipitation = "${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount}mm",
+                                uvStyrke = when {
+                                    vm.weatherData != null && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 3.0 -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Lavt"
+                                    vm.weatherData != null && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 3.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 6.0 -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Medium"
+                                    vm.weatherData != null && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 6.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 8.0 -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Høyt"
+                                    else -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Veldig høyt"
                                 },
                                 width = 120,
-                                height = 200
-                            ) {
-                                AsyncImage(
-                                    modifier = Modifier
-                                        .size(70.dp),
-                                    model = ImageRequest.Builder(LocalContext.current)
-                                        .data(vm.locationForecastIcons[i])
-                                        .decoderFactory(SvgDecoder.Factory())
-                                        .build(),
-                                    contentDescription = "Weather icon"
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(16.dp))
+                                height = 280,
+                                weatherIcon = {
+                                    AsyncImage(
+                                        modifier = Modifier.size(70.dp),
+                                        model = ImageRequest.Builder(LocalContext.current)
+                                            .data(vm.locationForecastIcons[i])
+                                            .decoderFactory(SvgDecoder.Factory())
+                                            .build(),
+                                        contentDescription = "Weather icon"
+                                    )
+                                }
+                            )
+                            Spacer(modifier = Modifier.width(20.dp))
                         }
                     }
 
@@ -1342,7 +1352,16 @@ fun SettingsCard(){
 
 //This box component is for the hour by hour weather forecast - if you want to use it!
 @Composable
-fun BoxComponent(text: String, width: Int, height: Int, content: @Composable () -> Unit) {
+fun BoxComponent(
+    time: String,
+    temperature: String,
+    windSpeed: String,
+    precipitation: String,
+    uvStyrke: String,
+    width: Int,
+    height: Int,
+    weatherIcon: @Composable () -> Unit
+) {
     Card(
         modifier = Modifier
             .border(
@@ -1364,16 +1383,56 @@ fun BoxComponent(text: String, width: Int, height: Int, content: @Composable () 
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = text,
+                text = time,
                 style = TextStyle(
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight(300),
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
                     color = Color.White,
                 ),
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(8.dp)
             )
-            content()
+            weatherIcon()
+            Text(
+                text = temperature,
+                style = TextStyle(
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = Color.White,
+                ),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(8.dp)
+            )
+            Text(
+                text = windSpeed,
+                style = TextStyle(
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = Color.White,
+                ),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(8.dp)
+            )
+            Text(
+                text = precipitation,
+                style = TextStyle(
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = Color.White,
+                ),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(8.dp)
+            )
+            Text(
+                text = uvStyrke,
+                style = TextStyle(
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = Color.White,
+                ),
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(8.dp)
+            )
         }
     }
 }
