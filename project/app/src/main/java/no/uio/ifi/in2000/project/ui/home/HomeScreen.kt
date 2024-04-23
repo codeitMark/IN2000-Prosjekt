@@ -2,6 +2,10 @@ package no.uio.ifi.in2000.project.ui.home
 
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -25,14 +29,18 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -45,6 +53,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Size
@@ -61,6 +71,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -110,10 +121,12 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollStateVertical)
-            .pointerInput(Unit){detectTapGestures(onTap = { //hides keyboard when clicking out
-                keyboardController?.hide()
-                //vm.expanded = false //hides suggestions when clicking out.
-            })},
+            .pointerInput(Unit) {
+                detectTapGestures(onTap = { //hides keyboard when clicking out
+                    keyboardController?.hide()
+                    //vm.expanded = false //hides suggestions when clicking out.
+                })
+            },
         //verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -151,15 +164,23 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
             DisplayItems(items = vm.suggestions)
         }
          */
-        Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)) {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(8.dp).weight(1f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .weight(1f),
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(modifier = Modifier.padding(8.dp), text = "Celsius/Fahrenheit")
             }
             Column(
-                modifier = Modifier.fillMaxWidth().padding(8.dp).weight(1f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                    .weight(1f),
                 horizontalAlignment = Alignment.End
             ) {
                 Switch(checked = switchChecked, onCheckedChange = {
@@ -347,27 +368,15 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         {
                             var i =
                                 0 //noe hardkodet teller for metAlertsIcons. Mulig med bedre løsning, men kan ta tid å finne.
-                            // vm.sortedAlerts.forEach //Bruk denne for å fjerne duplikater. Problem: I tilfellet det er duplikater, vil vm.metAlertsIcons[i] vise feil ikoner. Det vil iterere over ikonene som om det ikke er duplikater = gust gust vs. gust flood (filtered). Den første vil vise riktige ikoner. Den andre vil vise gust gust fortsatt.
-                            vm.alertsData!!.features.forEach { //drop for løkke, make map then set of eventawarenessname and instruction. compare feature with feature? if already in there or smth like that. this processing should happen in ViewModel. Map is already unique by default :)
-                                AsyncImage(
-                                    modifier = Modifier
-                                        .size(125.dp)
-                                        .padding(top = 20.dp, bottom = 20.dp),
-                                    model = ImageRequest.Builder(LocalContext.current)
-                                        .data(vm.metAlertsIcons!![i])
-                                        .decoderFactory(SvgDecoder.Factory())
-                                        .build(),
-                                    contentDescription = "Icon for an alert."
-                                )
-                                Text(
-                                    text = it.properties.eventAwarenessName,
-                                    fontWeight = Bold
-                                ) //Tidligere it.key (med vm.sortedAlerts.forEach)
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Text(
-                                    text = it.properties.instruction,
-                                    modifier = Modifier.padding(14.dp)
-                                ) //Tidligere it.value (med vm.sortedalerts.forEach)
+                            // vm.sortedAlerts.forEach //Bruk denne for å fjerne duplikater.
+                            // Problem: I tilfellet det er duplikater, vil vm.metAlertsIcons[i] vise feil ikoner.
+                            // Det vil iterere over ikonene som om det ikke er duplikater = gust gust vs. gust flood (filtered).
+                            // Den første vil vise riktige ikoner. Den andre vil vise gust gust fortsatt.
+                            vm.alertsData!!.features.forEach {
+                                //drop for løkke, make map then set of eventawarenessname and instruction.
+                                // compare feature with feature? if already in there or smth like that.
+                                // this processing should happen in ViewModel. Map is already unique by default :)
+                                WarningBox(headline = it.properties.eventAwarenessName, subtitle = "", info = it.properties.instruction, img = vm.metAlertsIcons!![i])
                                 Spacer(modifier = Modifier.height(20.dp))
                                 i++
                             }
@@ -656,3 +665,122 @@ fun DropdownRow(
     }
 
 }
+
+//Composable to make the warning box
+@Composable
+fun WarningBox(headline: String, subtitle: String, info: String, img: String) {
+    var expandedState by remember { mutableStateOf(false) }
+    val rotationState by animateFloatAsState(
+        targetValue = if (expandedState) 180f else 0f, label = ""
+    )
+
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFFFFCF72),
+        ),
+        modifier = Modifier
+            .padding(2.dp)
+            .alpha(0.7f)
+            .fillMaxWidth()
+            .animateContentSize(
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = LinearOutSlowInEasing
+                )
+            ),
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                AsyncImage(
+                    modifier = Modifier
+                        .size(125.dp)
+                        .padding(top = 20.dp, bottom = 20.dp),
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(img)
+                        .decoderFactory(SvgDecoder.Factory())
+                        .build(),
+                    contentDescription = "Icon for an alert."
+                )
+                /*
+                Icon(
+                    imageVector = Icons.Default.Warning,
+                    contentDescription = "Warning",
+                    modifier = Modifier
+                        .size(50.dp, 50.dp)
+                        .padding(10.dp, 0.dp, 0.dp, 0.dp)
+                )
+*/
+
+                Column {
+                    Text(
+                        modifier = Modifier.padding(20.dp, 15.dp, 0.dp),
+                        text = headline,
+                        style = TextStyle(
+                            fontSize = 20.sp,
+                            fontWeight = Bold,
+                            color = Color(0xFF000000),
+                        )
+                    )
+                    SettingsText(
+                        fontSize = 13,
+                        color = 0xFF000000,
+                        content = subtitle,
+                        start = 21,
+                        top = 0,
+                        end = 120,
+                        bottom = 15
+                    )
+                }
+
+                IconButton(
+                    modifier = Modifier
+                        .weight(1f)
+                        //.alpha(0.2f)
+                        .rotate(rotationState),
+                    onClick = {
+                        expandedState = !expandedState
+                    },
+                    colors = IconButtonDefaults.iconButtonColors(
+                        contentColor = Color(0xFF000000)
+                    )
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = "Drop-Down Arrow"
+                    )
+                }
+
+            }
+            if (expandedState) {
+                SettingsText(
+                    fontSize = 15,
+                    color = 0xFF000000,
+                    content = info,
+                    start = 10,
+                    top = 5,
+                    end = 5,
+                    bottom = 20
+                )
+            }
+        }
+    }
+}
+
+//Makes text with the same type of font
+@Composable
+fun SettingsText(fontSize: Int, color: Long, content: String, start: Int, top: Int, end: Int, bottom: Int ){
+    Text(
+        text = content ,
+        style = TextStyle(
+            fontSize = fontSize.sp,
+            fontWeight = FontWeight(300),
+            color = Color(color),
+        ),
+        modifier = Modifier
+            .padding(start.dp, top.dp, end.dp, bottom.dp),
+    )
+}
+
+
