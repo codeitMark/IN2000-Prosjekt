@@ -422,31 +422,27 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                     text = "Nedbør: ${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount}mm",
                                     fontSize = 15.sp
                                 )
-                                if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 3.0) {
+
+                                val uvStyrke = vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky
+                                if (uvStyrke < 3.0) {
                                     Text(
-                                        text = "Lavt"
+                                        text = "$uvStyrke Lavt"
                                     )
-                                } else if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 3.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 6.0) {
+                                } else if (uvStyrke >= 3.0 && uvStyrke < 6.0) {
                                     Text(
-                                        text = "Medium"
+                                        text = "$uvStyrke Medium"
                                     )
                                     //Text(text = "Husk å ta på solkrem hvis du skal være ute lenge!", modifier = Modifier.padding(14.dp))
-                                } else if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 6.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 8.0) {
+                                } else if (uvStyrke >= 6.0 && uvStyrke < 8.0) {
                                     Text(
-                                        text = "Høyt"
+                                        text = "$uvStyrke Høyt"
                                     )
                                     //Text(text = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola.", modifier = Modifier.padding(14.dp))
-                                } else if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 8.0) {
+                                } else if (uvStyrke >= 8.0) {
                                     Text(
-                                        text = "Veldig høyt"
+                                        text = "$uvStyrke Veldig høyt"
                                     )
-                                    //Text(text = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.", modifier = Modifier.padding(14.dp))
                                 }
-                                Text(
-                                    text = "UV styrke: ${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky}",
-                                    fontSize = 20.sp,
-                                    modifier = Modifier.padding(start = 23.dp)
-                                )
                             }
                         }
                     }
