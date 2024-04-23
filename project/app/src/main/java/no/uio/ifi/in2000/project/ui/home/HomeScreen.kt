@@ -12,7 +12,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,14 +33,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -684,6 +679,25 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
 
                     Row(modifier = Modifier.horizontalScroll(scrollState)) {
                         for (i in 1..13) {
+                            val time = "kl. ${vm.weatherData!!.properties.timeseries[i].time.removeRange(0, 11).removeRange(2, 9).toInt() + vm.offset}"
+                            val windSpeed = "Vind: ${vm.weatherData!!.properties.timeseries[i].data.instant.details.wind_speed}m/s"
+                            val precipitation = "Nedbør: ${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount}mm"
+                            val uvIndex = "UV styrke: ${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky}"
+
+                            val content = "$time\n$windSpeed\n$precipitation\n$uvIndex"
+
+                            BoxComponent(
+                                content = content,
+                                width = 120,
+                                height = 150
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                        }
+                    }
+
+                    /*
+                    Row(modifier = Modifier.horizontalScroll(scrollState)) {
+                        for (i in 1..13) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center,
@@ -773,6 +787,8 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             }
                         }
                     }
+
+                     */
                 }
             }
         }
