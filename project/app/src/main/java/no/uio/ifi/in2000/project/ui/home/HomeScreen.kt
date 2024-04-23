@@ -391,7 +391,8 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 if (time >= 24){
                                     time -= 24
                                 }
-                                Text(text = "kl. $time", fontSize = 30.sp)
+                                val formattedTime = String.format("%02d:00", time) // Format time to always have two digits
+                                Text(text = formattedTime, fontSize = 30.sp)
                                 AsyncImage(
                                     modifier = Modifier.size(70.dp),
                                     model = ImageRequest.Builder(LocalContext.current)
