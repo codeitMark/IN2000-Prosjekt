@@ -501,19 +501,25 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                 if (!vm.responseStatus) {
                     Text(text = "Loading...", fontSize = 50.sp, fontWeight = Bold)
                 } else {
-                    Text(text = "Været", fontSize = 60.sp, fontWeight = Bold)
+                    Text(text = "", fontSize = 0.sp, fontWeight = Bold)
 
                     Text(text = vm.currentFormatted, fontSize = 30.sp)
 
                     if (valgtTemperatur == "Celsius") {
                         Text(
                             text = "${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C",
-                            fontSize = 50.sp
+                            fontSize = 50.sp,
+                            style = TextStyle(
+                                color = Color.White
+                            )
                         )
                     } else if (valgtTemperatur == "Fahrenheit") {
                         Text(
                             text = "${(vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F",
-                            fontSize = 50.sp
+                            fontSize = 50.sp,
+                            style = TextStyle(
+                                color = Color.White
+                            )
                         )
                     }
 
@@ -569,7 +575,10 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         Text(
                             text = weatherSentence,
                             fontSize = 20.sp,
-                            modifier = Modifier.padding(8.dp)
+                            modifier = Modifier.padding(8.dp),
+                            style = TextStyle(
+                                color = Color.White
+                            )
                         )
                     }
 
@@ -587,14 +596,20 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         vm.weatherData!!.properties.timeseries[0].data.instant.details.wind_speed
                     Text(
                         text = "Vind: $vind m/s",
-                        fontSize = 20.sp
+                        fontSize = 20.sp,
+                        style = TextStyle(
+                            color = Color.White
+                        )
                     )
 
                     val nedbør =
                         vm.weatherData!!.properties.timeseries[0].data.next_1_hours.details.precipitation_amount
                     Text(
                         text = "Nedbør: $nedbør mm",
-                        fontSize = 20.sp
+                        fontSize = 20.sp,
+                        style = TextStyle(
+                            color = Color.White
+                        )
                     )
 
 
@@ -603,7 +618,10 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     Text(
                         text = "UV styrke: $uvStyrkeNå",
                         fontSize = 20.sp,
-                        modifier = Modifier.padding(top = 30.dp)
+                        modifier = Modifier.padding(top = 30.dp),
+                        style = TextStyle(
+                            color = Color.White
+                        )
                     )
 
                     if (uvStyrkeNå >= 3.0 && uvStyrkeNå < 6.0) {
@@ -651,9 +669,13 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     }
 
                     val sunriseTime = vm.sunriseTime
-                    Text(text = "Soloppgang: kl. $sunriseTime", fontSize = 20.sp)
+                    Text(text = "Soloppgang: kl. $sunriseTime", fontSize = 20.sp, style = TextStyle(
+                        color = Color.White
+                    ))
                     val sunsetTime = vm.sunsetTime
-                    Text(text = "Solnedgang: kl. $sunsetTime", fontSize = 20.sp)
+                    Text(text = "Solnedgang: kl. $sunsetTime", fontSize = 20.sp, style = TextStyle(
+                        color = Color.White
+                    ))
 
                     // Will only show alerts and take up space on screen if there are any active alerts in the area
                     if (vm.alertsData!!.features.isNotEmpty()) {
@@ -808,7 +830,10 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             text = "Kommende dager:",
                             fontSize = 30.sp,
                             modifier = Modifier
-                                .padding(top = 30.dp, bottom = 10.dp)
+                                .padding(top = 30.dp, bottom = 10.dp),
+                            style = TextStyle(
+                                color = Color.White
+                            )
                         )
 
                         // Opprett en Calendar-instans
@@ -1633,7 +1658,10 @@ fun DayTemperatureItem(date: String, maxTemperature: Int, minTemperature: Int, v
     ) {
         Text(
             text = date,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            style = TextStyle(
+                color = Color.White
+            )
         )
         Spacer(modifier = Modifier.width(10.dp))
         val formattedMaxTemp = if (valgtTemperatur == "Celsius") {
@@ -1651,7 +1679,11 @@ fun DayTemperatureItem(date: String, maxTemperature: Int, minTemperature: Int, v
         Text(
             text = "$formattedMaxTemp / $formattedMinTemp",
             modifier = Modifier.weight(1f),
-            textAlign = TextAlign.End
+            textAlign = TextAlign.End,
+            style = TextStyle(
+                color = Color.White
+            )
+
         )
     }
 }
