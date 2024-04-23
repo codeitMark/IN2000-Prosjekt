@@ -110,6 +110,11 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
         mutableStateOf("Celsius") //Default value will be Celsius. Can choose Fahrenheit.
     }
 
+    var expandedStateSettings by remember { mutableStateOf(false) }
+    val rotationStateSettings by animateFloatAsState(
+        targetValue = if (expandedStateSettings) 180f else 0f, label = ""
+    )
+
     //duplicate of same thing in SearchBar()
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -154,8 +159,224 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
             )
         }
         if (showSettings) {
-            SettingsCard()
+            //var chosenLanguage by remember { mutableStateOf("Norsk (bokmål)") }
+
+            //var chosenTemperature by remember {
+            //   mutableStateOf("Celsius") //Default value will be Celsius. Can choose Fahrenheit.
+
+            Card(
+                modifier = Modifier
+                    .width(242.dp)
+                    .animateContentSize(
+                        animationSpec = tween(
+                            durationMillis = 300,
+                            easing = LinearOutSlowInEasing
+                        )
+                    ),
+                colors = CardDefaults.cardColors(
+                    containerColor = Color(0xFF38424D),
+                )
+            ) {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    //Settings icon
+                    IconButton(
+                        modifier = Modifier
+                            .padding(190.dp, 0.dp, 0.dp, 0.dp)
+                            .size(50.dp),
+                        onClick = {
+                        },
+
+                        colors = IconButtonDefaults.iconButtonColors(
+                            contentColor = Color(0xFFFFFFFF)
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Settings"
+                        )
+                    }
+
+                    Row {
+                        SettingsText(
+                            14,
+                            color = 0xFFFFFFFF,
+                            content = "Posisjonsbasert værvarsel",
+                            10,
+                            5,
+                            12,
+                            5
+                        )
+                        SwitchButton()
+                    }
+                    Line()
+
+                    Row {
+                        var celsius by remember { mutableStateOf(0xFFFFFFFF) }
+                        var fahrenheit by remember { mutableStateOf(0xFF8C9299) }
+                        var checked by remember { mutableStateOf(true) }
+
+                        SettingsText(14, color = celsius, content = "Celsius", 10, 5, 0, 5)
+                        SettingsText(14, color = 0xFFFFFFFF, content = " / ", 0, 5, 0, 5)
+                        SettingsText(14, color = fahrenheit, content = "Fahrenheit", 0, 5, 50, 5)
+
+                        Switch(
+                            modifier = Modifier
+                                .size(2.dp)
+                                .padding(25.dp, 15.dp, 0.dp, 0.dp),
+                            checked = checked,
+                            onCheckedChange = {
+                                checked = it
+                                if (celsius == 0xFFFFFFFF) {
+                                    celsius = 0xFF8C9299
+                                    fahrenheit = 0xFFFFFFFF
+                                } else {
+                                    celsius = 0xFFFFFFFF
+                                    fahrenheit = 0xFF8C9299
+                                }
+                                valgtTemperatur = if (valgtTemperatur == "Celsius") {
+                                    "Fahrenheit" //add this to viewmodel so we can process this in repo?
+                                } else {
+                                    "Celsius"
+                                }
+                                Log.i("TEMPERATUR", valgtTemperatur)
+
+                            },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = Color(0xFF38424D),
+                                checkedTrackColor = Color(0xFFFFFFFF),
+                                uncheckedThumbColor = Color(0xFFFFFFFF),
+                                uncheckedTrackColor = Color(0xFF38424D),
+                            )
+                        )
+                    }
+                    Line()
+
+                    Row {
+                        SettingsText(14, color = 0xFFFFFFFF, content = "Varslinger", 10, 5, 110, 5)
+                        SwitchButton()
+                    }
+
+                }
+                Line()
+
+                Row {
+
+
+                    SettingsText(14, color = 0xFFFFFFFF, content = "Språk", 10, 5, 15, 5)
+                    SettingsText(14, color = 0xFF8C9299, content = valgtSpråk, 10, 5, 20, 5)
+
+                    IconButton(
+                        modifier = Modifier
+                            .padding(40.dp, 0.dp, 10.dp, 0.dp)
+                            .rotate(rotationStateSettings),
+                        onClick = {
+                            expandedStateSettings = !expandedStateSettings
+
+                        },
+                        colors = IconButtonDefaults.iconButtonColors(
+                            contentColor = Color(0xFFFFFFFF)
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowDropDown,
+                            contentDescription = "Drop-Down Arrow"
+                        )
+                    }
+
+                }
+                if (expandedStateSettings) {
+                    val notClicked = 0xFF272D34
+                    val clicked = 0xFF586471
+
+                    /* var nynorsk by remember{mutableStateOf(
+                         if (chosenLanguage == "Norsk (nynorsk)") clicked
+                         else notClicked
+                     ) }*/
+                    var bokmaal by remember {
+                        mutableStateOf(
+                            if (valgtSpråk == "Norsk") clicked
+                            else notClicked
+                        )
+                    }
+                    var engelsk by remember {
+                        mutableStateOf(
+                            if (valgtSpråk == "Engelsk") clicked
+                            else notClicked
+                        )
+                    }
+
+                    //In case we want to implement nynorsk:
+                    /*
+                                Box (modifier = Modifier
+                                    .clickable(onClick = {
+                                        nynorsk = clicked
+                                        bokmaal = notClicked
+                                        engelsk = notClicked
+
+                                        chosenLanguage = "Norsk (nynorsk)"
+
+                                    })
+                                    .padding(5.dp, 3.dp)
+                                    .fillMaxWidth()
+                                    .background(color = Color(nynorsk))
+
+                                ) {
+                                    SettingsText(fontSize = 14, color = 0xFFFFFFFF, content = "Norsk (Nynorsk)", start = 10, top = 5, end = 5, bottom = 5)
+                                }*/
+
+                    Box(
+                        modifier = Modifier
+                            .clickable(onClick = {
+                                //nynorsk = notClicked
+                                bokmaal = clicked
+                                engelsk = notClicked
+
+                                valgtSpråk = "Norsk (bokmål)"
+                            })
+                            .padding(5.dp, 3.dp)
+                            .fillMaxWidth()
+                            .background(color = Color(bokmaal))
+
+                    ) {
+                        SettingsText(
+                            fontSize = 14,
+                            color = 0xFFFFFFFF,
+                            content = "Norsk (Bokmål)",
+                            start = 10,
+                            top = 5,
+                            end = 5,
+                            bottom = 5
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .clickable(onClick = {
+                                //nynorsk = notClicked
+                                bokmaal = notClicked
+                                engelsk = clicked
+
+                                valgtSpråk = "Engelsk"
+                            })
+                            .padding(5.dp, 3.dp)
+                            .fillMaxWidth()
+                            .background(color = Color(engelsk))
+
+                    ) {
+                        SettingsText(
+                            fontSize = 14,
+                            color = 0xFFFFFFFF,
+                            content = "Engelsk",
+                            start = 10,
+                            top = 5,
+                            end = 5,
+                            bottom = 5
+                        )
+                    }
+                }
+            }
         }
+        /*
         ExposedDropdownMenuBox(expanded = expandedSpråk,
             onExpandedChange = { expandedSpråk = !expandedSpråk }) {
             TextField(
@@ -181,7 +402,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     )
                 }
             }
-        }
+        }*/
         SearchBar(vm)
 
         /*
@@ -190,7 +411,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
             DisplayItems(items = vm.suggestions)
         }
          */
-        Row(modifier = Modifier
+        /*Row(modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)) {
             Column(
@@ -220,7 +441,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                 })
             }
         }
-
+*/
         if (vm.initialized) {
             //null check for null-safety
             if (vm.weatherData == null || vm.alertsData == null) {
@@ -505,6 +726,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
         }
     }
 }
+
 
 @Composable
 fun DisplayItems(items: List<ApiProperties>?) {
