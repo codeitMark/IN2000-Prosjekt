@@ -514,50 +514,51 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         )
                     }
 
-                    val currentWeatherDescription = when (vm.weatherData!!.properties.timeseries[0].data.next_1_hours.summary.symbol_code) {
-                        "clearsky_day", "clearsky_night", "clearsky_polartwilight" -> "er klar himmel"
-                        "fair_day", "fair_night", "fair_polartwilight" -> "er lettskyet"
-                        "partlycloudy_day", "partlycloudy_night", "partlycloudy_polartwilight" -> "er delvis skyet"
-                        "cloudy" -> "er overskyet"
-                        "rainshowers_day", "rainshowers_night", "rainshowers_polartwilight" -> "er regnbyger"
-                        "rainshowersandthunder_day", "rainshowersandthunder_night", "rainshowersandthunder_polartwilight" -> "er regnbyger og torden"
-                        "sleetshowers_day", "sleetshowers_night", "sleetshowers_polartwilight" -> "er sluddbyger"
-                        "snowshowers_day", "snowshowers_night", "snowshowers_polartwilight" -> "er snøbyger"
-                        "rain" -> "regner"
-                        "heavyrain" -> "er kraftig regn"
-                        "heavyrainandthunder" -> "er kraftig regn og torden"
-                        "sleet" -> "er sludd"
-                        "snow" -> "snør"
-                        "snowandthunder" -> "er snø og torden"
-                        "fog" -> "er tåkete"
-                        "sleetshowersandthunder_day", "sleetshowersandthunder_night", "sleetshowersandthunder_polartwilight" -> "er sluddbyger og torden"
-                        "snowshowersandthunder_day", "snowshowersandthunder_night", "snowshowersandthunder_polartwilight" -> "er snøbyger og torden"
-                        "rainandthunder" -> "er regn og torden"
-                        "sleetandthunder" -> "er sludd og torden"
-                        "lightrainshowersandthunder_day", "lightrainshowersandthunder_night", "lightrainshowersandthunder_polartwilight" -> "er lette regnbyger og torden"
-                        "heavyrainshowersandthunder_day", "heavyrainshowersandthunder_night", "heavyrainshowersandthunder_polartwilight" -> "er kraftige regnbyger og torden"
-                        "lightsleetshowersandthunder_day", "lightsleetshowersandthunder_night", "lightsleetshowersandthunder_polartwilight" -> "er lette sluddbyger og torden"
-                        "heavysleetshowersandthunder_day", "heavysleetshowersandthunder_night", "heavysleetshowersandthunder_polartwilight" -> "er kraftige sluddbyger og torden"
-                        "lightsnowshowersandthunder_day", "lightsnowshowersandthunder_night", "lightsnowshowersandthunder_polartwilight" -> "er lette snøbyger og torden"
-                        "heavysnowshowersandthunder_day", "heavysnowshowersandthunder_night", "heavysnowshowersandthunder_polartwilight" -> "er kraftige snøbyger og torden"
-                        "lightrainandthunder" -> "er lett regn og torden"
-                        "lightsleetandthunder" -> "er lett sludd og torden"
-                        "heavysleetandthunder" -> "er kraftig sludd og torden"
-                        "lightsnowandthunder" -> "er lett snø og torden"
-                        "heavysnowandthunder" -> "er kraftig snø og torden"
-                        "lightrainshowers_day", "lightrainshowers_night", "lightrainshowers_polartwilight" -> "er lette regnbyger"
-                        "heavyrainshowers_day", "heavyrainshowers_night", "heavyrainshowers_polartwilight" -> "er kraftige regnbyger"
-                        "lightsleetshowers_day", "lightsleetshowers_night", "lightsleetshowers_polartwilight" -> "er lette sluddbyger"
-                        "heavysleetshowers_day", "heavysleetshowers_night", "heavysleetshowers_polartwilight" -> "er kraftige sluddbyger"
-                        "lightsnowshowers_day", "lightsnowshowers_night", "lightsnowshowers_polartwilight" -> "er lette snøbyger"
-                        "heavysnowshowers_day", "heavysnowshowers_night", "heavysnowshowers_polartwilight" -> "er kraftige snøbyger"
-                        "lightrain" -> "er lett regn"
-                        "lightsleet" -> "er lett sludd"
-                        "heavysleet" -> "er kraftig sludd"
-                        "lightsnow" -> "er lett snø"
-                        "heavysnow" -> "snør kraftig"
-                        else -> null
-                    }
+                    val currentWeatherDescription =
+                        when (vm.weatherData!!.properties.timeseries[0].data.next_1_hours.summary.symbol_code) {
+                            "clearsky_day", "clearsky_night", "clearsky_polartwilight" -> "er klar himmel"
+                            "fair_day", "fair_night", "fair_polartwilight" -> "er lettskyet"
+                            "partlycloudy_day", "partlycloudy_night", "partlycloudy_polartwilight" -> "er delvis skyet"
+                            "cloudy" -> "er overskyet"
+                            "rainshowers_day", "rainshowers_night", "rainshowers_polartwilight" -> "er regnbyger"
+                            "rainshowersandthunder_day", "rainshowersandthunder_night", "rainshowersandthunder_polartwilight" -> "er regnbyger og torden"
+                            "sleetshowers_day", "sleetshowers_night", "sleetshowers_polartwilight" -> "er sluddbyger"
+                            "snowshowers_day", "snowshowers_night", "snowshowers_polartwilight" -> "er snøbyger"
+                            "rain" -> "regner"
+                            "heavyrain" -> "er kraftig regn"
+                            "heavyrainandthunder" -> "er kraftig regn og torden"
+                            "sleet" -> "er sludd"
+                            "snow" -> "snør"
+                            "snowandthunder" -> "er snø og torden"
+                            "fog" -> "er tåkete"
+                            "sleetshowersandthunder_day", "sleetshowersandthunder_night", "sleetshowersandthunder_polartwilight" -> "er sluddbyger og torden"
+                            "snowshowersandthunder_day", "snowshowersandthunder_night", "snowshowersandthunder_polartwilight" -> "er snøbyger og torden"
+                            "rainandthunder" -> "er regn og torden"
+                            "sleetandthunder" -> "er sludd og torden"
+                            "lightrainshowersandthunder_day", "lightrainshowersandthunder_night", "lightrainshowersandthunder_polartwilight" -> "er lette regnbyger og torden"
+                            "heavyrainshowersandthunder_day", "heavyrainshowersandthunder_night", "heavyrainshowersandthunder_polartwilight" -> "er kraftige regnbyger og torden"
+                            "lightsleetshowersandthunder_day", "lightsleetshowersandthunder_night", "lightsleetshowersandthunder_polartwilight" -> "er lette sluddbyger og torden"
+                            "heavysleetshowersandthunder_day", "heavysleetshowersandthunder_night", "heavysleetshowersandthunder_polartwilight" -> "er kraftige sluddbyger og torden"
+                            "lightsnowshowersandthunder_day", "lightsnowshowersandthunder_night", "lightsnowshowersandthunder_polartwilight" -> "er lette snøbyger og torden"
+                            "heavysnowshowersandthunder_day", "heavysnowshowersandthunder_night", "heavysnowshowersandthunder_polartwilight" -> "er kraftige snøbyger og torden"
+                            "lightrainandthunder" -> "er lett regn og torden"
+                            "lightsleetandthunder" -> "er lett sludd og torden"
+                            "heavysleetandthunder" -> "er kraftig sludd og torden"
+                            "lightsnowandthunder" -> "er lett snø og torden"
+                            "heavysnowandthunder" -> "er kraftig snø og torden"
+                            "lightrainshowers_day", "lightrainshowers_night", "lightrainshowers_polartwilight" -> "er lette regnbyger"
+                            "heavyrainshowers_day", "heavyrainshowers_night", "heavyrainshowers_polartwilight" -> "er kraftige regnbyger"
+                            "lightsleetshowers_day", "lightsleetshowers_night", "lightsleetshowers_polartwilight" -> "er lette sluddbyger"
+                            "heavysleetshowers_day", "heavysleetshowers_night", "heavysleetshowers_polartwilight" -> "er kraftige sluddbyger"
+                            "lightsnowshowers_day", "lightsnowshowers_night", "lightsnowshowers_polartwilight" -> "er lette snøbyger"
+                            "heavysnowshowers_day", "heavysnowshowers_night", "heavysnowshowers_polartwilight" -> "er kraftige snøbyger"
+                            "lightrain" -> "er lett regn"
+                            "lightsleet" -> "er lett sludd"
+                            "heavysleet" -> "er kraftig sludd"
+                            "lightsnow" -> "er lett snø"
+                            "heavysnow" -> "snør kraftig"
+                            else -> null
+                        }
 
                     if (currentWeatherDescription != null) {
                         val weatherSentence = "Det $currentWeatherDescription"
@@ -578,13 +579,15 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         contentDescription = "Weather icon"
                     )
 
-                    val vind  = vm.weatherData!!.properties.timeseries[0].data.instant.details.wind_speed
+                    val vind =
+                        vm.weatherData!!.properties.timeseries[0].data.instant.details.wind_speed
                     Text(
                         text = "Vind: $vind m/s",
                         fontSize = 20.sp
                     )
 
-                    val nedbør = vm.weatherData!!.properties.timeseries[0].data.next_1_hours.details.precipitation_amount
+                    val nedbør =
+                        vm.weatherData!!.properties.timeseries[0].data.next_1_hours.details.precipitation_amount
                     Text(
                         text = "Nedbør: $nedbør mm",
                         fontSize = 20.sp
@@ -671,7 +674,12 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 //drop for løkke, make map then set of eventawarenessname and instruction.
                                 // compare feature with feature? if already in there or smth like that.
                                 // this processing should happen in ViewModel. Map is already unique by default :)
-                                WarningBox(headline = it.properties.eventAwarenessName, subtitle = "", info = it.properties.instruction, img = vm.metAlertsIcons!![i])
+                                WarningBox(
+                                    headline = it.properties.eventAwarenessName,
+                                    subtitle = "",
+                                    info = it.properties.instruction,
+                                    img = vm.metAlertsIcons!![i]
+                                )
                                 Spacer(modifier = Modifier.height(20.dp))
                                 i++
                             }
@@ -683,11 +691,18 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         for (i in 1..13) {
                             var time: Int =
                                 vm.weatherData!!.properties.timeseries[i].time.removeRange(0, 11)
-                                    .removeRange(2, 9).toInt() + vm.offset // Lokal tid siden locationForecast er i UTC/STD.
-                            var formattedTime = String.format("%02d:00", time) // Formatere tiden til alltid å ha to sifre
+                                    .removeRange(2, 9)
+                                    .toInt() + vm.offset // Lokal tid siden locationForecast er i UTC/STD.
+                            var formattedTime = String.format(
+                                "%02d:00",
+                                time
+                            ) // Formatere tiden til alltid å ha to sifre
                             if (time >= 24) {
                                 time -= 24
-                                formattedTime = String.format("%02d:00", time) // Formatere tiden på nytt hvis den overstiger 24 timer
+                                formattedTime = String.format(
+                                    "%02d:00",
+                                    time
+                                ) // Formatere tiden på nytt hvis den overstiger 24 timer
                             }
 
                             BigBoxComponent(
@@ -721,6 +736,47 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             Spacer(modifier = Modifier.width(16.dp))
                         }
                     }
+
+                    //Small box component -> only time and icons
+                    /*
+                    Row(modifier = Modifier.horizontalScroll(scrollState)) {
+                        for (i in 1..13) {
+                            var time: Int =
+                                vm.weatherData!!.properties.timeseries[i].time.removeRange(0, 11)
+                                    .removeRange(2, 9)
+                                    .toInt() + vm.offset // Lokal tid siden locationForecast er i UTC/STD.
+                            var formattedTime = String.format(
+                                "%02d:00",
+                                time
+                            ) // Formatere tiden til alltid å ha to sifre
+                            if (time >= 24) {
+                                time -= 24
+                                formattedTime = String.format(
+                                    "%02d:00",
+                                    time
+                                ) // Formatere tiden på nytt hvis den overstiger 24 timer
+                            }
+                            SmallBoxComponent(
+                                time = formattedTime,
+                                width = 100,
+                                height = 150,
+                                weatherIcon = {
+                                    AsyncImage(
+                                        modifier = Modifier.size(70.dp),
+                                        model = ImageRequest.Builder(LocalContext.current)
+                                            .data(vm.locationForecastIcons[i])
+                                            .decoderFactory(SvgDecoder.Factory())
+                                            .build(),
+                                        contentDescription = "Weather icon"
+                                    )
+                                }
+                            )
+                            Spacer(modifier = Modifier.width(16.dp))
+                        }
+                    }
+                    */
+                }
+
 
 
                     /*
@@ -821,7 +877,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
             }
         }
     }
-}
+
 
 
 @Composable
