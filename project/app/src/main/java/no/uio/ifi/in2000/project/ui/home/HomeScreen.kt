@@ -220,10 +220,6 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 contentColor = Color(0xFFFFFFFF)
                             )
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Settings,
-                                contentDescription = "Settings"
-                            )
                         }
 
                         Row {
@@ -594,22 +590,38 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
 
                     val vind =
                         vm.weatherData!!.properties.timeseries[0].data.instant.details.wind_speed
-                    Text(
-                        text = "Vind: $vind m/s",
-                        fontSize = 20.sp,
-                        style = TextStyle(
-                            color = Color.White
+                    Row(
+                        modifier = Modifier.fillMaxWidth(), // Sprekker Row over hele bredden
+                        verticalAlignment = Alignment.CenterVertically // Midtstiller elementene vertikalt
+                    ) {
+                        Text(
+                            text = "Vind: $vind m/s",
+                            fontSize = 20.sp,
+                            color = Color.White,
+                            modifier = Modifier.weight(1f).padding(start = 20.dp, end = 16.dp) // Gir en vekt slik at den tar opp halve bredden
                         )
-                    )
 
-                    val nedbør =
-                        vm.weatherData!!.properties.timeseries[0].data.next_1_hours.details.precipitation_amount
-                    Text(
-                        text = "Nedbør: $nedbør mm",
-                        fontSize = 20.sp,
-                        style = TextStyle(
-                            color = Color.White
+                        Spacer(Modifier.width(16.dp)) // Gir litt plass mellom tekstene, valgfritt
+                        val nedbør =
+                            vm.weatherData!!.properties.timeseries[0].data.next_1_hours.details.precipitation_amount
+
+                        Text(
+                            text = "Nedbør: $nedbør mm",
+                            fontSize = 20.sp,
+                            color = Color.White,
+                            modifier = Modifier.weight(1f).padding(start = 16.dp, end = 16.dp)// Igjen, gir vekt for å ta opp resterende bredde
                         )
+                    }
+
+                    val sunriseTime = vm.sunriseTime
+                    Text(text = "Soloppgang: kl. $sunriseTime", fontSize = 20.sp,
+                        color = Color.White,
+                        modifier = Modifier.weight(1f).padding(start = 20.dp, end = 16.dp)
+                    )
+                    val sunsetTime = vm.sunsetTime
+                    Text(text = "Solnedgang: kl. $sunsetTime", fontSize = 20.sp,
+                        color = Color.White,
+                        modifier = Modifier.weight(1f).padding(start = 16.dp, end = 16.dp)
                     )
 
 
@@ -667,15 +679,6 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             modifier = Modifier.padding(14.dp)
                         )
                     }
-
-                    val sunriseTime = vm.sunriseTime
-                    Text(text = "Soloppgang: kl. $sunriseTime", fontSize = 20.sp, style = TextStyle(
-                        color = Color.White
-                    ))
-                    val sunsetTime = vm.sunsetTime
-                    Text(text = "Solnedgang: kl. $sunsetTime", fontSize = 20.sp, style = TextStyle(
-                        color = Color.White
-                    ))
 
                     // Will only show alerts and take up space on screen if there are any active alerts in the area
                     if (vm.alertsData!!.features.isNotEmpty()) {
@@ -1030,7 +1033,6 @@ fun SearchBar(vm: HomeViewModel) {
     Column(
         modifier = Modifier
             .padding(top = 30.dp)
-            .background(Color(0xFF586471))
             .padding(horizontal = 30.dp)
             .fillMaxWidth()
             .clickable(
