@@ -12,6 +12,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -679,18 +680,29 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
 
                     Row(modifier = Modifier.horizontalScroll(scrollState)) {
                         for (i in 1..13) {
-                            val time = "kl. ${vm.weatherData!!.properties.timeseries[i].time.removeRange(0, 11).removeRange(2, 9).toInt() + vm.offset}"
-                            val windSpeed = "Vind: ${vm.weatherData!!.properties.timeseries[i].data.instant.details.wind_speed}m/s"
-                            val precipitation = "Nedbør: ${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount}mm"
-                            val uvIndex = "UV styrke: ${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky}"
-
-                            val content = "$time\n$windSpeed\n$precipitation\n$uvIndex"
-
                             BoxComponent(
-                                content = content,
+                                text = buildString {
+                                    append("kl. ${vm.weatherData!!.properties.timeseries[i].time.removeRange(0, 11).removeRange(2, 9).toInt() + vm.offset}")
+                                    append("\n")
+                                    append("Vind: ${vm.weatherData!!.properties.timeseries[i].data.instant.details.wind_speed}m/s")
+                                    append("\n")
+                                    append("Nedbør: ${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount}mm")
+                                    append("\n")
+                                    append("UV styrke: ${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky}")
+                                },
                                 width = 120,
-                                height = 150
-                            )
+                                height = 200
+                            ) {
+                                AsyncImage(
+                                    modifier = Modifier
+                                        .size(70.dp),
+                                    model = ImageRequest.Builder(LocalContext.current)
+                                        .data(vm.locationForecastIcons[i])
+                                        .decoderFactory(SvgDecoder.Factory())
+                                        .build(),
+                                    contentDescription = "Weather icon"
+                                )
+                            }
                             Spacer(modifier = Modifier.width(16.dp))
                         }
                     }
@@ -1330,7 +1342,7 @@ fun SettingsCard(){
 
 //This box component is for the hour by hour weather forecast - if you want to use it!
 @Composable
-fun BoxComponent(content: String, width: Int, height: Int){
+fun BoxComponent(text: String, width: Int, height: Int, content: @Composable () -> Unit) {
     Card(
         modifier = Modifier
             .border(
@@ -1345,21 +1357,25 @@ fun BoxComponent(content: String, width: Int, height: Int){
             containerColor = Color(0xFF4A535D)
         ),
         shape = RoundedCornerShape(size = 20.dp)
-    ){
-        Text(
-            text = content,
-            style = TextStyle(
-                fontSize = 15.sp,
-                //fontFamily = FontFamily(Font(R.font.inter)),
-                fontWeight = FontWeight(300),
-                color = Color(0xFFFFFFFF),
-
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = text,
+                style = TextStyle(
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight(300),
+                    color = Color.White,
                 ),
-            modifier = Modifier
-                .padding(16.dp),
-            textAlign = TextAlign.Center)
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(16.dp)
+            )
+            content()
+        }
     }
-
 }
 
 
