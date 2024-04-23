@@ -15,8 +15,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowColumnScopeInstance.align
-import androidx.compose.foundation.layout.FlowRowScopeInstance.align
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -134,6 +132,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
 
     Column(
         modifier = Modifier
+            .background(Color(0xFF272D34))
             .fillMaxSize()
             .verticalScroll(scrollStateVertical)
             .pointerInput(Unit) {
@@ -157,9 +156,9 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                 },
 
 
-                /*colors = IconButtonDefaults.iconButtonColors(
+                colors = IconButtonDefaults.iconButtonColors(
                 contentColor = Color(0xFFFFFFFF)
-            )*/
+            )
             ) {
                 Icon(
                     imageVector = Icons.Default.Search,
@@ -177,9 +176,9 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                 },
 
 
-                /*colors = IconButtonDefaults.iconButtonColors(
+                colors = IconButtonDefaults.iconButtonColors(
                 contentColor = Color(0xFFFFFFFF)
-            )*/
+            )
             ) {
                 Icon(
                     imageVector = Icons.Default.Settings,
@@ -825,6 +824,7 @@ fun SearchBar(vm: HomeViewModel) {
     Column(
         modifier = Modifier
             .padding(top = 30.dp)
+            .background(Color(0xFF586471))
             .padding(horizontal = 30.dp)
             .fillMaxWidth()
             .clickable(
@@ -870,9 +870,9 @@ fun SearchBar(vm: HomeViewModel) {
                     },
                     placeholder = { Text("Enter any Location") },
                     colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
+                        containerColor = Color(0xFFFFFFFF),
+                        focusedIndicatorColor = Color(0xFFFFFFFF),
+                        unfocusedIndicatorColor = Color(0xFFFFFFFF),
                         cursorColor = Color.Black
                     ),
                     textStyle = TextStyle(
