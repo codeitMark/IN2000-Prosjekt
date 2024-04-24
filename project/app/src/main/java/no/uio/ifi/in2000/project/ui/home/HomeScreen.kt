@@ -48,6 +48,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -818,7 +819,8 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 var formattedTime = String.format(
                                     "%02d:00",
                                     time
-                                ) // Formatere tiden til alltid å ha to sifre
+                                )// Formatere tiden til alltid å ha to sifre
+
                                 if (time >= 24) {
                                     time -= 24
                                     formattedTime = String.format(
@@ -844,6 +846,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                     },
                                     width = 120,
                                     height = 280,
+                                    expanded = remember { mutableStateOf(false) },
                                     weatherIcon = {
                                         AsyncImage(
                                             modifier = Modifier.size(70.dp),
@@ -853,7 +856,9 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                                 .build(),
                                             contentDescription = "Weather icon"
                                         )
+
                                     }
+
                                 )
                                 Spacer(modifier = Modifier.width(16.dp))
                             }
@@ -1642,7 +1647,8 @@ fun BigBoxComponent(
     uvStyrke: String,
     width: Int,
     height: Int,
-    weatherIcon: @Composable () -> Unit
+    weatherIcon: @Composable () -> Unit,
+    expanded: MutableState<Boolean>
 ) {
     Card(
         modifier = Modifier
@@ -1652,8 +1658,9 @@ fun BigBoxComponent(
                 shape = RoundedCornerShape(size = 20.dp)
             )
             .width(width.dp)
-            .height(height.dp)
-            .background(color = Color(0xFF4A535D), shape = RoundedCornerShape(size = 20.dp)),
+            .height(if (expanded.value) height.dp else 160.dp)
+            .background(color = Color(0xFF4A535D), shape = RoundedCornerShape(size = 20.dp))
+            .clickable { expanded.value = !expanded.value },
         colors = CardDefaults.cardColors(
             containerColor = Color(0xFF4A535D)
         ),
@@ -1685,36 +1692,38 @@ fun BigBoxComponent(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(8.dp)
             )
-            Text(
-                text = windSpeed,
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = Color.White,
-                ),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(8.dp)
-            )
-            Text(
-                text = precipitation,
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = Color.White,
-                ),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(8.dp)
-            )
-            Text(
-                text = uvStyrke,
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = Color.White,
-                ),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(8.dp)
-            )
+            if (expanded.value) {
+                Text(
+                    text = windSpeed,
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = Color.White,
+                    ),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(8.dp)
+                )
+                Text(
+                    text = precipitation,
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = Color.White,
+                    ),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(8.dp)
+                )
+                Text(
+                    text = uvStyrke,
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = Color.White,
+                    ),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
         }
     }
 }
