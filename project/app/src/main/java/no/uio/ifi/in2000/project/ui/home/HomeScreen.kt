@@ -734,7 +734,11 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         )
 
                      */
-                    
+
+                    Column(
+                        modifier = Modifier
+                            .padding(start = 30.dp, end = 30.dp)
+                    ) {
                     if (uvStyrkeNå >= 8.0) {
                         WarningBox(
                             headline = "Høy UV-indeks!",
@@ -756,6 +760,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             info = "Husk å ta på solkrem hvis du skal være ute lenge!",
                             img = "https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-yellow.svg"
                         )
+                    }
                     }
 
                     Text(
