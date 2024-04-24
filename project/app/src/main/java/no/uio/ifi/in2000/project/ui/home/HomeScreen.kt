@@ -1832,7 +1832,7 @@ fun UVScale(uvIndex: Float, modifier: Modifier = Modifier) {
             drawRect(
                 color = Color.White,
                 topLeft = Offset(uvIndexPosition, 0f),
-                size = Size(2.dp.toPx(), size.height)
+                size = Size(5.dp.toPx(), size.height)
             )
         }
     }
