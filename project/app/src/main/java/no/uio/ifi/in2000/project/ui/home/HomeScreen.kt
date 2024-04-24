@@ -499,7 +499,12 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                 } else {
                     Text(text = "", fontSize = 0.sp, fontWeight = Bold)
 
-                    Text(text = vm.currentFormatted, fontSize = 30.sp)
+                    Text(
+                        text = vm.currentFormatted,
+                        fontSize = 30.sp,
+                        color = Color.White,
+                        modifier = Modifier
+                            .padding(20.dp))
 
                     if (valgtTemperatur == "Celsius") {
                         Text(
