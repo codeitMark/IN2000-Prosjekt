@@ -506,7 +506,6 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         modifier = Modifier
                             .padding(20.dp)
                     )
-
                     Row(
                         modifier = Modifier
                             .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -526,78 +525,84 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
 
                         VerticalLine()
 
-                        Text(
-                            modifier = Modifier.weight(1f),
-                            text = if (valgtTemperatur == "Celsius") {
-                                "   ${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C"
+                        // Kolonne for temperatur og værbeskrivelse
+                        Column {
+                            // Temperaturtekst
+                            val temperatureText = if (valgtTemperatur == "Celsius") {
+                                "  ${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C"
                             } else {
-                                "   ${(vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F"
-                            },
-                            fontSize = 50.sp,
-                            style = TextStyle(
-                                color = Color.White
-                            )
-                        )
-                    }
+                                "  ${(vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F"
+                            }
 
-                    val currentWeatherDescription =
-                        when (vm.weatherData!!.properties.timeseries[0].data.next_1_hours.summary.symbol_code) {
-                            "clearsky_day", "clearsky_night", "clearsky_polartwilight" -> "er klar himmel"
-                            "fair_day", "fair_night", "fair_polartwilight" -> "er lettskyet"
-                            "partlycloudy_day", "partlycloudy_night", "partlycloudy_polartwilight" -> "er delvis skyet"
-                            "cloudy" -> "er overskyet"
-                            "rainshowers_day", "rainshowers_night", "rainshowers_polartwilight" -> "er regnbyger"
-                            "rainshowersandthunder_day", "rainshowersandthunder_night", "rainshowersandthunder_polartwilight" -> "er regnbyger og torden"
-                            "sleetshowers_day", "sleetshowers_night", "sleetshowers_polartwilight" -> "er sluddbyger"
-                            "snowshowers_day", "snowshowers_night", "snowshowers_polartwilight" -> "er snøbyger"
-                            "rain" -> "regner"
-                            "heavyrain" -> "er kraftig regn"
-                            "heavyrainandthunder" -> "er kraftig regn og torden"
-                            "sleet" -> "er sludd"
-                            "snow" -> "snør"
-                            "snowandthunder" -> "er snø og torden"
-                            "fog" -> "er tåkete"
-                            "sleetshowersandthunder_day", "sleetshowersandthunder_night", "sleetshowersandthunder_polartwilight" -> "er sluddbyger og torden"
-                            "snowshowersandthunder_day", "snowshowersandthunder_night", "snowshowersandthunder_polartwilight" -> "er snøbyger og torden"
-                            "rainandthunder" -> "er regn og torden"
-                            "sleetandthunder" -> "er sludd og torden"
-                            "lightrainshowersandthunder_day", "lightrainshowersandthunder_night", "lightrainshowersandthunder_polartwilight" -> "er lette regnbyger og torden"
-                            "heavyrainshowersandthunder_day", "heavyrainshowersandthunder_night", "heavyrainshowersandthunder_polartwilight" -> "er kraftige regnbyger og torden"
-                            "lightsleetshowersandthunder_day", "lightsleetshowersandthunder_night", "lightsleetshowersandthunder_polartwilight" -> "er lette sluddbyger og torden"
-                            "heavysleetshowersandthunder_day", "heavysleetshowersandthunder_night", "heavysleetshowersandthunder_polartwilight" -> "er kraftige sluddbyger og torden"
-                            "lightsnowshowersandthunder_day", "lightsnowshowersandthunder_night", "lightsnowshowersandthunder_polartwilight" -> "er lette snøbyger og torden"
-                            "heavysnowshowersandthunder_day", "heavysnowshowersandthunder_night", "heavysnowshowersandthunder_polartwilight" -> "er kraftige snøbyger og torden"
-                            "lightrainandthunder" -> "er lett regn og torden"
-                            "lightsleetandthunder" -> "er lett sludd og torden"
-                            "heavysleetandthunder" -> "er kraftig sludd og torden"
-                            "lightsnowandthunder" -> "er lett snø og torden"
-                            "heavysnowandthunder" -> "er kraftig snø og torden"
-                            "lightrainshowers_day", "lightrainshowers_night", "lightrainshowers_polartwilight" -> "er lette regnbyger"
-                            "heavyrainshowers_day", "heavyrainshowers_night", "heavyrainshowers_polartwilight" -> "er kraftige regnbyger"
-                            "lightsleetshowers_day", "lightsleetshowers_night", "lightsleetshowers_polartwilight" -> "er lette sluddbyger"
-                            "heavysleetshowers_day", "heavysleetshowers_night", "heavysleetshowers_polartwilight" -> "er kraftige sluddbyger"
-                            "lightsnowshowers_day", "lightsnowshowers_night", "lightsnowshowers_polartwilight" -> "er lette snøbyger"
-                            "heavysnowshowers_day", "heavysnowshowers_night", "heavysnowshowers_polartwilight" -> "er kraftige snøbyger"
-                            "lightrain" -> "er lett regn"
-                            "lightsleet" -> "er lett sludd"
-                            "heavysleet" -> "er kraftig sludd"
-                            "lightsnow" -> "er lett snø"
-                            "heavysnow" -> "snør kraftig"
-                            else -> null
+                            val currentWeatherDescription =
+                                when (vm.weatherData!!.properties.timeseries[0].data.next_1_hours.summary.symbol_code) {
+                                    "clearsky_day", "clearsky_night", "clearsky_polartwilight" -> "er klar himmel"
+                                    "fair_day", "fair_night", "fair_polartwilight" -> "er lettskyet"
+                                    "partlycloudy_day", "partlycloudy_night", "partlycloudy_polartwilight" -> "er delvis skyet"
+                                    "cloudy" -> "er overskyet"
+                                    "rainshowers_day", "rainshowers_night", "rainshowers_polartwilight" -> "er regnbyger"
+                                    "rainshowersandthunder_day", "rainshowersandthunder_night", "rainshowersandthunder_polartwilight" -> "er regnbyger og torden"
+                                    "sleetshowers_day", "sleetshowers_night", "sleetshowers_polartwilight" -> "er sluddbyger"
+                                    "snowshowers_day", "snowshowers_night", "snowshowers_polartwilight" -> "er snøbyger"
+                                    "rain" -> "regner"
+                                    "heavyrain" -> "er kraftig regn"
+                                    "heavyrainandthunder" -> "er kraftig regn og torden"
+                                    "sleet" -> "er sludd"
+                                    "snow" -> "snør"
+                                    "snowandthunder" -> "er snø og torden"
+                                    "fog" -> "er tåkete"
+                                    "sleetshowersandthunder_day", "sleetshowersandthunder_night", "sleetshowersandthunder_polartwilight" -> "er sluddbyger og torden"
+                                    "snowshowersandthunder_day", "snowshowersandthunder_night", "snowshowersandthunder_polartwilight" -> "er snøbyger og torden"
+                                    "rainandthunder" -> "er regn og torden"
+                                    "sleetandthunder" -> "er sludd og torden"
+                                    "lightrainshowersandthunder_day", "lightrainshowersandthunder_night", "lightrainshowersandthunder_polartwilight" -> "er lette regnbyger og torden"
+                                    "heavyrainshowersandthunder_day", "heavyrainshowersandthunder_night", "heavyrainshowersandthunder_polartwilight" -> "er kraftige regnbyger og torden"
+                                    "lightsleetshowersandthunder_day", "lightsleetshowersandthunder_night", "lightsleetshowersandthunder_polartwilight" -> "er lette sluddbyger og torden"
+                                    "heavysleetshowersandthunder_day", "heavysleetshowersandthunder_night", "heavysleetshowersandthunder_polartwilight" -> "er kraftige sluddbyger og torden"
+                                    "lightsnowshowersandthunder_day", "lightsnowshowersandthunder_night", "lightsnowshowersandthunder_polartwilight" -> "er lette snøbyger og torden"
+                                    "heavysnowshowersandthunder_day", "heavysnowshowersandthunder_night", "heavysnowshowersandthunder_polartwilight" -> "er kraftige snøbyger og torden"
+                                    "lightrainandthunder" -> "er lett regn og torden"
+                                    "lightsleetandthunder" -> "er lett sludd og torden"
+                                    "heavysleetandthunder" -> "er kraftig sludd og torden"
+                                    "lightsnowandthunder" -> "er lett snø og torden"
+                                    "heavysnowandthunder" -> "er kraftig snø og torden"
+                                    "lightrainshowers_day", "lightrainshowers_night", "lightrainshowers_polartwilight" -> "er lette regnbyger"
+                                    "heavyrainshowers_day", "heavyrainshowers_night", "heavyrainshowers_polartwilight" -> "er kraftige regnbyger"
+                                    "lightsleetshowers_day", "lightsleetshowers_night", "lightsleetshowers_polartwilight" -> "er lette sluddbyger"
+                                    "heavysleetshowers_day", "heavysleetshowers_night", "heavysleetshowers_polartwilight" -> "er kraftige sluddbyger"
+                                    "lightsnowshowers_day", "lightsnowshowers_night", "lightsnowshowers_polartwilight" -> "er lette snøbyger"
+                                    "heavysnowshowers_day", "heavysnowshowers_night", "heavysnowshowers_polartwilight" -> "er kraftige snøbyger"
+                                    "lightrain" -> "er lett regn"
+                                    "lightsleet" -> "er lett sludd"
+                                    "heavysleet" -> "er kraftig sludd"
+                                    "lightsnow" -> "er lett snø"
+                                    "heavysnow" -> "snør kraftig"
+                                    else -> null
+                                }
+
+                            // Vis temperatur
+                            Text(
+                                modifier = Modifier.padding(vertical = 4.dp),
+                                text = temperatureText,
+                                fontSize = 50.sp,
+                                style = TextStyle(
+                                    color = Color.White
+                                )
+                            )
+
+                            if (currentWeatherDescription != null) {
+                                val weatherSentence = "  Det $currentWeatherDescription"
+                                Text(
+                                    text = weatherSentence,
+                                    fontSize = 18.sp,
+                                    style = TextStyle(
+                                        color = Color.White
+                                    )
+                                )
+                            }
                         }
-
-
-                    if (currentWeatherDescription != null) {
-                        val weatherSentence = "Det $currentWeatherDescription"
-                        Text(
-                            text = weatherSentence,
-                            fontSize = 20.sp,
-                            modifier = Modifier.padding(8.dp),
-                            style = TextStyle(
-                                color = Color.White
-                            )
-                        )
                     }
+
 
                     val vind =
                         vm.weatherData!!.properties.timeseries[0].data.instant.details.wind_speed
@@ -1382,7 +1387,7 @@ fun VerticalLine(){
         Modifier
             .padding(0.dp)
             .width(1.dp)
-            .height(86.dp)
+            .height(100.dp)
             .background(color = Color(0xFFFFFFFF))
     )
 }
