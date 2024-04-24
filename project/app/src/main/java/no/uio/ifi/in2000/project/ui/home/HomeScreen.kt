@@ -677,12 +677,31 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     )
 
 
-                    val uvStyrkeNå =
-                        vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky
                     Text(
-                        text = "UV styrke: $uvStyrkeNå",
+                        text = "UV-indeks",
                         fontSize = 20.sp,
                         modifier = Modifier.padding(top = 30.dp),
+                        style = TextStyle(
+                            color = Color.White
+                        )
+                    )
+
+                    val uvStyrkeNå =
+                        vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky
+
+                    val uvStyrkeTekst = when {
+                        vm.weatherData != null && uvStyrkeNå < 3.0 -> "Lavt"
+                        vm.weatherData != null && uvStyrkeNå >= 3.0 && uvStyrkeNå < 6.0 -> "Medium"
+                        vm.weatherData != null && uvStyrkeNå >= 6.0 && uvStyrkeNå < 8.0 -> "Høyt"
+                        else -> "Veldig høyt"
+                    }
+
+
+                    Text(
+                        text = "$uvStyrkeNå - $uvStyrkeTekst",
+                        fontSize = 20.sp,
+                        modifier = Modifier
+                            .padding(top = 30.dp, bottom = 10.dp),
                         style = TextStyle(
                             color = Color.White
                         )
@@ -739,28 +758,28 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         modifier = Modifier
                             .padding(start = 30.dp, end = 30.dp)
                     ) {
-                    if (uvStyrkeNå >= 8.0) {
-                        WarningBox(
-                            headline = "Høy UV-indeks!",
-                            subtitle = "",
-                            info = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.",
-                            img = "https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-red.svg"
-                        )
-                    } else if (uvStyrkeNå >= 6.0 && uvStyrkeNå < 8) {
-                        WarningBox(
-                            headline = "Høy UV-indeks!",
-                            subtitle = "",
-                            info = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola.",
-                            img = "https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-orange.svg"
-                        )
-                    } else if (uvStyrkeNå >= 3 && uvStyrkeNå < 6) {
-                        WarningBox(
-                            headline = "Middels UV-indeks",
-                            subtitle = "",
-                            info = "Husk å ta på solkrem hvis du skal være ute lenge!",
-                            img = "https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-yellow.svg"
-                        )
-                    }
+                        if (uvStyrkeNå >= 8.0) {
+                            WarningBox(
+                                headline = "Høy UV-indeks!",
+                                subtitle = "",
+                                info = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.",
+                                img = "https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-red.svg"
+                            )
+                        } else if (uvStyrkeNå >= 6.0 && uvStyrkeNå < 8) {
+                            WarningBox(
+                                headline = "Høy UV-indeks!",
+                                subtitle = "",
+                                info = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola.",
+                                img = "https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-orange.svg"
+                            )
+                        } else if (uvStyrkeNå >= 3 && uvStyrkeNå < 6) {
+                            WarningBox(
+                                headline = "Middels UV-indeks",
+                                subtitle = "",
+                                info = "Husk å ta på solkrem hvis du skal være ute lenge!",
+                                img = "https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-yellow.svg"
+                            )
+                        }
                     }
 
                     Text(
@@ -928,7 +947,10 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             val monthText = monthMap[month]
                             val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
 
-                            val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.time)
+                            val date = SimpleDateFormat(
+                                "yyyy-MM-dd",
+                                Locale.getDefault()
+                            ).format(calendar.time)
 
                             // Hent data for den aktuelle dagen fra API-et
                             val dayData = vm.getTemperatureForDay(vm.weatherData!!, date)
@@ -952,6 +974,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         Line()
                     }
                 }
+            }
 
 
 
@@ -1053,7 +1076,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                 }
             }
         }
-    }
+
 
 
 
