@@ -726,53 +726,62 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         )
                     )
 
-                    Row(modifier = Modifier.horizontalScroll(scrollState)) {
-                        for (i in 1..13) {
-                            var time: Int =
-                                vm.weatherData!!.properties.timeseries[i].time.removeRange(0, 11)
-                                    .removeRange(2, 9)
-                                    .toInt() + vm.offset // Lokal tid siden locationForecast er i UTC/STD.
-                            var formattedTime = String.format(
-                                "%02d:00",
-                                time
-                            ) // Formatere tiden til alltid å ha to sifre
-                            if (time >= 24) {
-                                time -= 24
-                                formattedTime = String.format(
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(color = Color(0xCF38424D))
+                    ) {
+                        Row(modifier = Modifier.horizontalScroll(scrollState)) {
+                            for (i in 1..13) {
+                                var time: Int =
+                                    vm.weatherData!!.properties.timeseries[i].time.removeRange(
+                                        0,
+                                        11
+                                    )
+                                        .removeRange(2, 9)
+                                        .toInt() + vm.offset // Lokal tid siden locationForecast er i UTC/STD.
+                                var formattedTime = String.format(
                                     "%02d:00",
                                     time
-                                ) // Formatere tiden på nytt hvis den overstiger 24 timer
-                            }
-
-                            BigBoxComponent(
-                                time = formattedTime, // Legger til tid som en parameter i BoxComponent
-                                temperature = if (valgtTemperatur == "Celsius") {
-                                    "${vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature.roundToInt()}°C"
-                                } else {
-                                    "${(vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F"
-                                },
-                                windSpeed = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.wind_speed}m/s",
-                                precipitation = "${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount}mm",
-                                uvStyrke = when {
-                                    vm.weatherData != null && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 3.0 -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Lavt"
-                                    vm.weatherData != null && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 3.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 6.0 -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Medium"
-                                    vm.weatherData != null && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 6.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 8.0 -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Høyt"
-                                    else -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Veldig høyt"
-                                },
-                                width = 120,
-                                height = 280,
-                                weatherIcon = {
-                                    AsyncImage(
-                                        modifier = Modifier.size(70.dp),
-                                        model = ImageRequest.Builder(LocalContext.current)
-                                            .data(vm.locationForecastIcons[i])
-                                            .decoderFactory(SvgDecoder.Factory())
-                                            .build(),
-                                        contentDescription = "Weather icon"
-                                    )
+                                ) // Formatere tiden til alltid å ha to sifre
+                                if (time >= 24) {
+                                    time -= 24
+                                    formattedTime = String.format(
+                                        "%02d:00",
+                                        time
+                                    ) // Formatere tiden på nytt hvis den overstiger 24 timer
                                 }
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
+
+                                BigBoxComponent(
+                                    time = formattedTime, // Legger til tid som en parameter i BoxComponent
+                                    temperature = if (valgtTemperatur == "Celsius") {
+                                        "${vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature.roundToInt()}°C"
+                                    } else {
+                                        "${(vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F"
+                                    },
+                                    windSpeed = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.wind_speed}m/s",
+                                    precipitation = "${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount}mm",
+                                    uvStyrke = when {
+                                        vm.weatherData != null && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 3.0 -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Lavt"
+                                        vm.weatherData != null && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 3.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 6.0 -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Medium"
+                                        vm.weatherData != null && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 6.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 8.0 -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Høyt"
+                                        else -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Veldig høyt"
+                                    },
+                                    width = 120,
+                                    height = 280,
+                                    weatherIcon = {
+                                        AsyncImage(
+                                            modifier = Modifier.size(70.dp),
+                                            model = ImageRequest.Builder(LocalContext.current)
+                                                .data(vm.locationForecastIcons[i])
+                                                .decoderFactory(SvgDecoder.Factory())
+                                                .build(),
+                                            contentDescription = "Weather icon"
+                                        )
+                                    }
+                                )
+                                Spacer(modifier = Modifier.width(16.dp))
+                            }
                         }
                     }
 
