@@ -710,6 +710,16 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         }
                     }
 
+                    Text(
+                        text = "  Idag",
+                        fontSize = 30.sp,
+                        modifier = Modifier
+                                .padding(top = 30.dp, bottom = 10.dp)
+                                .align(Alignment.Start), // Juster teksten til starten av Row
+                        style = TextStyle(
+                            color = Color.White
+                        )
+                    )
 
                     Row(modifier = Modifier.horizontalScroll(scrollState)) {
                         for (i in 1..13) {
