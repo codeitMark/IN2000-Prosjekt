@@ -842,11 +842,10 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         // Opprett en Calendar-instans
                         val calendar = Calendar.getInstance()
 
-                        // Loop gjennom de neste 7 dagene
                         repeat(7) { index ->
                             // Beregn datoen for dagen
                             calendar.timeInMillis = System.currentTimeMillis()
-                            calendar.add(Calendar.DATE, index)
+                            calendar.add(Calendar.DATE, index + 1) // Legg til 1 dag til index
 
                             // Hent ukedagen
                             val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
