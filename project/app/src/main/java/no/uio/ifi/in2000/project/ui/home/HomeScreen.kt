@@ -1385,7 +1385,7 @@ fun Line(){
 fun VerticalLine(){
     Spacer(
         Modifier
-            .padding(0.dp)
+            .padding(start = 40.dp, end = 40.dp)
             .width(1.dp)
             .height(100.dp)
             .background(color = Color(0xFFFFFFFF))
