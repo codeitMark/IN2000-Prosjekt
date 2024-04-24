@@ -668,50 +668,6 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         )
                     )
 
-                    if (uvStyrkeNå >= 3.0 && uvStyrkeNå < 6.0) {
-                        AsyncImage(
-                            modifier = Modifier
-                                .size(140.dp),
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-yellow.svg")
-                                .decoderFactory(SvgDecoder.Factory())
-                                .build(),
-                            contentDescription = "UV-strength icon"
-                        )
-                        Text(
-                            text = "Husk å ta på solkrem hvis du skal være ute lenge!",
-                            modifier = Modifier.padding(14.dp)
-                        )
-                    } else if (uvStyrkeNå >= 6.0 && uvStyrkeNå < 8.0) {
-                        AsyncImage(
-                            modifier = Modifier
-                                .size(140.dp),
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-orange.svg")
-                                .decoderFactory(SvgDecoder.Factory())
-                                .build(),
-                            contentDescription = "UV-strength icon"
-                        )
-                        Text(
-                            text = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola.",
-                            modifier = Modifier.padding(14.dp)
-                        )
-                    } else if (uvStyrkeNå >= 8.0) {
-                        AsyncImage(
-                            modifier = Modifier
-                                .size(140.dp),
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-red.svg")
-                                .decoderFactory(SvgDecoder.Factory())
-                                .build(),
-                            contentDescription = "UV-strength icon"
-                        )
-                        Text(
-                            text = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.",
-                            modifier = Modifier.padding(14.dp)
-                        )
-                    }
-
                     // Will only show alerts and take up space on screen if there are any active alerts in the area
                     if (vm.alertsData!!.features.isNotEmpty()) {
                         Column(
@@ -762,12 +718,26 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     Spacer(
                         modifier = Modifier.height(20.dp)
                     )
-                    if (uvStyrkeNå >= 6.0) {
+                    if (uvStyrkeNå >= 8.0) {
                         WarningBox(
                             headline = "Høy UV-indeks!",
                             subtitle = "",
                             info = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.",
                             img = "https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-red.svg"
+                        )
+                    } else if (uvStyrkeNå >= 6.0 && uvStyrkeNå < 8) {
+                        WarningBox(
+                            headline = "Høy UV-indeks!",
+                            subtitle = "",
+                            info = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola.",
+                            img = "https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-orange.svg"
+                        )
+                    } else if (uvStyrkeNå >= 3 && uvStyrkeNå < 6) {
+                        WarningBox(
+                            headline = "Middels UV-indeks",
+                            subtitle = "",
+                            info = "Husk å ta på solkrem hvis du skal være ute lenge!",
+                            img = "https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-yellow.svg"
                         )
                     }
 
