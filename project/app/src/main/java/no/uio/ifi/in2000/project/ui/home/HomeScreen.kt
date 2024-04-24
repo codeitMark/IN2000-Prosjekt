@@ -499,13 +499,32 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                 } else {
                     Text(text = "", fontSize = 0.sp, fontWeight = Bold)
 
-                    Text(
-                        text = vm.currentFormatted,
-                        fontSize = 30.sp,
-                        color = Color.White,
+                    Column(
                         modifier = Modifier
-                            .padding(20.dp)
-                    )
+                            .fillMaxWidth()
+                            .padding(top = 20.dp, bottom = 20.dp),
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Text(
+                            text = "Idag",
+                            fontSize = 20.sp,
+                            modifier = Modifier.padding(start = 15.dp),
+                            style = TextStyle(
+                                color = Color.White
+                            )
+                        )
+
+                        Text(
+                            text = vm.currentFormatted,
+                            fontSize = 30.sp,
+                            style = TextStyle(
+                                color = Color.White
+                            ),
+                            modifier = Modifier.padding(start = 15.dp, bottom = 20.dp)
+                        )
+                    }
+
+
                     Row(
                         modifier = Modifier
                             .padding(horizontal = 16.dp, vertical = 8.dp)
