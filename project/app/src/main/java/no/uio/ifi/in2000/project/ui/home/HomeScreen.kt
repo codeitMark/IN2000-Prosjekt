@@ -510,11 +510,13 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     Row(
                         modifier = Modifier
                             .padding(horizontal = 16.dp, vertical = 8.dp)
-                            .padding(start = 25.dp, end = 25.dp),
+                            .padding(start = 25.dp, end = 40.dp),
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         AsyncImage(
-                            modifier = Modifier.size(100.dp),
+                            modifier = Modifier
+                                .size(110.dp)
+                                .weight(1f),
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data(vm.locationForecastIcons[0])
                                 .decoderFactory(SvgDecoder.Factory())
@@ -525,10 +527,11 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         VerticalLine()
 
                         Text(
+                            modifier = Modifier.weight(1f),
                             text = if (valgtTemperatur == "Celsius") {
-                                "${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C"
+                                "   ${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C"
                             } else {
-                                "${(vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F"
+                                "   ${(vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F"
                             },
                             fontSize = 50.sp,
                             style = TextStyle(
