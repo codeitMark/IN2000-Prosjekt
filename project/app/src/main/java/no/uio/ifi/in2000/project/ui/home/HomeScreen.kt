@@ -6,6 +6,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -41,7 +42,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -59,6 +59,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -697,42 +698,22 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         else -> "Veldig høyt"
                     }
 
-                    val sliderPosition = remember { mutableStateOf(uvStyrkeNå) }
-                    sliderPosition.value = uvStyrkeNå
-
-                    val gradientColors = listOf(
-                        Color(0xFF14FC00),
-                        Color(0xFFDEEF17),
-                        Color(0xFFFFAA06),
-                        Color(0xFFFD6C06),
-                        Color(0xFFFB0606),
-                        Color(0xFF9E06FB)
-                    )
-
-                    val gradientBrush = Brush.horizontalGradient(
-                        colors = gradientColors,
-                    )
-
-                    Slider(
-                        value = sliderPosition.value,
-                        onValueChange = {}, //skal ikke være mulig å endre slideren
-                        valueRange = 1f..11f,
-                        steps = 10,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                            .background(brush = gradientBrush)
-                    )
-
-                    Text(
-                        text = "$uvStyrkeNå - $uvStyrkeTekst",
-                        fontSize = 20.sp,
-                        modifier = Modifier
-                            .padding(top = 5.dp, bottom = 10.dp),
-                        style = TextStyle(
-                            color = Color.White
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        UVScale(uvIndex = uvStyrkeNå)
+                        Text(
+                            text = "$uvStyrkeNå - $uvStyrkeTekst",
+                            fontSize = 20.sp,
+                            modifier = Modifier.padding(top = 5.dp, bottom = 10.dp),
+                            style = TextStyle(
+                                color = Color.White
+                            ),
+                            textAlign = TextAlign.Center
                         )
-                    )
+                    }
 
                     // Will only show alerts and take up space on screen if there are any active alerts in the area
                     if (vm.alertsData!!.features.isNotEmpty()) {
@@ -1818,6 +1799,42 @@ fun DayTemperatureItem(date: String, maxTemperature: Int, minTemperature: Int, v
             )
 
         )
+    }
+}
+
+@Composable
+fun UVScale(uvIndex: Float, modifier: Modifier = Modifier) {
+    val gradientColors = listOf(
+        Color(0xFF14FC00),
+        Color(0xFFDEEF17),
+        Color(0xFFFFAA06),
+        Color(0xFFFD6C06),
+        Color(0xFFFB0606),
+        Color(0xFF9E06FB)
+    )
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(10.dp)
+            .background(
+                brush = Brush.horizontalGradient(
+                    colors = gradientColors,
+                )
+            )
+    ) {
+        Canvas(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 4.dp)
+        ) {
+            val uvIndexPosition = (uvIndex / 11f) * size.width
+            drawRect(
+                color = Color.White,
+                topLeft = Offset(uvIndexPosition, 0f),
+                size = Size(2.dp.toPx(), size.height)
+            )
+        }
     }
 }
 
