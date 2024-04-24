@@ -1841,10 +1841,10 @@ fun UVScale(uvIndex: Float, modifier: Modifier = Modifier) {
                 .padding(horizontal = 4.dp)
         ) {
             val uvIndexPosition = (uvIndex / 11f) * size.width
-            drawRect(
+            drawCircle(
                 color = Color.White,
-                topLeft = Offset(uvIndexPosition, 0f),
-                size = Size(5.dp.toPx(), size.height)
+                center = Offset(uvIndexPosition, size.height / 2),
+                radius = 8.dp.toPx()
             )
         }
     }
