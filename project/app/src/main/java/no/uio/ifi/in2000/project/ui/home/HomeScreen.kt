@@ -744,7 +744,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     Spacer(
                         modifier = Modifier.height(20.dp)
                     )
-                    if (uvStyrkeNå >= 1.0) { //Endre til 6
+                    if (uvStyrkeNå >= 6.0) {
                         WarningBox(
                             headline = "Høy UV-indeks!",
                             subtitle = "",
