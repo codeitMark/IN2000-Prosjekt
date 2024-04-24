@@ -507,17 +507,29 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             .padding(20.dp)
                     )
 
-                    if (valgtTemperatur == "Celsius") {
-                        Text(
-                            text = "${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C",
-                            fontSize = 50.sp,
-                            style = TextStyle(
-                                color = Color.White
-                            )
+                    Row(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .padding(start = 25.dp, end = 25.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        AsyncImage(
+                            modifier = Modifier.size(100.dp),
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(vm.locationForecastIcons[0])
+                                .decoderFactory(SvgDecoder.Factory())
+                                .build(),
+                            contentDescription = "Weather icon"
                         )
-                    } else if (valgtTemperatur == "Fahrenheit") {
+
+                        VerticalLine()
+
                         Text(
-                            text = "${(vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F",
+                            text = if (valgtTemperatur == "Celsius") {
+                                "${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C"
+                            } else {
+                                "${(vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F"
+                            },
                             fontSize = 50.sp,
                             style = TextStyle(
                                 color = Color.White
@@ -584,16 +596,6 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         )
                     }
 
-                    AsyncImage(
-                        modifier = Modifier
-                            .size(280.dp),
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(vm.locationForecastIcons[0])
-                            .decoderFactory(SvgDecoder.Factory())
-                            .build(),
-                        contentDescription = "Weather icon"
-                    )
-
                     val vind =
                         vm.weatherData!!.properties.timeseries[0].data.instant.details.wind_speed
                     Row(
@@ -604,10 +606,12 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             text = "Vind: $vind m/s",
                             fontSize = 20.sp,
                             color = Color.White,
-                            modifier = Modifier.weight(1f).padding(
-                                start = 20.dp,
-                                end = 16.dp
-                            ) // Gir en vekt slik at den tar opp halve bredden
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(
+                                    start = 20.dp,
+                                    end = 16.dp
+                                ) // Gir en vekt slik at den tar opp halve bredden
                         )
 
                         Spacer(Modifier.width(16.dp)) // Gir litt plass mellom tekstene, valgfritt
@@ -618,10 +622,12 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             text = "Nedbør: $nedbør mm",
                             fontSize = 20.sp,
                             color = Color.White,
-                            modifier = Modifier.weight(1f).padding(
-                                start = 16.dp,
-                                end = 16.dp
-                            )// Igjen, gir vekt for å ta opp resterende bredde
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(
+                                    start = 16.dp,
+                                    end = 16.dp
+                                )// Igjen, gir vekt for å ta opp resterende bredde
                         )
                     }
 
@@ -629,13 +635,17 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     Text(
                         text = "Soloppgang: kl. $sunriseTime", fontSize = 20.sp,
                         color = Color.White,
-                        modifier = Modifier.weight(1f).padding(start = 20.dp, end = 16.dp)
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = 20.dp, end = 16.dp)
                     )
                     val sunsetTime = vm.sunsetTime
                     Text(
                         text = "Solnedgang: kl. $sunsetTime", fontSize = 20.sp,
                         color = Color.White,
-                        modifier = Modifier.weight(1f).padding(start = 16.dp, end = 16.dp)
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = 16.dp, end = 16.dp)
                     )
 
 
@@ -757,8 +767,8 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         text = "  Idag",
                         fontSize = 30.sp,
                         modifier = Modifier
-                                .padding(top = 30.dp, bottom = 10.dp)
-                                .align(Alignment.Start), // Juster teksten til starten av Row
+                            .padding(top = 30.dp, bottom = 10.dp)
+                            .align(Alignment.Start), // Juster teksten til starten av Row
                         style = TextStyle(
                             color = Color.White
                         )
@@ -1359,6 +1369,18 @@ fun Line(){
         .fillMaxWidth()
         .height(1.dp)
         .background(Color(0xFFFFFFFF))
+    )
+}
+
+//Makes a vertical line (used between weather icon and degrees
+@Composable
+fun VerticalLine(){
+    Spacer(
+        Modifier
+            .padding(0.dp)
+            .width(1.dp)
+            .height(86.dp)
+            .background(color = Color(0xFFFFFFFF))
     )
 }
 
