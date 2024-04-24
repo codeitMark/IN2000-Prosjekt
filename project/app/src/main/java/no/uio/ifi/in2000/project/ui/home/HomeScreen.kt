@@ -504,7 +504,8 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         fontSize = 30.sp,
                         color = Color.White,
                         modifier = Modifier
-                            .padding(20.dp))
+                            .padding(20.dp)
+                    )
 
                     if (valgtTemperatur == "Celsius") {
                         Text(
@@ -603,7 +604,10 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             text = "Vind: $vind m/s",
                             fontSize = 20.sp,
                             color = Color.White,
-                            modifier = Modifier.weight(1f).padding(start = 20.dp, end = 16.dp) // Gir en vekt slik at den tar opp halve bredden
+                            modifier = Modifier.weight(1f).padding(
+                                start = 20.dp,
+                                end = 16.dp
+                            ) // Gir en vekt slik at den tar opp halve bredden
                         )
 
                         Spacer(Modifier.width(16.dp)) // Gir litt plass mellom tekstene, valgfritt
@@ -614,17 +618,22 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             text = "Nedbør: $nedbør mm",
                             fontSize = 20.sp,
                             color = Color.White,
-                            modifier = Modifier.weight(1f).padding(start = 16.dp, end = 16.dp)// Igjen, gir vekt for å ta opp resterende bredde
+                            modifier = Modifier.weight(1f).padding(
+                                start = 16.dp,
+                                end = 16.dp
+                            )// Igjen, gir vekt for å ta opp resterende bredde
                         )
                     }
 
                     val sunriseTime = vm.sunriseTime
-                    Text(text = "Soloppgang: kl. $sunriseTime", fontSize = 20.sp,
+                    Text(
+                        text = "Soloppgang: kl. $sunriseTime", fontSize = 20.sp,
                         color = Color.White,
                         modifier = Modifier.weight(1f).padding(start = 20.dp, end = 16.dp)
                     )
                     val sunsetTime = vm.sunsetTime
-                    Text(text = "Solnedgang: kl. $sunsetTime", fontSize = 20.sp,
+                    Text(
+                        text = "Solnedgang: kl. $sunsetTime", fontSize = 20.sp,
                         color = Color.White,
                         modifier = Modifier.weight(1f).padding(start = 16.dp, end = 16.dp)
                     )
@@ -713,6 +722,35 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 i++
                             }
                         }
+                    }
+
+                    /*
+                        AsyncImage(
+                            modifier = Modifier
+                                .size(100.dp),
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-red.svg")
+                                .decoderFactory(SvgDecoder.Factory())
+                                .build(),
+                            contentDescription = "UV-strength icon"
+                        )
+                        Text(
+                            text = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.",
+                            modifier = Modifier.padding(14.dp)
+                        )
+
+                     */
+
+                    Spacer(
+                        modifier = Modifier.height(20.dp)
+                    )
+                    if (uvStyrkeNå >= 1.0) { //Endre til 6
+                        WarningBox(
+                            headline = "Høy UV-indeks!",
+                            subtitle = "",
+                            info = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.",
+                            img = "https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-red.svg"
+                        )
                     }
 
                     Text(
@@ -903,8 +941,6 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         }
                         Line()
                     }
-
-
                 }
 
 
