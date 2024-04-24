@@ -41,6 +41,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -59,6 +60,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
@@ -127,7 +129,6 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
     }
     var showSettings by remember {mutableStateOf(false)}
     var showSearchbar by remember{ mutableStateOf(false)}
-
 
     Column(
         modifier = Modifier
@@ -680,7 +681,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     Text(
                         text = "UV-indeks",
                         fontSize = 20.sp,
-                        modifier = Modifier.padding(top = 30.dp),
+                        modifier = Modifier.padding(top = 30.dp, bottom = 10.dp),
                         style = TextStyle(
                             color = Color.White
                         )
@@ -696,12 +697,38 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         else -> "Veldig høyt"
                     }
 
+                    val sliderPosition = remember { mutableStateOf(uvStyrkeNå) }
+                    sliderPosition.value = uvStyrkeNå
+
+                    val gradientColors = listOf(
+                        Color(0xFF14FC00),
+                        Color(0xFFDEEF17),
+                        Color(0xFFFFAA06),
+                        Color(0xFFFD6C06),
+                        Color(0xFFFB0606),
+                        Color(0xFF9E06FB)
+                    )
+
+                    val gradientBrush = Brush.horizontalGradient(
+                        colors = gradientColors,
+                    )
+
+                    Slider(
+                        value = sliderPosition.value,
+                        onValueChange = {}, //skal ikke være mulig å endre slideren
+                        valueRange = 1f..11f,
+                        steps = 10,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp)
+                            .background(brush = gradientBrush)
+                    )
 
                     Text(
                         text = "$uvStyrkeNå - $uvStyrkeTekst",
                         fontSize = 20.sp,
                         modifier = Modifier
-                            .padding(top = 30.dp, bottom = 10.dp),
+                            .padding(top = 5.dp, bottom = 10.dp),
                         style = TextStyle(
                             color = Color.White
                         )
