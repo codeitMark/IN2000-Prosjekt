@@ -662,22 +662,25 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     }
 
                     val sunriseTime = vm.sunriseTime
-                    Text(
-                        text = "Soloppgang: kl. $sunriseTime", fontSize = 20.sp,
-                        color = Color.White,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(start = 20.dp, end = 16.dp)
-                    )
                     val sunsetTime = vm.sunsetTime
-                    Text(
-                        text = "Solnedgang: kl. $sunsetTime", fontSize = 20.sp,
-                        color = Color.White,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(start = 16.dp, end = 16.dp)
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Soloppgang: kl. $sunriseTime",
+                            fontSize = 20.sp,
+                            color = Color.White,
+                            modifier = Modifier.padding(start = 20.dp, end = 16.dp)
+                        )
 
+                        Text(
+                            text = "Solnedgang: kl. $sunsetTime",
+                            fontSize = 20.sp,
+                            color = Color.White,
+                            modifier = Modifier.padding(start = 16.dp, end = 20.dp)
+                        )
+                    }
 
                     Text(
                         text = "UV-indeks",
