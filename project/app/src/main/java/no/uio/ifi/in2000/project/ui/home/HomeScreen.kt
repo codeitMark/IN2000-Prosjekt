@@ -545,8 +545,10 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         VerticalLine()
 
                         // Kolonne for temperatur og værbeskrivelse
-                        Column {
-                            // Temperaturtekst
+                        Column(
+                            modifier = Modifier
+                                .padding(bottom = 60.dp)
+                        ) {
                             val temperatureText = if (valgtTemperatur == "Celsius") {
                                 "  ${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C"
                             } else {
@@ -599,7 +601,6 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                     else -> null
                                 }
 
-                            // Vis temperatur
                             Text(
                                 modifier = Modifier.padding(vertical = 4.dp),
                                 text = temperatureText,
@@ -692,7 +693,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier
-                                .padding(30.dp)
+                                .padding(start = 30.dp, end = 30.dp, top = 30.dp, bottom = 0.dp)
                         )
                         {
                             var i =
@@ -733,10 +734,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         )
 
                      */
-
-                    Spacer(
-                        modifier = Modifier.height(20.dp)
-                    )
+                    
                     if (uvStyrkeNå >= 8.0) {
                         WarningBox(
                             headline = "Høy UV-indeks!",
