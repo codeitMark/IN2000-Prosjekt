@@ -1830,6 +1830,7 @@ fun UVScale(uvIndex: Float, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .padding(start = 30.dp, end = 30.dp)
             .height(10.dp)
             .background(
                 brush = Brush.horizontalGradient(
@@ -1840,7 +1841,6 @@ fun UVScale(uvIndex: Float, modifier: Modifier = Modifier) {
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 4.dp)
         ) {
             val uvIndexPosition = (uvIndex / 11f) * size.width
             drawCircle(
