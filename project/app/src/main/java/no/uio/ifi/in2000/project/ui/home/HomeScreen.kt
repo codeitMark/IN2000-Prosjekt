@@ -502,6 +502,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     Text(text = "Loading...", fontSize = 50.sp, fontWeight = Bold)
                 } else {
                     Text(text = "", fontSize = 0.sp, fontWeight = Bold)
+                }
 
                     Column(
                         modifier = Modifier
@@ -627,61 +628,115 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         }
                     }
 
-
-                    val vind =
-                        vm.weatherData!!.properties.timeseries[0].data.instant.details.wind_speed
-                    Row(
-                        modifier = Modifier.fillMaxWidth(), // Sprekker Row over hele bredden
-                        verticalAlignment = Alignment.CenterVertically // Midtstiller elementene vertikalt
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 50.dp),
+                        verticalArrangement = Arrangement.Center
                     ) {
-                        Text(
-                            text = "Vind: $vind m/s",
-                            fontSize = 20.sp,
-                            color = Color.White,
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(
-                                    start = 20.dp,
-                                    end = 16.dp
-                                ) // Gir en vekt slik at den tar opp halve bredden
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Start
+                        ) {
+                            Text(
+                                text = "Vind",
+                                fontSize = 23.sp,
+                                style = TextStyle(
+                                    color = Color.White
+                                )
+                            )
 
-                        Spacer(Modifier.width(16.dp)) // Gir litt plass mellom tekstene, valgfritt
-                        val nedbør =
-                            vm.weatherData!!.properties.timeseries[0].data.next_1_hours.details.precipitation_amount
+                            Spacer(modifier = Modifier.weight(1f))
 
-                        Text(
-                            text = "Nedbør: $nedbør mm",
-                            fontSize = 20.sp,
-                            color = Color.White,
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(
-                                    start = 16.dp,
-                                    end = 16.dp
-                                )// Igjen, gir vekt for å ta opp resterende bredde
-                        )
-                    }
+                            Text(
+                                text = "Nedbør",
+                                fontSize = 23.sp,
+                                style = TextStyle(
+                                    color = Color.White
+                                )
+                            )
+                        }
 
-                    val sunriseTime = vm.sunriseTime
-                    val sunsetTime = vm.sunsetTime
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Soloppgang: kl. $sunriseTime",
-                            fontSize = 20.sp,
-                            color = Color.White,
-                            modifier = Modifier.padding(start = 20.dp, end = 16.dp)
-                        )
+                        Spacer(modifier = Modifier.height(10.dp))
 
-                        Text(
-                            text = "Solnedgang: kl. $sunsetTime",
-                            fontSize = 20.sp,
-                            color = Color.White,
-                            modifier = Modifier.padding(start = 16.dp, end = 20.dp)
-                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Start
+                        ) {
+                            val vind =
+                                vm.weatherData!!.properties.timeseries[0].data.instant.details.wind_speed
+                            Text(
+                                text = "${vind}m/s",
+                                fontSize = 20.sp,
+                                style = TextStyle(
+                                    color = Color.White
+                                )
+                            )
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            val nedbør =
+                                vm.weatherData!!.properties.timeseries[0].data.next_1_hours.details.precipitation_amount
+                            Text(
+                                text = "${nedbør}mm",
+                                fontSize = 20.sp,
+                                style = TextStyle(
+                                    color = Color.White
+                                )
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(50.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+
+                            Text(
+                                text = "Soloppgang",
+                                fontSize = 20.sp,
+                                style = TextStyle(
+                                    color = Color.White
+                                )
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            Text(
+                                text = "Solnedgang",
+                                fontSize = 20.sp,
+                                style = TextStyle(
+                                    color = Color.White
+                                )
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            val sunriseTime = vm.sunriseTime
+                            Text(
+                                text = sunriseTime,
+                                fontSize = 20.sp,
+                                style = TextStyle(
+                                    color = Color.White
+                                )
+                            )
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            val sunsetTime = vm.sunsetTime
+                            Text(
+                                text = sunsetTime,
+                                fontSize = 20.sp,
+                                style = TextStyle(
+                                    color = Color.White
+                                )
+                            )
+                        }
                     }
 
                     Text(
@@ -769,7 +824,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
 
                     Column(
                         modifier = Modifier
-                            .padding(start = 30.dp, end = 30.dp)
+                            .padding(start = 30.dp, end = 30.dp, top = 30.dp)
                     ) {
                         if (uvStyrkeNå >= 8.0) {
                             WarningBox(
@@ -1092,11 +1147,6 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                      */
                 }
             }
-        }
-
-
-
-
 
 @Composable
 fun DisplayItems(items: List<ApiProperties>?) {
