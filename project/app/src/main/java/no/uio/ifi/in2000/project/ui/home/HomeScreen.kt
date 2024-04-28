@@ -57,6 +57,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.focus.focusRequester
@@ -1160,10 +1161,11 @@ fun SearchBar(vm: HomeViewModel) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(heightTextFields)
+                        .clip(RoundedCornerShape(50.dp))
                         .border(
                             width = 1.8.dp,
                             color = Color.Black,
-                            shape = RoundedCornerShape(15.dp)
+                            shape = RoundedCornerShape(50.dp)
                         )
                         .focusRequester(vm.focusRequester)
                         .onKeyEvent { event ->
