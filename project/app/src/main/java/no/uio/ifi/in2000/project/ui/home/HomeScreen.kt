@@ -1842,7 +1842,11 @@ fun UVScale(uvIndex: Float, modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxSize()
         ) {
-            val uvIndexPosition = (uvIndex / 11f) * size.width
+            val uvIndexPosition = if (uvIndex <= 11f) {
+                (uvIndex / 11f) * size.width
+            } else {
+                size.width // Hvis UV-indeksen er over 11, plasser prikken i enden av skalaen
+            }
             drawCircle(
                 color = Color.White,
                 center = Offset(uvIndexPosition, size.height / 2),
