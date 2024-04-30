@@ -1348,7 +1348,7 @@ fun WarningBox(headline: String, subtitle: String, info: String, img: String) {
             containerColor = Color(0xFFFFCF72),
         ),
         modifier = Modifier
-            .clickable{expandedState=true}
+            .clickable { expandedState = !expandedState }
             .padding(2.dp)
             .alpha(0.7f)
             .fillMaxWidth()
