@@ -7,6 +7,7 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -76,6 +77,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
@@ -537,16 +539,13 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 .padding(start = 25.dp, end = 40.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            AsyncImage(
-                                modifier = Modifier
-                                    .size(110.dp)
-                                    .weight(1f),
-                                model = ImageRequest.Builder(LocalContext.current)
-                                    .data(vm.locationForecastIcons[0])
-                                    .decoderFactory(SvgDecoder.Factory())
-                                    .build(),
+                            val iconid = LocalContext.current.resources.getIdentifier(vm.locationForecastIcons[0], "drawable", LocalContext.current.packageName) //ignore warning. It makes R.drawable dynamic instead of static, allowing us to apply variable names (since weather icons change a lot)
+                            Image(
+                                modifier = Modifier.size(110.dp).weight(1f),
+                                painter = painterResource(id = iconid),
                                 contentDescription = "Weather icon"
                             )
+
 
                             VerticalLine()
                         // Kolonne for temperatur og værbeskrivelse
@@ -907,12 +906,10 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                     height = 280,
                                     expanded = remember { mutableStateOf(false) },
                                     weatherIcon = {
-                                        AsyncImage(
-                                            modifier = Modifier.size(70.dp),
-                                            model = ImageRequest.Builder(LocalContext.current)
-                                                .data(vm.locationForecastIcons[i])
-                                                .decoderFactory(SvgDecoder.Factory())
-                                                .build(),
+                                        val iconids = LocalContext.current.resources.getIdentifier(vm.locationForecastIcons[i], "drawable", LocalContext.current.packageName) //ignore warning. It makes R.drawable dynamic instead of static, allowing us to apply variable names (since weather icons change a lot)
+                                        Image(
+                                            modifier = Modifier.size(110.dp).weight(1f),
+                                            painter = painterResource(id = iconids),
                                             contentDescription = "Weather icon"
                                         )
 

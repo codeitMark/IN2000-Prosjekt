@@ -27,7 +27,8 @@ class LocationForecastRepository() {
         val icons = mutableListOf<String>()
         weather?.properties?.timeseries?.forEach{
             if (it.data.next_1_hours != null){ //ignore warning, it is not redundant. next_1_hours can be null!
-                icons.add("https://raw.githubusercontent.com/metno/weathericons/89e3173756248b4696b9b10677b66c4ef435db53/weather/svg/${it.data.next_1_hours.summary.symbol_code}.svg")
+                //icons.add("https://raw.githubusercontent.com/metno/weathericons/89e3173756248b4696b9b10677b66c4ef435db53/weather/svg/${it.data.next_1_hours.summary.symbol_code}.svg") //Icons from Yr
+                icons.add(it.data.next_1_hours.summary.symbol_code) //Own icons
             }
         }
         return icons
