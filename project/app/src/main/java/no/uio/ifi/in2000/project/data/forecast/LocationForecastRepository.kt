@@ -8,7 +8,22 @@ class LocationForecastRepository() {
         return locationForecastSource.getWeather(lat, lon)
     }
 
+    //Attempt at using own icons, did not work
+    /*
     suspend fun fetchLocationForecastIcons(weather: LocationForecastResponse?): MutableList<String> {
+        val icons = mutableListOf<String>()
+        weather?.properties?.timeseries?.forEach{
+            if (it.data.next_1_hours != null){ //ignore warning, it is not redundant. next_1_hours can be null!
+                val symbolCode = it.data.next_1_hours.summary.symbol_code
+                val icon = "no/uio/ifi/in2000/project/ui/media/Dark-mode_icons_svg/${symbolCode}.svg"
+                icons.add(icon)
+            }
+        }
+        return icons
+    }
+    */
+
+    suspend fun fetchLocationForecastIcons (weather: LocationForecastResponse?): MutableList<String> {
         val icons = mutableListOf<String>()
         weather?.properties?.timeseries?.forEach{
             if (it.data.next_1_hours != null){ //ignore warning, it is not redundant. next_1_hours can be null!

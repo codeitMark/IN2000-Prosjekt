@@ -530,25 +530,25 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     }
 
 
-                    Row(
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                            .padding(start = 25.dp, end = 40.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        AsyncImage(
+
+                        Row(
                             modifier = Modifier
-                                .size(110.dp)
-                                .weight(1f),
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(vm.locationForecastIcons[0])
-                                .decoderFactory(SvgDecoder.Factory())
-                                .build(),
-                            contentDescription = "Weather icon"
-                        )
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                .padding(start = 25.dp, end = 40.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            AsyncImage(
+                                modifier = Modifier
+                                    .size(110.dp)
+                                    .weight(1f),
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(vm.locationForecastIcons[0])
+                                    .decoderFactory(SvgDecoder.Factory())
+                                    .build(),
+                                contentDescription = "Weather icon"
+                            )
 
-                        VerticalLine()
-
+                            VerticalLine()
                         // Kolonne for temperatur og værbeskrivelse
                         Column(
                             modifier = Modifier
@@ -1906,7 +1906,3 @@ fun UVScale(uvIndex: Float, modifier: Modifier = Modifier) {
         }
     }
 }
-
-
-
-
