@@ -887,18 +887,17 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                     )
                                         .removeRange(2, 9)
                                         .toInt() + vm.offset // Lokal tid siden locationForecast er i UTC/STD.
+
+                                if (time >= 24) { // Gjør time til lokal tid
+                                    time -= 24
+                                } else if (time < 0){ // For en eller annen grunn kan det bli negativt. Dette sørger for at det ikke skjer.
+                                    time += 24
+                                }
+
                                 var formattedTime = String.format(
                                     "%02d:00",
                                     time
                                 )// Formatere tiden til alltid å ha to sifre
-
-                                if (time >= 24) {
-                                    time -= 24
-                                    formattedTime = String.format(
-                                        "%02d:00",
-                                        time
-                                    ) // Formatere tiden på nytt hvis den overstiger 24 timer
-                                }
 
                                 BigBoxComponent(
                                     time = formattedTime, // Legger til tid som en parameter i BoxComponent
