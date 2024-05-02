@@ -738,7 +738,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 horizontalArrangement = Arrangement.End
                             ) {
                                 Text(
-                                    text = "Solnedgang\n${vm.sunsetTime}",
+                                    text = "Solnedgang\n           ${vm.sunsetTime}",
                                     fontSize = 18.sp,
                                     style = TextStyle(
                                         color = Color.White
