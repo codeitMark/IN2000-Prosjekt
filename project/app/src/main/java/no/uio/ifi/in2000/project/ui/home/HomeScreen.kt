@@ -908,7 +908,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                     time
                                 )// Formatere tiden til alltid å ha to sifre
 
-                                BigBoxComponent(
+                                BoxComponent(
                                     time = formattedTime, // Legger til tid som en parameter i BoxComponent
                                     temperature = if (valgtTemperatur == "Celsius") {
                                         "${vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature.roundToInt()}°C"
@@ -923,7 +923,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                         vm.weatherData != null && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 6.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 8.0 -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Høyt"
                                         else -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Veldig høyt"
                                     },
-                                    width = 120,
+                                    width = 130,
                                     height = 280,
                                     expanded = remember { mutableStateOf(false) },
                                     weatherIcon = {
@@ -1712,7 +1712,7 @@ fun SettingsCard(){
 
 //This box component is for the hour by hour weather forecast - if you want to use it!
 @Composable
-fun BigBoxComponent(
+fun BoxComponent(
     time: String,
     temperature: String,
     windSpeed: String,
@@ -1766,25 +1766,55 @@ fun BigBoxComponent(
                 modifier = Modifier.padding(8.dp)
             )
             if (expanded.value) {
-                Text(
-                    text = windSpeed,
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Normal,
-                        color = Color.White,
-                    ),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(8.dp)
-                )
-                Text(
-                    text = precipitation,
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Normal,
-                        color = Color.White,
-                    ),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(8.dp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(end = 8.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.windicon),
+                            contentDescription = "Wind Icon",
+                            modifier = Modifier.size(23.dp)
+                        )
+                        Text(
+                            text = windSpeed,
+                            style = TextStyle(
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = Color.White,
+                            ),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(start = 8.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.rainicon),
+                            contentDescription = "Rain Icon",
+                            modifier = Modifier.size(23.dp)
+                        )
+                        Text(
+                            text = precipitation,
+                            style = TextStyle(
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Normal,
+                                color = Color.White,
+                            ),
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+                }
+                Image(
+                    painter = painterResource(id = R.drawable.uvicon),
+                    contentDescription = "UV Icon",
+                    modifier = Modifier.size(23.dp)
                 )
                 Text(
                     text = uvStyrke,
@@ -1797,49 +1827,6 @@ fun BigBoxComponent(
                     modifier = Modifier.padding(8.dp)
                 )
             }
-        }
-    }
-}
-
-//Small box for the hourly forecast, only time and weather icon
-@Composable
-fun SmallBoxComponent(
-    time: String,
-    width: Int,
-    height: Int,
-    weatherIcon: @Composable () -> Unit
-) {
-    Card(
-        modifier = Modifier
-            .border(
-                width = 1.dp,
-                color = Color(0xFFFFFFFF),
-                shape = RoundedCornerShape(size = 20.dp)
-            )
-            .width(width.dp)
-            .height(height.dp)
-            .background(color = Color(0xFF4A535D), shape = RoundedCornerShape(size = 20.dp)),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF4A535D)
-        ),
-        shape = RoundedCornerShape(size = 20.dp)
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = time,
-                style = TextStyle(
-                    fontSize = 20.sp,
-                    fontWeight = Bold,
-                    color = Color.White,
-                ),
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(8.dp)
-            )
-            weatherIcon()
         }
     }
 }
