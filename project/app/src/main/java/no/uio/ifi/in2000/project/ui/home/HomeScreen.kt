@@ -92,6 +92,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.decode.SvgDecoder
 import coil.request.ImageRequest
+import no.uio.ifi.in2000.project.R
 import no.uio.ifi.in2000.project.model.search.ApiProperties
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -541,7 +542,9 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         ) {
                             val iconid = LocalContext.current.resources.getIdentifier(vm.locationForecastIcons[0], "drawable", LocalContext.current.packageName) //ignore warning. It makes R.drawable dynamic instead of static, allowing us to apply variable names (since weather icons change a lot)
                             Image(
-                                modifier = Modifier.size(110.dp).weight(1f),
+                                modifier = Modifier
+                                    .size(110.dp)
+                                    .weight(1f),
                                 painter = painterResource(id = iconid),
                                 contentDescription = "Weather icon"
                             )
@@ -630,7 +633,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 50.dp),
+                            .padding(horizontal = 30.dp),
                         verticalArrangement = Arrangement.Center
                     ) {
                         Row(
@@ -639,7 +642,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         ) {
                             Text(
                                 text = "Vind",
-                                fontSize = 23.sp,
+                                fontSize = 20.sp,
                                 style = TextStyle(
                                     color = Color.White
                                 )
@@ -649,7 +652,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
 
                             Text(
                                 text = "Nedbør",
-                                fontSize = 23.sp,
+                                fontSize = 20.sp,
                                 style = TextStyle(
                                     color = Color.White
                                 )
@@ -666,7 +669,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 vm.weatherData!!.properties.timeseries[0].data.instant.details.wind_speed
                             Text(
                                 text = "${vind}m/s",
-                                fontSize = 20.sp,
+                                fontSize = 18.sp,
                                 style = TextStyle(
                                     color = Color.White
                                 )
@@ -678,7 +681,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 vm.weatherData!!.properties.timeseries[0].data.next_1_hours.details.precipitation_amount
                             Text(
                                 text = "${nedbør}mm",
-                                fontSize = 20.sp,
+                                fontSize = 18.sp,
                                 style = TextStyle(
                                     color = Color.White
                                 )
@@ -689,63 +692,73 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
 
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-
-                            Text(
-                                text = "Soloppgang",
-                                fontSize = 20.sp,
-                                style = TextStyle(
-                                    color = Color.White
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.sunriseicon),
+                                    contentDescription = "Sunrise Icon",
+                                    modifier = Modifier
+                                        .padding(end = 10.dp)
+                                        .size(40.dp)
                                 )
-                            )
-                            Spacer(modifier = Modifier.weight(1f))
-
-                            Text(
-                                text = "Solnedgang",
-                                fontSize = 20.sp,
-                                style = TextStyle(
-                                    color = Color.White
+                                Text(
+                                    text = "Soloppgang\n${vm.sunriseTime}",
+                                    fontSize = 18.sp,
+                                    style = TextStyle(
+                                        color = Color.White
+                                    ),
                                 )
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            val sunriseTime = vm.sunriseTime
-                            Text(
-                                text = sunriseTime,
-                                fontSize = 20.sp,
-                                style = TextStyle(
-                                    color = Color.White
-                                )
-                            )
+                            }
 
                             Spacer(modifier = Modifier.weight(1f))
 
-                            val sunsetTime = vm.sunsetTime
-                            Text(
-                                text = sunsetTime,
-                                fontSize = 20.sp,
-                                style = TextStyle(
-                                    color = Color.White
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                Text(
+                                    text = "Solnedgang\n${vm.sunsetTime}",
+                                    fontSize = 18.sp,
+                                    style = TextStyle(
+                                        color = Color.White
+                                    )
                                 )
-                            )
+                                Image(
+                                    painter = painterResource(id = R.drawable.sunseticon),
+                                    contentDescription = "Sunset Icon",
+                                    modifier = Modifier
+                                        .padding(start = 10.dp)
+                                        .size(40.dp)
+                                )
+                            }
                         }
                     }
 
-                    Text(
-                        text = "UV-indeks",
-                        fontSize = 20.sp,
-                        modifier = Modifier.padding(top = 30.dp, bottom = 10.dp),
-                        style = TextStyle(
-                            color = Color.White
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 30.dp, bottom = 10.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.uvicon),
+                            contentDescription = "UV Icon",
+                            modifier = Modifier.size(27.dp)
                         )
-                    )
+                        Text(
+                            text = "UV-indeks",
+                            fontSize = 20.sp,
+                            modifier = Modifier
+                                .padding(start = 8.dp),
+                            style = TextStyle(
+                                color = Color.White
+                            )
+                        )
+                    }
 
                     val uvStyrkeNå =
                         vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky
@@ -908,7 +921,9 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                     weatherIcon = {
                                         val iconids = LocalContext.current.resources.getIdentifier(vm.locationForecastIcons[i], "drawable", LocalContext.current.packageName) //ignore warning. It makes R.drawable dynamic instead of static, allowing us to apply variable names (since weather icons change a lot)
                                         Image(
-                                            modifier = Modifier.size(110.dp).weight(1f),
+                                            modifier = Modifier
+                                                .size(110.dp)
+                                                .weight(1f),
                                             painter = painterResource(id = iconids),
                                             contentDescription = "Weather icon"
                                         )
