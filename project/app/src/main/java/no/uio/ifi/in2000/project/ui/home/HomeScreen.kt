@@ -728,17 +728,16 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 )
                             }
 
-                            Spacer(modifier = Modifier.weight(1f))
-
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.End
                             ) {
                                 Text(
-                                    text = "Solnedgang\n           ${vm.sunsetTime}",
+                                    text = "Solnedgang\n${vm.sunsetTime}",
                                     fontSize = 18.sp,
                                     style = TextStyle(
-                                        color = Color.White
+                                        color = Color.White,
+                                        textAlign = TextAlign.End
                                     )
                                 )
                                 Image(
