@@ -89,9 +89,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
-import coil.decode.SvgDecoder
-import coil.request.ImageRequest
 import no.uio.ifi.in2000.project.R
 import no.uio.ifi.in2000.project.model.search.ApiProperties
 import java.text.SimpleDateFormat
@@ -758,7 +755,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 30.dp, bottom = 10.dp),
+                            .padding(top = 70.dp, bottom = 20.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
@@ -810,7 +807,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier
-                                .padding(start = 30.dp, end = 30.dp, top = 30.dp, bottom = 0.dp)
+                                .padding(start = 30.dp, end = 30.dp, top = 30.dp)
                         )
                         {
                             var i =
@@ -827,9 +824,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                     headline = it.properties.eventAwarenessName,
                                     subtitle = "",
                                     info = it.properties.instruction,
-                                    img = vm.metAlertsIcons!![i]
                                 )
-                                Spacer(modifier = Modifier.height(20.dp))
                                 i++
                             }
                         }
@@ -854,28 +849,25 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
 
                     Column(
                         modifier = Modifier
-                            .padding(start = 30.dp, end = 30.dp, top = 30.dp)
+                            .padding(start = 30.dp, end = 30.dp, top = 30.dp, bottom = 30.dp)
                     ) {
                         if (uvStyrkeNå >= 8.0) {
                             WarningBox(
-                                headline = "Høy UV-indeks!",
+                                headline = "Veldig høy UV-indeks!",
                                 subtitle = "",
                                 info = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.",
-                                img = "https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-red.svg"
                             )
                         } else if (uvStyrkeNå >= 6.0 && uvStyrkeNå < 8) {
                             WarningBox(
                                 headline = "Høy UV-indeks!",
                                 subtitle = "",
                                 info = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola.",
-                                img = "https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-orange.svg"
                             )
                         } else if (uvStyrkeNå >= 3 && uvStyrkeNå < 6) {
                             WarningBox(
                                 headline = "Middels UV-indeks",
                                 subtitle = "",
                                 info = "Husk å ta på solkrem hvis du skal være ute lenge!",
-                                img = "https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-yellow.svg"
                             )
                         }
                     }
@@ -884,8 +876,8 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         text = "  Idag",
                         fontSize = 30.sp,
                         modifier = Modifier
-                            .padding(top = 30.dp, bottom = 10.dp)
-                            .align(Alignment.Start), // Juster teksten til starten av Row
+                            .padding(bottom = 10.dp)
+                            .align(Alignment.Start),
                         style = TextStyle(
                             color = Color.White
                         )
@@ -1025,7 +1017,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             text = "Kommende dager:",
                             fontSize = 30.sp,
                             modifier = Modifier
-                                .padding(top = 30.dp, bottom = 10.dp),
+                                .padding(top = 60.dp, bottom = 10.dp),
                             style = TextStyle(
                                 color = Color.White
                             )
@@ -1366,7 +1358,7 @@ fun DropdownRow(
 
 //Composable to make the warning box
 @Composable
-fun WarningBox(headline: String, subtitle: String, info: String, img: String) {
+fun WarningBox(headline: String, subtitle: String, info: String) {
     var expandedState by remember { mutableStateOf(false) }
     val rotationState by animateFloatAsState(
         targetValue = if (expandedState) 180f else 0f, label = ""
@@ -1392,15 +1384,12 @@ fun WarningBox(headline: String, subtitle: String, info: String, img: String) {
             modifier = Modifier.fillMaxWidth()
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                AsyncImage(
+                Image(
+                    painter = painterResource(id = R.drawable.warningicon),
+                    contentDescription = "Warning icon",
                     modifier = Modifier
                         .size(125.dp)
-                        .padding(top = 20.dp, bottom = 20.dp),
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(img)
-                        .decoderFactory(SvgDecoder.Factory())
-                        .build(),
-                    contentDescription = "Icon for an alert."
+                        .padding(top = 20.dp, bottom = 20.dp)
                 )
                 /*
                 Icon(
