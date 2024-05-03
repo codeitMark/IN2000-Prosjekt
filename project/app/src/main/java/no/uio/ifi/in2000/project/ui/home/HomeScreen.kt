@@ -1257,7 +1257,7 @@ fun SearchBar(vm: HomeViewModel) {
                         vm.expanded = true
                         vm.loadSuggestions(it)
                     },
-                    placeholder = { Text("Enter any Location") },
+                    placeholder = { Text("Søk i lokasjoner") },
                     colors = TextFieldDefaults.textFieldColors(
                         containerColor = Color(0xFFFFFFFF),
                         focusedIndicatorColor = Color(0xFFFFFFFF),
