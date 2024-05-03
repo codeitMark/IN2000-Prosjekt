@@ -1274,8 +1274,16 @@ fun SearchBar(vm: HomeViewModel) {
                     ),
                     singleLine = true,
                     trailingIcon = {
-                        if (category.isNotEmpty()) {
                             Row {
+                                if (category.isNotEmpty()) {
+                                    IconButton(onClick = { category = "" }) {
+                                        Icon(
+                                            imageVector = Icons.Rounded.Clear,
+                                            contentDescription = "Clear",
+                                            tint = Color.Black
+                                        )
+                                    }
+                                }
                                 IconButton(onClick = { vm.expanded = !vm.expanded }) {
                                     Icon(
                                         modifier = Modifier.size(24.dp),
@@ -1284,14 +1292,6 @@ fun SearchBar(vm: HomeViewModel) {
                                         tint = Color.Black
                                     )
                                 }
-                                IconButton(onClick = { category = "" }) {
-                                    Icon(
-                                        imageVector = Icons.Rounded.Clear,
-                                        contentDescription = "Clear",
-                                        tint = Color.Black
-                                    )
-                                }
-                            }
                         }
                     }
                 )
