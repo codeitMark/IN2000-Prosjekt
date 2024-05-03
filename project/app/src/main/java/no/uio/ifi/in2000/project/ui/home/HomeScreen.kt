@@ -36,6 +36,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -1273,13 +1274,24 @@ fun SearchBar(vm: HomeViewModel) {
                     ),
                     singleLine = true,
                     trailingIcon = {
-                        IconButton(onClick = { vm.expanded = !vm.expanded }) {
-                            Icon(
-                                modifier = Modifier.size(24.dp),
-                                imageVector = Icons.Rounded.KeyboardArrowDown,
-                                contentDescription = "arrow",
-                                tint = Color.Black
-                            )
+                        if (category.isNotEmpty()) {
+                            Row {
+                                IconButton(onClick = { vm.expanded = !vm.expanded }) {
+                                    Icon(
+                                        modifier = Modifier.size(24.dp),
+                                        imageVector = Icons.Rounded.KeyboardArrowDown,
+                                        contentDescription = "arrow",
+                                        tint = Color.Black
+                                    )
+                                }
+                                IconButton(onClick = { category = "" }) {
+                                    Icon(
+                                        imageVector = Icons.Rounded.Clear,
+                                        contentDescription = "Clear",
+                                        tint = Color.Black
+                                    )
+                                }
+                            }
                         }
                     }
                 )
