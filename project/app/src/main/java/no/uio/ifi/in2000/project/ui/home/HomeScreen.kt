@@ -148,58 +148,36 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
         //verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            // Søkeikonet, alltid synlig
             IconButton(
-                modifier = Modifier
-                    //.padding(190.dp, 0.dp, 0.dp, 0.dp)
-                    .size(50.dp)
-                    //.align(Alignment.Start),
-
-                , onClick = {
-                    showSearchbar = !showSearchbar
-                },
-
-
-                colors = IconButtonDefaults.iconButtonColors(
-                contentColor = Color(0xFFFFFFFF)
-            )
+                onClick = { showSearchbar = !showSearchbar },
+                modifier = Modifier.size(50.dp),
+                colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Search,
-                    contentDescription = "Settings"
-                )
+                Icon(Icons.Default.Search, contentDescription = "Search")
             }
-            IconButton(
-                modifier = Modifier
-                    //.padding(190.dp, 0.dp, 0.dp, 0.dp)
-                    .size(50.dp)
-                    //.align(Alignment.End),
 
-                , onClick = {
-                    showSettings = !showSettings
-                },
-
-
-                colors = IconButtonDefaults.iconButtonColors(
-                contentColor = Color(0xFFFFFFFF)
-            )
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Settings"
-                )
+            // Innstillingsikonet, kun synlig når boksen ikke er åpen
+            AnimatedVisibility(visible = !showSettings) {
+                IconButton(
+                    onClick = { showSettings = true },
+                    modifier = Modifier.size(50.dp),
+                    colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
+                ) {
+                    Icon(Icons.Default.Settings, contentDescription = "Settings")
+                }
             }
-            //settingsBox
-            if (showSettings) {
-                //var chosenLanguage by remember { mutableStateOf("Norsk (bokmål)") }
 
-                //var chosenTemperature by remember {
-                //   mutableStateOf("Celsius") //Default value will be Celsius. Can choose Fahrenheit.
-
+            // Innstillingsboksen, åpnes på høyre hjørne
+            AnimatedVisibility(visible = showSettings) {
                 Card(
                     modifier = Modifier
-                        //.align(Alignment.End)
-                        .align(Alignment.Top)
                         .width(242.dp)
                         .animateContentSize(
                             animationSpec = tween(
@@ -207,24 +185,17 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 easing = LinearOutSlowInEasing
                             )
                         ),
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color(0xFF38424D),
-
-                        )
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFF38424D))
                 ) {
                     Column(modifier = Modifier.fillMaxWidth()) {
-                        //Settings icon
+                        // Innstillingsikonet inne i boksen
                         IconButton(
+                            onClick = { showSettings = false }, // Lukker boksen når klikket
                             modifier = Modifier
-                                .padding(190.dp, 0.dp, 0.dp, 0.dp)
                                 .size(50.dp),
-                            onClick = {
-                            },
-
-                            colors = IconButtonDefaults.iconButtonColors(
-                                contentColor = Color(0xFFFFFFFF)
-                            )
+                            colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
                         ) {
+                            Icon(Icons.Default.Settings, contentDescription = "Close settings")
                         }
 
                         Row {
