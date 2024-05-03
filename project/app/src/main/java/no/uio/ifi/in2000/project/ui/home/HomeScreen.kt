@@ -1399,7 +1399,7 @@ fun WarningBox(headline: String, subtitle: String, info: String) {
                     painter = painterResource(id = R.drawable.warningicon),
                     contentDescription = "Warning icon",
                     modifier = Modifier
-                        .size(125.dp)
+                        .size(115.dp)
                         .padding(top = 20.dp, bottom = 20.dp)
                 )
                 /*
@@ -1414,7 +1414,6 @@ fun WarningBox(headline: String, subtitle: String, info: String) {
 
                 Column {
                     Text(
-                        modifier = Modifier.padding(20.dp, 15.dp, 0.dp),
                         text = headline,
                         style = TextStyle(
                             fontSize = 20.sp,
