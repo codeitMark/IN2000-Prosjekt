@@ -910,6 +910,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
 
                                     }
 
+
                                 )
                                 Spacer(modifier = Modifier.width(16.dp))
                             }
@@ -1704,7 +1705,12 @@ fun BoxComponent(
     height: Int,
     weatherIcon: @Composable () -> Unit,
     expanded: MutableState<Boolean>
+
 ) {
+    val rotationState = animateFloatAsState(
+        targetValue = if (expanded.value) 180f else 0f
+    )
+
     Card(
         modifier = Modifier
             .border(
@@ -1747,6 +1753,20 @@ fun BoxComponent(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(8.dp)
             )
+            IconButton(
+                onClick = { expanded.value = !expanded.value },
+                modifier = Modifier
+                    .weight(1f)
+                    .rotate(rotationState.value),
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = Color(0xFFFFFFFF)
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowDropDown,
+                    contentDescription = "Drop-Down Arrow"
+                )
+            }
             if (expanded.value) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
