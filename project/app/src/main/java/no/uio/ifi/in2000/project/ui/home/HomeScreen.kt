@@ -857,7 +857,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(color = Color(0xCF38424D))
+                            //.background(color = Color(0xFF272D34))
                     ) {
                         Row(modifier = Modifier.horizontalScroll(scrollState)) {
                             for (i in 1..13) {
@@ -1720,7 +1720,7 @@ fun BoxComponent(
             )
             .width(width.dp)
             .height(if (expanded.value) height.dp else 160.dp)
-            .background(color = Color(0xFF4A535D), shape = RoundedCornerShape(size = 20.dp))
+            //.background(color = Color(0xFF4A535D), shape = RoundedCornerShape(size = 20.dp))
             .clickable { expanded.value = !expanded.value },
         colors = CardDefaults.cardColors(
             containerColor = Color(0xFF4A535D)
