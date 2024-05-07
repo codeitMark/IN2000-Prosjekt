@@ -58,7 +58,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.focus.FocusManager
@@ -215,19 +214,11 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         Row {
                             var celsius by remember { mutableStateOf(0xFFFFFFFF) }
                             var fahrenheit by remember { mutableStateOf(0xFF8C9299) }
-                            var checked by remember { mutableStateOf(true) }
+                            var checked by remember { mutableStateOf(false) }
 
                             SettingsText(14, color = celsius, content = "Celsius", 10, 5, 0, 5)
                             SettingsText(14, color = 0xFFFFFFFF, content = " / ", 0, 5, 0, 5)
-                            SettingsText(
-                                14,
-                                color = fahrenheit,
-                                content = "Fahrenheit",
-                                0,
-                                5,
-                                50,
-                                5
-                            )
+                            SettingsText(14, color = fahrenheit, content = "Fahrenheit", 0, 5, 50, 5)
 
                             Switch(
                                 modifier = Modifier
