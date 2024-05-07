@@ -1353,8 +1353,8 @@ fun WarningBox(headline: String, subtitle: String, info: String) {
         ),
         modifier = Modifier
             .clickable { expandedState = !expandedState }
-            .padding(2.dp)
-            .alpha(0.7f)
+            //.padding(2.dp)
+            //.alpha(0.7f)
             .fillMaxWidth()
             .animateContentSize(
                 animationSpec = tween(
