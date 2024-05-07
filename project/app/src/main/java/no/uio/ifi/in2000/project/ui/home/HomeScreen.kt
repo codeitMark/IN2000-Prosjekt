@@ -608,48 +608,50 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(start = 10.dp, end = 10.dp),
-                            horizontalArrangement = Arrangement.Start
+                                .padding(start = 20.dp, end = 20.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Text(
-                                text = "Vind",
-                                fontSize = 20.sp,
-                                style = TextStyle(
-                                    color = Color.White
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = "Vind",
+                                    fontSize = 18.sp,
+                                    style = TextStyle(
+                                        color = Color.White
+                                    )
                                 )
-                            )
-                            Image(
-                                painter = painterResource(id = R.drawable.windicon),
-                                contentDescription = "Wind Icon",
-                                modifier = Modifier
-                                    .padding(start = 5.dp)
-                                    .size(40.dp)
-                            )
-
-                            Spacer(modifier = Modifier.weight(1f))
-
-                            Image(
-                                painter = painterResource(id = R.drawable.rainicon),
-                                contentDescription = "Rain Icon",
-                                modifier = Modifier
-                                    .padding(end = 5.dp)
-                                    .size(35.dp)
-                            )
-                            Text(
-                                text = "Nedbør",
-                                fontSize = 20.sp,
-                                style = TextStyle(
-                                    color = Color.White
+                                Image(
+                                    painter = painterResource(id = R.drawable.windicon),
+                                    contentDescription = "Wind Icon",
+                                    modifier = Modifier
+                                        .padding(start = 5.dp)
+                                        .size(40.dp)
                                 )
-                            )
+                            }
+                            //Spacer(modifier = Modifier.weight(1f))
+
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.rainicon),
+                                    contentDescription = "Rain Icon",
+                                    modifier = Modifier
+                                        .padding(end = 5.dp)
+                                        .size(35.dp)
+                                )
+                                Text(
+                                    text = "Nedbør",
+                                    fontSize = 18.sp,
+                                    style = TextStyle(
+                                        color = Color.White
+                                    )
+                                )
+                            }
                         }
-
-                        Spacer(modifier = Modifier.height(10.dp))
+                        //Spacer(modifier = Modifier.height(10.dp))
 
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(start = 10.dp, end = 10.dp),
+                                .padding(start = 20.dp, end = 20.dp),
                             horizontalArrangement = Arrangement.Start
                         ) {
                             val vind =
