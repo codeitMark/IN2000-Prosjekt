@@ -104,8 +104,6 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
     val scrollState = rememberScrollState()
     val scrollStateVertical = rememberScrollState()
 
-    vm.loadCurrent("Oslo, Norway")
-
     var expandedSpråk by remember {
         mutableStateOf(false)
     }

@@ -81,6 +81,11 @@ class HomeViewModel : ViewModel(){
         private set
     //private set gjør at variabelen kan kun endres inni klassen. Dette sørger for at det ikke kan endres av noe fra HomeScreen/utenfor HVM.
 
+
+    init {
+        loadCurrent("Oslo, Norway")
+    }
+
     var alertsData: MetAlertsResponse? by mutableStateOf(MetAlertsResponse(listOf(), String(), String(), String()))
         private set
 
