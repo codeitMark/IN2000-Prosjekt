@@ -996,13 +996,13 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     )
 
                     val dayOfWeekMap = mapOf(
-                        Calendar.MONDAY to "man",
-                        Calendar.TUESDAY to "tir",
-                        Calendar.WEDNESDAY to "ons",
-                        Calendar.THURSDAY to "tor",
-                        Calendar.FRIDAY to "fre",
-                        Calendar.SATURDAY to "lør",
-                        Calendar.SUNDAY to "søn"
+                        Calendar.MONDAY to "Man",
+                        Calendar.TUESDAY to "Tir",
+                        Calendar.WEDNESDAY to "Ons",
+                        Calendar.THURSDAY to "Tor",
+                        Calendar.FRIDAY to "Fre",
+                        Calendar.SATURDAY to "Lør",
+                        Calendar.SUNDAY to "Søn"
                     )
 
                     Column(
@@ -1842,7 +1842,7 @@ fun DayTemperatureItem(date: String, maxTemperature: Int, minTemperature: Int, v
     Row(
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .padding(start = 25.dp, end = 25.dp),
+            .padding(start = 35.dp, end = 35.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
