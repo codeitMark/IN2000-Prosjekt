@@ -16,6 +16,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -853,11 +854,15 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         )
                     )
 
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            //.background(color = Color(0xFF272D34))
-                    ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = Color(0x38424D4D))
+                        .padding(top = 20.dp, bottom = 40.dp)
+                ) {
+                    BoxWithConstraints {
+                        val boxHeight = this.maxHeight
+
                         Row(modifier = Modifier.horizontalScroll(scrollState)) {
                             for (i in 1..13) {
                                 var time: Int =
@@ -915,25 +920,28 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             }
                         }
                     }
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                        IconButton(
-                            onClick = {
-                                allBoxesExpanded.value = !allBoxesExpanded.value
-                            },
-                            modifier = Modifier
-                                .padding(top = 10.dp)
-                                .rotate(rotationState.value)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowDropDown,
-                                contentDescription = "Drop-Down Arrow",
-                                tint = Color.White,
-                                modifier = Modifier.size(70.dp)
-                            )
-                        }
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    IconButton(
+                        onClick = {
+                            allBoxesExpanded.value = !allBoxesExpanded.value
+                        },
+                        modifier = Modifier.rotate(rotationState.value)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowDropDown,
+                            contentDescription = "Drop-Down Arrow",
+                            tint = Color.White,
+                            modifier = Modifier.size(70.dp)
+                        )
                     }
+                }
 
-                    //Small box component -> only time and icons
+                //Small box component -> only time and icons
                     /*
                     Row(modifier = Modifier.horizontalScroll(scrollState)) {
                         for (i in 1..13) {
@@ -1005,7 +1013,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             text = "Kommende dager:",
                             fontSize = 30.sp,
                             modifier = Modifier
-                                .padding(top = 60.dp, bottom = 10.dp),
+                                .padding(top = 10.dp, bottom = 10.dp),
                             style = TextStyle(
                                 color = Color.White
                             )
