@@ -101,6 +101,7 @@ import kotlin.math.roundToInt
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun HomeScreen(vm: HomeViewModel = viewModel()) {
+
     val scrollState = rememberScrollState()
     val scrollStateVertical = rememberScrollState()
 
@@ -773,58 +774,56 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         )
                     }
 
-                    // Will only show alerts and take up space on screen if there are any active alerts in the area
-                    if (vm.alertsData!!.features.isNotEmpty()) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .padding(start = 30.dp, end = 30.dp, top = 30.dp)
-                        )
-                        {
-                            var i =
-                                0 //noe hardkodet teller for metAlertsIcons. Mulig med bedre løsning, men kan ta tid å finne.
-                            // vm.sortedAlerts.forEach //Bruk denne for å fjerne duplikater.
-                            // Problem: I tilfellet det er duplikater, vil vm.metAlertsIcons[i] vise feil ikoner.
-                            // Det vil iterere over ikonene som om det ikke er duplikater = gust gust vs. gust flood (filtered).
-                            // Den første vil vise riktige ikoner. Den andre vil vise gust gust fortsatt.
-                            vm.alertsData!!.features.forEach {
-                                //drop for løkke, make map then set of eventawarenessname and instruction.
-                                // compare feature with feature? if already in there or smth like that.
-                                // this processing should happen in ViewModel. Map is already unique by default :)
-                                val awarenessLevel = it.properties.awareness_level.split(";")[1].trim()
-                                val awarenessType = it.properties.awareness_type.split(";")[1].trim()
-                                //Have to do this for forest-fire to work.
-                                //In API its called forest-fire, in file its forestfire
-                                val awarenessTypeCleaned = awarenessType.replace("-", "")
-                                val iconName = "icon_warning_${awarenessTypeCleaned.lowercase()}_${awarenessLevel.lowercase()}"
+                val alertIcons = vm.getAlertIcons()
 
-                                WarningBox(
-                                    headline = it.properties.eventAwarenessName,
-                                    subtitle = "",
-                                    info = it.properties.instruction,
-                                    iconResourceId = LocalContext.current.resources.getIdentifier(iconName, "drawable", LocalContext.current.packageName)
-                                )
-                                i++
-                            }
+                if (vm.alertsData!!.features.isNotEmpty()) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .padding(start = 30.dp, end = 30.dp, top = 30.dp)
+                    ) {
+                        var i = 0
+                        //noe hardkodet teller for metAlertsIcons. Mulig med bedre løsning, men kan ta tid å finne.
+                        // vm.sortedAlerts.forEach //Bruk denne for å fjerne duplikater.
+                        // Problem: I tilfellet det er duplikater, vil vm.metAlertsIcons[i] vise feil ikoner.
+                        // Det vil iterere over ikonene som om det ikke er duplikater = gust gust vs. gust flood (filtered).
+                        // Den første vil vise riktige ikoner. Den andre vil vise gust gust fortsatt.
+                        vm.alertsData!!.features.forEach {
+                            //drop for løkke, make map then set of eventawarenessname and instruction.
+                            // compare feature with feature? if already in there or smth like that.
+                            // this processing should happen in ViewModel. Map is already unique by default :)
+                            val event = it.properties.event
+                            val riskMatrixColor = it.properties.riskMatrixColor.lowercase()
+                            val iconResourceName = "${alertIcons[event]}_$riskMatrixColor"
+
+                            WarningBox(
+                                headline = it.properties.eventAwarenessName,
+                                subtitle = "",
+                                info = it.properties.instruction,
+                                iconResourceId = LocalContext.current.resources.getIdentifier(iconResourceName, "drawable", LocalContext.current.packageName)
+                            )
+                            i++
                         }
                     }
+                }
 
-                    /*
-                        AsyncImage(
-                            modifier = Modifier
-                                .size(100.dp),
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-red.svg")
-                                .decoderFactory(SvgDecoder.Factory())
-                                .build(),
-                            contentDescription = "UV-strength icon"
-                        )
-                        Text(
-                            text = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.",
-                            modifier = Modifier.padding(14.dp)
-                        )
 
-                     */
+                /*
+                    AsyncImage(
+                        modifier = Modifier
+                            .size(100.dp),
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-red.svg")
+                            .decoderFactory(SvgDecoder.Factory())
+                            .build(),
+                        contentDescription = "UV-strength icon"
+                    )
+                    Text(
+                        text = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.",
+                        modifier = Modifier.padding(14.dp)
+                    )
+
+                 */
 
                     Column(
                         modifier = Modifier

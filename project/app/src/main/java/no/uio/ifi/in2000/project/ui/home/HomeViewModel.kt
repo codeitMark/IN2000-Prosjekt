@@ -290,4 +290,9 @@ class HomeViewModel : ViewModel(){
         }
         return Pair(maxTemp, minTemp)
     }
+    // I ViewModel
+    fun getAlertIcons(): Map<String, String> {
+        return metAlertsRep.alertIcons
+    }
+
 }
