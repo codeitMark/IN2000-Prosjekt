@@ -133,6 +133,8 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
     var showSettings by remember {mutableStateOf(false)}
     var showSearchbar by remember{ mutableStateOf(false)}
 
+    val allBoxesExpanded = remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier
             .background(Color(0xFF272D34))
@@ -890,7 +892,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                     },
                                     width = 130,
                                     height = 280,
-                                    expanded = remember { mutableStateOf(false) },
+                                    expanded = allBoxesExpanded,
                                     weatherIcon = {
                                         val iconids = LocalContext.current.resources.getIdentifier(vm.locationForecastIcons[i], "drawable", LocalContext.current.packageName) //ignore warning. It makes R.drawable dynamic instead of static, allowing us to apply variable names (since weather icons change a lot)
                                         Image(
@@ -1698,7 +1700,6 @@ fun BoxComponent(
     height: Int,
     weatherIcon: @Composable () -> Unit,
     expanded: MutableState<Boolean>
-
 ) {
     val rotationState = animateFloatAsState(
         targetValue = if (expanded.value) 180f else 0f
@@ -1713,8 +1714,7 @@ fun BoxComponent(
             )
             .width(width.dp)
             .height(if (expanded.value) height.dp else 160.dp)
-            //.background(color = Color(0xFF4A535D), shape = RoundedCornerShape(size = 20.dp))
-            .clickable { expanded.value = !expanded.value },
+            .clickable { expanded.value = !expanded.value }, // Oppdaterer den felles expanded-state'en
         colors = CardDefaults.cardColors(
             containerColor = Color(0xFF4A535D)
         ),
@@ -1746,20 +1746,6 @@ fun BoxComponent(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(8.dp)
             )
-            IconButton(
-                onClick = { expanded.value = !expanded.value },
-                modifier = Modifier
-                    .weight(1f)
-                    .rotate(rotationState.value),
-                colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = Color(0xFFFFFFFF)
-                )
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "Drop-Down Arrow"
-                )
-            }
             if (expanded.value) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
