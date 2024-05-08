@@ -134,6 +134,10 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
     var showSearchbar by remember{ mutableStateOf(false)}
 
     val allBoxesExpanded = remember { mutableStateOf(false) }
+    val rotationState = animateFloatAsState(
+        targetValue = if (allBoxesExpanded.value) 180f else 0f,
+        label = ""
+    )
 
     Column(
         modifier = Modifier
@@ -909,6 +913,23 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 )
                                 Spacer(modifier = Modifier.width(16.dp))
                             }
+                        }
+                    }
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                        IconButton(
+                            onClick = {
+                                allBoxesExpanded.value = !allBoxesExpanded.value
+                            },
+                            modifier = Modifier
+                                .padding(top = 10.dp)
+                                .rotate(rotationState.value)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowDropDown,
+                                contentDescription = "Drop-Down Arrow",
+                                tint = Color.White,
+                                modifier = Modifier.size(70.dp)
+                            )
                         }
                     }
 
@@ -1701,10 +1722,6 @@ fun BoxComponent(
     weatherIcon: @Composable () -> Unit,
     expanded: MutableState<Boolean>
 ) {
-    val rotationState = animateFloatAsState(
-        targetValue = if (expanded.value) 180f else 0f
-    )
-
     Card(
         modifier = Modifier
             .border(
