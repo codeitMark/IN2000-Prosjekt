@@ -1422,7 +1422,8 @@ fun WarningBox(headline: String, subtitle: String, info: String,  iconResourceId
                             fontSize = 13.sp,
                             color = Color(0xFF000000),
                         ),
-                        modifier = Modifier.padding(bottom = 15.dp)
+                        modifier = Modifier
+                            .padding(bottom = 15.dp)
                     )
                 }
 
@@ -1450,7 +1451,8 @@ fun WarningBox(headline: String, subtitle: String, info: String,  iconResourceId
                         fontSize = 15.sp,
                         color = Color(0xFF000000),
                     ),
-                    modifier = Modifier.padding(vertical = 20.dp)
+                    modifier = Modifier
+                        .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
                 )
             }
         }
