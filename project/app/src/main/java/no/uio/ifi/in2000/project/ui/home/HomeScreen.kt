@@ -1876,37 +1876,26 @@ fun DayTemperatureItem(date: String, maxTemperature: Int, minTemperature: Int, v
 @Composable
 fun UVScale(uvIndex: Float, modifier: Modifier = Modifier) {
     val gradientColors = listOf(
-        Color(0xFF14FC00),
-        Color(0xFFDEEF17),
-        Color(0xFFFFAA06),
-        Color(0xFFFD6C06),
-        Color(0xFFFB0606),
-        Color(0xFF9E06FB)
+        Color(0xFF14FC00), // Low
+        Color(0xFFDEEF17), // Moderate
+        Color(0xFFFFAA06), // High
+        Color(0xFFFD6C06), // Very High
+        Color(0xFFFB0606), // Extreme
+        Color(0xFF9E06FB)  // Above Extreme
     )
 
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(start = 30.dp, end = 30.dp)
+            .padding(horizontal = 30.dp)
             .height(10.dp)
-            .background(
-                brush = Brush.horizontalGradient(
-                    colors = gradientColors,
-                )
-            )
+            .background(brush = Brush.horizontalGradient(colors = gradientColors))
     ) {
-        Canvas(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            val uvIndexPosition = if (uvIndex <= 11f) {
-                (uvIndex / 11f) * size.width
-            } else {
-                size.width // Hvis UV-indeksen er over 11, plasser prikken i enden av skalaen
-            }
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val positionX = (uvIndex.coerceIn(0f, 11f) / 11f) * size.width
             drawCircle(
                 color = Color.White,
-                center = Offset(uvIndexPosition, size.height / 2),
+                center = Offset(positionX, size.height / 2),
                 radius = 8.dp.toPx()
             )
         }
