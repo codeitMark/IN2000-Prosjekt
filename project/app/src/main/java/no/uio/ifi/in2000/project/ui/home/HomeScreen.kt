@@ -791,10 +791,18 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 //drop for løkke, make map then set of eventawarenessname and instruction.
                                 // compare feature with feature? if already in there or smth like that.
                                 // this processing should happen in ViewModel. Map is already unique by default :)
+                                val awarenessLevel = it.properties.awareness_level.split(";")[1].trim()
+                                val awarenessType = it.properties.awareness_type.split(";")[1].trim()
+                                //Have to do this for forest-fire to work.
+                                //In API its called forest-fire, in file its forestfire
+                                val awarenessTypeCleaned = awarenessType.replace("-", "")
+                                val iconName = "icon_warning_${awarenessTypeCleaned.lowercase()}_${awarenessLevel.lowercase()}"
+
                                 WarningBox(
                                     headline = it.properties.eventAwarenessName,
                                     subtitle = "",
                                     info = it.properties.instruction,
+                                    iconResourceId = LocalContext.current.resources.getIdentifier(iconName, "drawable", LocalContext.current.packageName)
                                 )
                                 i++
                             }
@@ -827,18 +835,21 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 headline = "Veldig høy UV-indeks!",
                                 subtitle = "",
                                 info = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.",
+                                iconResourceId = R.drawable.icon_warning_generic_red
                             )
                         } else if (uvStyrkeNå >= 6.0 && uvStyrkeNå < 8) {
                             WarningBox(
                                 headline = "Høy UV-indeks!",
                                 subtitle = "",
                                 info = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola.",
+                                iconResourceId = R.drawable.icon_warning_generic_orange
                             )
                         } else if (uvStyrkeNå >= 3 && uvStyrkeNå < 6) {
                             WarningBox(
                                 headline = "Middels UV-indeks",
                                 subtitle = "",
                                 info = "Husk å ta på solkrem hvis du skal være ute lenge!",
+                                iconResourceId = R.drawable.icon_warning_generic_yellow
                             )
                         }
                     }
@@ -1365,7 +1376,7 @@ fun DropdownRow(
 
 //Composable to make the warning box
 @Composable
-fun WarningBox(headline: String, subtitle: String, info: String) {
+fun WarningBox(headline: String, subtitle: String, info: String,  iconResourceId: Int) {
     var expandedState by remember { mutableStateOf(false) }
     val rotationState by animateFloatAsState(
         targetValue = if (expandedState) 180f else 0f, label = ""
@@ -1377,8 +1388,6 @@ fun WarningBox(headline: String, subtitle: String, info: String) {
         ),
         modifier = Modifier
             .clickable { expandedState = !expandedState }
-            //.padding(2.dp)
-            //.alpha(0.7f)
             .fillMaxWidth()
             .animateContentSize(
                 animationSpec = tween(
@@ -1392,46 +1401,35 @@ fun WarningBox(headline: String, subtitle: String, info: String) {
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
-                    painter = painterResource(id = R.drawable.warningicon),
+                    painter = painterResource(id = iconResourceId),
                     contentDescription = "Warning icon",
                     modifier = Modifier
-                        .size(115.dp)
+                        .size(130.dp)
                         .padding(top = 20.dp, bottom = 20.dp)
                 )
-                /*
-                Icon(
-                    imageVector = Icons.Default.Warning,
-                    contentDescription = "Warning",
-                    modifier = Modifier
-                        .size(50.dp, 50.dp)
-                        .padding(10.dp, 0.dp, 0.dp, 0.dp)
-                )
-*/
 
                 Column {
                     Text(
                         text = headline,
                         style = TextStyle(
                             fontSize = 20.sp,
-                            fontWeight = Bold,
+                            fontWeight = FontWeight.Bold,
                             color = Color(0xFF000000),
                         )
                     )
-                    SettingsText(
-                        fontSize = 13,
-                        color = 0xFF000000,
-                        content = subtitle,
-                        start = 21,
-                        top = 0,
-                        end = 120,
-                        bottom = 15
+                    Text(
+                        text = subtitle,
+                        style = TextStyle(
+                            fontSize = 13.sp,
+                            color = Color(0xFF000000),
+                        ),
+                        modifier = Modifier.padding(bottom = 15.dp)
                     )
                 }
 
                 IconButton(
                     modifier = Modifier
                         .weight(1f)
-                        //.alpha(0.2f)
                         .rotate(rotationState),
                     onClick = {
                         expandedState = !expandedState
@@ -1445,17 +1443,15 @@ fun WarningBox(headline: String, subtitle: String, info: String) {
                         contentDescription = "Drop-Down Arrow"
                     )
                 }
-
             }
             if (expandedState) {
-                SettingsText(
-                    fontSize = 15,
-                    color = 0xFF000000,
-                    content = info,
-                    start = 10,
-                    top = 5,
-                    end = 5,
-                    bottom = 20
+                Text(
+                    text = info,
+                    style = TextStyle(
+                        fontSize = 15.sp,
+                        color = Color(0xFF000000),
+                    ),
+                    modifier = Modifier.padding(vertical = 20.dp)
                 )
             }
         }
