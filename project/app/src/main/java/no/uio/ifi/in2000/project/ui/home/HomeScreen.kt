@@ -150,6 +150,8 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                 detectTapGestures(onTap = { //hides keyboard when clicking out
                     keyboardController?.hide()
                     //vm.expanded = false //hides suggestions when clicking out.
+                    showSettings = false
+                    //hides settings when user clicking out
                 })
             },
         //verticalArrangement = Arrangement.Center,
