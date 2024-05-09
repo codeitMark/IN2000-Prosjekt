@@ -951,7 +951,10 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     Text(
                         text = if (allBoxesExpanded.value) "Vis mindre" else "Vis mer",
                         color = Color.White,
-                        modifier = Modifier.padding(start = 8.dp)
+                        modifier = Modifier
+                            .clickable {
+                                allBoxesExpanded.value = !allBoxesExpanded.value
+                            }.padding(start = 8.dp)
                     )
                 }
 
