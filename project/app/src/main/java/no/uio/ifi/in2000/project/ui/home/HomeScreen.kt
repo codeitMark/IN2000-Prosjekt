@@ -927,26 +927,33 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             }
                         }
                     }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 20.dp),
-                        horizontalArrangement = Arrangement.Center
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 20.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(
+                        onClick = {
+                            allBoxesExpanded.value = !allBoxesExpanded.value
+                        },
+                        modifier = Modifier.rotate(rotationState.value)
                     ) {
-                        IconButton(
-                            onClick = {
-                                allBoxesExpanded.value = !allBoxesExpanded.value
-                            },
-                            modifier = Modifier.rotate(rotationState.value)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowDropDown,
-                                contentDescription = "Drop-Down Arrow",
-                                tint = Color.White,
-                                modifier = Modifier.size(200.dp)
-                            )
-                        }
+                        Icon(
+                            imageVector = Icons.Default.ArrowDropDown,
+                            contentDescription = "Drop-Down Arrow",
+                            tint = Color.White,
+                            modifier = Modifier.size(300.dp)
+                        )
                     }
+                    // Tekst som endres basert på om pilen er trykket på eller ikke
+                    Text(
+                        text = if (allBoxesExpanded.value) "Vis mindre" else "Vis mer",
+                        color = Color.White,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
 
                 //Small box component -> only time and icons
                     /*
