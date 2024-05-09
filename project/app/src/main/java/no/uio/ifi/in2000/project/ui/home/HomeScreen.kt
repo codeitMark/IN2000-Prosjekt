@@ -1868,7 +1868,15 @@ fun BoxComponent(
                     Box(
                         modifier = Modifier
                             .size(15.dp)
-                            .background(color = uvColor, shape = CircleShape)
+                            .background(
+                                color = uvColor,
+                                shape = CircleShape
+                            )
+                            .border(
+                                width = 1.dp,
+                                color = Color.White,
+                                shape = CircleShape
+                            )
                     )
                 }
             }
