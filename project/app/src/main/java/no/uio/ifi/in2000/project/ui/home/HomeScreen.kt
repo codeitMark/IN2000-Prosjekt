@@ -867,7 +867,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 20.dp, bottom = 40.dp)
+                        .padding(top = 20.dp, bottom = 10.dp)
                 ) {
                     BoxWithConstraints {
                         val boxHeight = this.maxHeight
