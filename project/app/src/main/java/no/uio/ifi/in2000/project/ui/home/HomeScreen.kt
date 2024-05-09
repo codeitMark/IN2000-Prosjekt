@@ -867,7 +867,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 20.dp, bottom = 10.dp)
+                        .padding(top = 20.dp)
                 ) {
                     BoxWithConstraints {
                         val boxHeight = this.maxHeight
@@ -932,7 +932,8 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                 }
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(bottom = 20.dp),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     IconButton(
@@ -945,7 +946,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             imageVector = Icons.Default.ArrowDropDown,
                             contentDescription = "Drop-Down Arrow",
                             tint = Color.White,
-                            modifier = Modifier.size(70.dp)
+                            modifier = Modifier.size(200.dp)
                         )
                     }
                 }
