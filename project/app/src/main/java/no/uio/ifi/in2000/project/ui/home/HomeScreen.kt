@@ -29,6 +29,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -737,7 +738,6 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         Text(
                             text = "UV-indeks",
                             fontSize = 20.sp,
-                            modifier = Modifier,
                             style = TextStyle(
                                 color = Color.White
                             )
@@ -761,6 +761,8 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     ) {
                         UVScale(uvIndex = uvStyrkeNå)
                         Text(
+                            modifier = Modifier
+                                .padding(top = 10.dp),
                             text = "$uvStyrkeNå - $uvStyrkeTekst",
                             fontSize = 20.sp,
                             style = TextStyle(
@@ -860,6 +862,15 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         )
                     )
 
+                /*
+                val uvTekst = when {
+                    vm.weatherData != null && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 3.0 -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Lavt"
+                    vm.weatherData != null && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 3.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 6.0 -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Medium"
+                    vm.weatherData != null && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 6.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 8.0 -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Høyt"
+                    else -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Veldig høyt"
+                }
+                */
+
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -895,12 +906,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                     },
                                     windSpeed = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.wind_speed}m/s",
                                     precipitation = "${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount}mm",
-                                    uvStyrke = when {
-                                        vm.weatherData != null && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 3.0 -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Lavt"
-                                        vm.weatherData != null && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 3.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 6.0 -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Medium"
-                                        vm.weatherData != null && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 6.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 8.0 -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Høyt"
-                                        else -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Veldig høyt"
-                                    },
+                                    uvStyrke = vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky,
                                     width = 140,
                                     height = 275,
                                     expanded = allBoxesExpanded,
@@ -1738,12 +1744,21 @@ fun BoxComponent(
     temperature: String,
     windSpeed: String,
     precipitation: String,
-    uvStyrke: String,
+    uvStyrke: Float,
     width: Int,
     height: Int,
     weatherIcon: @Composable () -> Unit,
     expanded: MutableState<Boolean>
 ) {
+    val uvColor = when {
+        uvStyrke <= 2 -> Color(0xFF14FC00)
+        uvStyrke <= 4 -> Color(0xFFDEEF17)
+        uvStyrke <= 6 -> Color(0xFFFFAA06)
+        uvStyrke <= 8 -> Color(0xFFFD6C06)
+        uvStyrke <= 12 -> Color(0xFFFB0606)
+        else -> Color(0xFF9E06FB)
+    }
+
     Card(
         modifier = Modifier
             .border(
@@ -1831,21 +1846,31 @@ fun BoxComponent(
                         )
                     }
                 }
-                Image(
-                    painter = painterResource(id = R.drawable.uvicon),
-                    contentDescription = "UV Icon",
-                    modifier = Modifier.size(23.dp)
-                )
-                Text(
-                    text = uvStyrke,
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Normal,
-                        color = Color.White,
-                    ),
-                    textAlign = TextAlign.Center,
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(8.dp)
-                )
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.uvicon),
+                        contentDescription = "UV Icon",
+                        modifier = Modifier.size(23.dp)
+                    )
+                    Text(
+                        text = "$uvStyrke",
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Normal,
+                            color = Color.White,
+                        ),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .size(15.dp)
+                            .background(color = uvColor, shape = CircleShape)
+                    )
+                }
             }
         }
     }
