@@ -1059,7 +1059,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
 
 
                             // Formattert dato (ukedag, måned, dato)
-                            val formattedDate = "$dayOfWeekText, $monthText $dayOfMonth"
+                            val formattedDate = "$dayOfWeekText, $dayOfMonth. $monthText"
 
                             Line()
                             // Vis maks- og minimumstemperaturene for dagen
