@@ -867,7 +867,6 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(color = Color(0x38424D4D))
                         .padding(top = 20.dp, bottom = 40.dp)
                 ) {
                     BoxWithConstraints {
