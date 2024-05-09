@@ -477,7 +477,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 20.dp, bottom = 20.dp),
+                            .padding(bottom = 20.dp),
                         horizontalAlignment = Alignment.Start
                     ) {
                         Text(
@@ -737,8 +737,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         Text(
                             text = "UV-indeks",
                             fontSize = 20.sp,
-                            modifier = Modifier
-                                .padding(start = 8.dp),
+                            modifier = Modifier,
                             style = TextStyle(
                                 color = Color.White
                             )
@@ -764,7 +763,6 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         Text(
                             text = "$uvStyrkeNå - $uvStyrkeTekst",
                             fontSize = 20.sp,
-                            modifier = Modifier.padding(top = 5.dp, bottom = 10.dp),
                             style = TextStyle(
                                 color = Color.White
                             ),
@@ -1014,7 +1012,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             text = "Kommende dager:",
                             fontSize = 30.sp,
                             modifier = Modifier
-                                .padding(top = 10.dp, bottom = 30.dp),
+                                .padding(top = 10.dp, bottom = 25.dp),
                             style = TextStyle(
                                 color = Color.White
                             )
@@ -1023,7 +1021,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                         Row(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp, vertical = 8.dp)
-                                .padding(start = 35.dp, end = 35.dp),
+                                .padding(start = 47.dp, end = 23.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
@@ -1236,7 +1234,7 @@ fun SearchBar(vm: HomeViewModel) {
     // Category Field
     Column(
         modifier = Modifier
-            .padding(top = 30.dp)
+            .padding(top = 10.dp, bottom = 20.dp)
             .padding(horizontal = 30.dp)
             .fillMaxWidth()
             .clickable(
@@ -1404,6 +1402,7 @@ fun WarningBox(headline: String, subtitle: String, info: String,  iconResourceId
             containerColor = Color(0xFFFFCF72),
         ),
         modifier = Modifier
+            .padding(top = 20.dp)
             .clickable { expandedState = !expandedState }
             .fillMaxWidth()
             .animateContentSize(
