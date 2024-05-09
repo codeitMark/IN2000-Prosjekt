@@ -1023,11 +1023,39 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             text = "Kommende dager:",
                             fontSize = 30.sp,
                             modifier = Modifier
-                                .padding(top = 10.dp, bottom = 10.dp),
+                                .padding(top = 10.dp, bottom = 30.dp),
                             style = TextStyle(
                                 color = Color.White
                             )
                         )
+
+                        Row(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                                .padding(start = 35.dp, end = 35.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = "Dato",
+                                modifier = Modifier
+                                    .weight(1f),
+                                textAlign = TextAlign.Start,
+                                fontWeight = Bold,
+                                style = TextStyle(
+                                    color = Color.White
+                                )
+                            )
+                            Text(
+                                text = "Høyest / Lavest",
+                                modifier = Modifier
+                                    .weight(1f),
+                                textAlign = TextAlign.End,
+                                fontWeight = Bold,
+                                style = TextStyle(
+                                    color = Color.White
+                                )
+                            )
+                        }
 
                         // Opprett en Calendar-instans
                         val calendar = Calendar.getInstance()
@@ -1057,8 +1085,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             val maxTemp = dayData?.first?.roundToInt()
                             val minTemp = dayData?.second?.roundToInt()
 
-
-                            // Formattert dato (ukedag, måned, dato)
+                            // Formattert dato (ukedag, dato, måned)
                             val formattedDate = "$dayOfWeekText, $dayOfMonth. $monthText"
 
                             Line()
@@ -1869,7 +1896,6 @@ fun DayTemperatureItem(date: String, maxTemperature: Int, minTemperature: Int, v
             style = TextStyle(
                 color = Color.White
             )
-
         )
     }
 }
