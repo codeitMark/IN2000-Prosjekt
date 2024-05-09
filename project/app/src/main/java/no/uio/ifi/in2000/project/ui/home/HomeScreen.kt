@@ -16,7 +16,6 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -868,10 +867,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 20.dp)
-                ) {
-                    BoxWithConstraints {
-                        val boxHeight = this.maxHeight
-
+                    ) {
                         Row(modifier = Modifier.horizontalScroll(scrollState)) {
                             for (i in 1..13) {
                                 var time: Int =
@@ -888,7 +884,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                     time += 24
                                 }
 
-                                var formattedTime = String.format(
+                                val formattedTime = String.format(
                                     "%02d:00",
                                     time
                                 )// Formatere tiden til alltid å ha to sifre
@@ -908,8 +904,8 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                         vm.weatherData != null && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 6.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 8.0 -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Høyt"
                                         else -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Veldig høyt"
                                     },
-                                    width = 130,
-                                    height = 280,
+                                    width = 140,
+                                    height = 275,
                                     expanded = allBoxesExpanded,
                                     weatherIcon = {
                                         val iconids = LocalContext.current.resources.getIdentifier(vm.locationForecastIcons[i], "drawable", LocalContext.current.packageName) //ignore warning. It makes R.drawable dynamic instead of static, allowing us to apply variable names (since weather icons change a lot)
@@ -920,36 +916,32 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                             painter = painterResource(id = iconids),
                                             contentDescription = "Weather icon"
                                         )
-
                                     }
-
-
                                 )
                                 Spacer(modifier = Modifier.width(16.dp))
                             }
                         }
                     }
-                }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 20.dp),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    IconButton(
-                        onClick = {
-                            allBoxesExpanded.value = !allBoxesExpanded.value
-                        },
-                        modifier = Modifier.rotate(rotationState.value)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 20.dp),
+                        horizontalArrangement = Arrangement.Center
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowDropDown,
-                            contentDescription = "Drop-Down Arrow",
-                            tint = Color.White,
-                            modifier = Modifier.size(200.dp)
-                        )
+                        IconButton(
+                            onClick = {
+                                allBoxesExpanded.value = !allBoxesExpanded.value
+                            },
+                            modifier = Modifier.rotate(rotationState.value)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.ArrowDropDown,
+                                contentDescription = "Drop-Down Arrow",
+                                tint = Color.White,
+                                modifier = Modifier.size(200.dp)
+                            )
+                        }
                     }
-                }
 
                 //Small box component -> only time and icons
                     /*
