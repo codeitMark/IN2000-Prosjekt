@@ -31,6 +31,8 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+// Comment on main
+
 @Composable
 fun MainScreen(){
     HomeScreen()
