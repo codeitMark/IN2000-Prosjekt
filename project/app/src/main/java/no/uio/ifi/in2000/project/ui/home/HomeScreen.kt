@@ -621,7 +621,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                     }
 
                     Text(
-                        text = "Neste timer",
+                        text = "Time for time",
                         fontSize = 30.sp,
                         modifier = Modifier
                             .padding(bottom = 10.dp, start = 20.dp)
