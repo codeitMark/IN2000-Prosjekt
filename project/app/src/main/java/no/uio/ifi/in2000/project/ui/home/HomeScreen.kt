@@ -1110,7 +1110,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
 
                             val symbolCode = vm.weatherData!!.properties.timeseries.find {
                                 val time = it.time
-                                time.endsWith("T09:00:00Z")
+                                time.endsWith("T06:00:00Z")
                             }!!.data.next_12_hours.summary.symbol_code
 
                             Line()
