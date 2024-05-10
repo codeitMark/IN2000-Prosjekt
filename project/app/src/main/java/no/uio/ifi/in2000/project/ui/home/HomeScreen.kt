@@ -1108,6 +1108,12 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             // Formattert dato (ukedag, dato, måned)
                             val formattedDate = "$dayOfWeekText, $dayOfMonth. $monthText"
 
+                            val symbolCode = vm.weatherData!!.properties.timeseries.find {
+                                val time = it.time
+                                val timeOfDay = time.substring(11, 13).toInt()
+                                time.endsWith("T09:00:00Z") && timeOfDay >= 9
+                            }!!.data.next_12_hours.summary.symbol_code
+
                             Line()
 
                             DayTemperatureItem(
@@ -1115,6 +1121,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                 maxTemperature = maxTemp!!,
                                 minTemperature = minTemp!!,
                                 valgtTemperatur = valgtTemperatur,
+                                weatherIcon = symbolCode
                             )
                         }
                         Line()
@@ -1912,7 +1919,7 @@ fun BoxComponent(
 }
 
 @Composable
-fun DayTemperatureItem(date: String, maxTemperature: Int, minTemperature: Int, valgtTemperatur: String) {
+fun DayTemperatureItem(date: String, maxTemperature: Int, minTemperature: Int, valgtTemperatur: String, weatherIcon: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -1948,10 +1955,9 @@ fun DayTemperatureItem(date: String, maxTemperature: Int, minTemperature: Int, v
                 color = Color.White
             )
         )
-        // Placeholder for værsymbol
         Image(
-            painter = painterResource(id = R.drawable.clearsky_day),
-            contentDescription = "Weather Icon",
+            painter = painterResource(id = LocalContext.current.resources.getIdentifier(weatherIcon, "drawable", LocalContext.current.packageName)),
+            contentDescription = "Weather icon",
             modifier = Modifier.size(40.dp)
         )
     }
