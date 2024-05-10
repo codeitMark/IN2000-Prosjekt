@@ -1067,7 +1067,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             Text(
                                 text = "Vær",
                                 modifier = Modifier
-                                    .padding(end = 12.dp)
+                                    .padding(end = 18.dp)
                                     .weight(1f),
                                 textAlign = TextAlign.End,
                                 fontWeight = Bold,
@@ -1110,7 +1110,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
 
                             val symbolCode = vm.weatherData!!.properties.timeseries.find {
                                 val time = it.time
-                                time.startsWith("${date}T06:00:00Z")
+                                time == "${date}T06:00:00Z"
                             }!!.data.next_12_hours.summary.symbol_code
 
                             Line()
@@ -1957,7 +1957,8 @@ fun DayTemperatureItem(date: String, maxTemperature: Int, minTemperature: Int, v
         Image(
             painter = painterResource(id = LocalContext.current.resources.getIdentifier(weatherIcon, "drawable", LocalContext.current.packageName)),
             contentDescription = "Weather icon",
-            modifier = Modifier.size(40.dp)
+            modifier = Modifier
+                .size(50.dp)
         )
     }
 }
