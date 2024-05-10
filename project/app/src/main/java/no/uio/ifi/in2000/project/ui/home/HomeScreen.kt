@@ -1292,16 +1292,18 @@ fun WarningBox(headline: String, subtitle: String, info: String,  iconResourceId
                     painter = painterResource(id = iconResourceId),
                     contentDescription = "Warning icon",
                     modifier = Modifier
-                        .size(130.dp)
-                        .padding(top = 20.dp, bottom = 20.dp)
+                        .size(120.dp)
+                        .padding(start = 20.dp, top = 20.dp, end = 10.dp)
                 )
 
                 Column {
                     Text(
                         text = headline,
+                        modifier = Modifier
+                            .padding(top = 10.dp),
                         style = TextStyle(
                             fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = Bold,
                             color = Color(0xFF000000),
                         )
                     )
