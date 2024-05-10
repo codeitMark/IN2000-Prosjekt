@@ -8,6 +8,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusRequester
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.project.data.alerts.MetAlertsRepository
@@ -39,6 +41,10 @@ class HomeViewModel : ViewModel(){
     private val searchRep = SearchRepository()
 
     var responseStatus by mutableStateOf(false) //made mutableStateOf so HomeScreen updates if responseStatus changes. Without this it will NOT update since the combination of weatherData and alertsData in init takes too long.
+
+    init {
+        loadCurrent("Oslo, Norway")
+    }
 
     // Filled with placeholders. This is because we have to create an instance of the class.
     var weatherData: LocationForecastResponse? by mutableStateOf(
@@ -82,9 +88,6 @@ class HomeViewModel : ViewModel(){
     //private set gjør at variabelen kan kun endres inni klassen. Dette sørger for at det ikke kan endres av noe fra HomeScreen/utenfor HVM.
 
 
-    init {
-        loadCurrent("Oslo, Norway")
-    }
 
     var alertsData: MetAlertsResponse? by mutableStateOf(MetAlertsResponse(listOf(), String(), String(), String()))
         private set

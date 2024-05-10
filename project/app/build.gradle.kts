@@ -86,4 +86,6 @@ dependencies {
     implementation("io.coil-kt:coil-svg:$coil_version")
 
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.8")
+
+    implementation("com.google.android.gms:play-services-location:21.2.0")
 }

@@ -98,9 +98,9 @@ import java.util.Locale
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
-@Preview(showBackground = true, showSystemUi = true)
+//@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun HomeScreen(vm: HomeViewModel = viewModel()) {
+fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
 
     val scrollState = rememberScrollState()
     val scrollStateVertical = rememberScrollState()
@@ -155,6 +155,8 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
         //verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Text(text = "Latitude: $lat", color = Color.White)
+        Text(text = "Longitude: $lon", color = Color.White)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
