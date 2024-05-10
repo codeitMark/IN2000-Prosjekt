@@ -109,6 +109,11 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
         mutableStateOf(false)
     }
 
+    if (lat != 0.0 && lon != 0.0 && vm.firstLoad) {
+        vm.loadCurrentFromCoordinates(lat, lon)
+        vm.firstLoad = false
+    }
+
     var switchChecked by remember {
         mutableStateOf(false)
     }
@@ -155,8 +160,6 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
         //verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Latitude: $lat", color = Color.White)
-        Text(text = "Longitude: $lon", color = Color.White)
         Row(
             modifier = Modifier
                 .fillMaxWidth()

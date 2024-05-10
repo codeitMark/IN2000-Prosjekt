@@ -11,15 +11,18 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import no.uio.ifi.in2000.project.ui.home.HomeScreen
+import no.uio.ifi.in2000.project.ui.home.HomeViewModel
 import no.uio.ifi.in2000.project.ui.theme.ProjectTheme
 
 class MainActivity : ComponentActivity() {
@@ -27,8 +30,8 @@ class MainActivity : ComponentActivity() {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     // private var lat: Double = 0.0
     //private var lon: Double = 0.0
-    var lat: Double by mutableStateOf(0.0)
-    var lon: Double by mutableStateOf(0.0)
+    var lat: Double by mutableDoubleStateOf(0.0)
+    var lon: Double by mutableDoubleStateOf(0.0)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)

@@ -9,6 +9,7 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.get
 import io.ktor.serialization.gson.gson
 import no.uio.ifi.in2000.project.model.search.AutoCompleteResponse
+import no.uio.ifi.in2000.project.model.search.ReverseGeocodingResponse
 
 
 data class SearchDataSource(private val path: String = "https://api.geoapify.com") {
@@ -36,6 +37,21 @@ data class SearchDataSource(private val path: String = "https://api.geoapify.com
                 null //Innholdet blir null uansett, bare at man får LocationForecastResponse objekt med parameterne null. Enklere å bare gjøre det til null tidlig nå, så slipper vi å lage en if-sjekk senere for om det det som er inni er null.
             }
         } catch (e: Exception){
+            null
+        }
+    }
+
+    suspend fun getUserLocation(lat: Double, lon: Double): ReverseGeocodingResponse? {
+        return try {
+            val httpResponse = client.get("/v1/geocode/reverse?lat=$lat&lon=$lon&type=postcode&lang=en&limit=1&format=json&apiKey=$apiKey")
+            connected = true
+            if (httpResponse.status.value == 200) {
+                authorized = true
+                httpResponse.body<ReverseGeocodingResponse>()
+            } else {
+                null
+            }
+        } catch (e: Exception) {
             null
         }
     }

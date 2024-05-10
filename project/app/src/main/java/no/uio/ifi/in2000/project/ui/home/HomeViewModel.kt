@@ -42,10 +42,6 @@ class HomeViewModel : ViewModel(){
 
     var responseStatus by mutableStateOf(false) //made mutableStateOf so HomeScreen updates if responseStatus changes. Without this it will NOT update since the combination of weatherData and alertsData in init takes too long.
 
-    init {
-        loadCurrent("Oslo, Norway")
-    }
-
     // Filled with placeholders. This is because we have to create an instance of the class.
     var weatherData: LocationForecastResponse? by mutableStateOf(
         LocationForecastResponse(
@@ -100,6 +96,8 @@ class HomeViewModel : ViewModel(){
 
     var metAlertsIcons: MutableList<String>? = mutableListOf<String>()
         private set
+
+    var firstLoad = true
 
     // Filled with placeholders. This is because we have to create an instance of the class.
     var sunrise: SunriseResponse? by mutableStateOf(
@@ -207,6 +205,28 @@ class HomeViewModel : ViewModel(){
             }
             //Log.i("HOMEVIEWMODEL INIT", "Initiated.")
             //weatherUiState = weatherUiState.copy(weather = weather) //same functionality as weatherData = locationForecastRep.fetchWeather(lat, lon)
+        }
+    }
+
+    fun loadCurrentFromCoordinates(lat: Double, lon: Double) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val response = searchRep.fetchUserLocationData(lat, lon)
+            if (response != null) {
+                val item = response.results[0]
+                currentFormatted = item.formatted
+                name = item.timezone.name
+            sjekkDST(name)
+            if (dst){
+                timeZone = item.timezone.offset_DST //Daylight Saving Time. Sommertid.
+                offset = item.timezone.offset_DST_seconds/60/60
+            } else{
+                timeZone = item.timezone.offset_STD //Standard Time. Norge er i DST, mens steder som New Zealand er i STD.
+                offset = item.timezone.offset_STD_seconds/60/60
+            }
+
+            loadData(lang, lat, lon, timeZone)
+            }
+            //loadData(59.9133301, 10.7389701)
         }
     }
 
