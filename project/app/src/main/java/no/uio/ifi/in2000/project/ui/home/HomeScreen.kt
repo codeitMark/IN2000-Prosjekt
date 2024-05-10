@@ -239,15 +239,13 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
             SearchBar(vm)
 
             // Innstillingsikonet, kun synlig når boksen ikke er åpen
-            AnimatedVisibility(visible = !showSettings) {
                 IconButton(
-                    onClick = { showSettings = true },
+                    onClick = { showSettings = !showSettings },
                     modifier = Modifier.size(60.dp),
                     colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
                 ) {
                     Icon(Icons.Default.Settings, contentDescription = "Settings")
                 }
-            }
         }
 
 
@@ -888,104 +886,6 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                     }
                 }
             }
-
-
-
-
-                    /*
-                    Row(modifier = Modifier.horizontalScroll(scrollState)) {
-                        for (i in 1..13) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center,
-                                modifier = Modifier.size(120.dp, 280.dp)
-                            ) {
-                                var time: Int =
-                                    vm.weatherData!!.properties.timeseries[i].time.removeRange(
-                                        0,
-                                        11
-                                    )
-                                        .removeRange(2, 9)
-                                        .toInt()+vm.offset //local time since locationForecast is in UTC/STD.
-                                if (time >= 24){
-                                    time -= 24
-                                }
-                                Text(text = "kl. $time", fontSize = 30.sp)
-                                AsyncImage(
-                                    modifier = Modifier.size(70.dp),
-                                    model = ImageRequest.Builder(LocalContext.current)
-                                        .data(vm.locationForecastIcons[i])
-                                        .decoderFactory(SvgDecoder.Factory())
-                                        .build(),
-                                    contentDescription = "Weather icon",
-                                )
-                                if (valgtTemperatur == "Celsius") {
-                                    Text(
-                                        text = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature.roundToInt()}°C",
-                                        fontSize = 30.sp,
-                                        fontWeight = Bold
-                                    )
-                                } else if (valgtTemperatur == "Fahrenheit") {
-                                    Text(
-                                        text = "${(vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F",
-                                        fontSize = 30.sp,
-                                        fontWeight = Bold
-                                    )
-                                }
-                                Text(
-                                    text = "Vind: ${vm.weatherData!!.properties.timeseries[i].data.instant.details.wind_speed}m/s",
-                                    fontSize = 15.sp
-                                )
-
-                                Text(
-                                    text = "Nedbør: ${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount}mm",
-                                    fontSize = 15.sp
-                                )
-
-                                if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 3.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 6.0) {
-                                    AsyncImage(
-                                        modifier = Modifier
-                                            .size(40.dp),
-                                        model = ImageRequest.Builder(LocalContext.current)
-                                            .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-yellow.svg")
-                                            .decoderFactory(SvgDecoder.Factory())
-                                            .build(),
-                                        contentDescription = "UV-strength icon."
-                                    )
-                                    //Text(text = "Husk å ta på solkrem hvis du skal være ute lenge!", modifier = Modifier.padding(14.dp))
-                                } else if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 6.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 8.0) {
-                                    AsyncImage(
-                                        modifier = Modifier
-                                            .size(40.dp),
-                                        model = ImageRequest.Builder(LocalContext.current)
-                                            .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-orange.svg")
-                                            .decoderFactory(SvgDecoder.Factory())
-                                            .build(),
-                                        contentDescription = "UV-strength icon."
-                                    )
-                                    //Text(text = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola.", modifier = Modifier.padding(14.dp))
-                                } else if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 8.0) {
-                                    AsyncImage(
-                                        modifier = Modifier
-                                            .size(40.dp),
-                                        model = ImageRequest.Builder(LocalContext.current)
-                                            .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-red.svg")
-                                            .decoderFactory(SvgDecoder.Factory())
-                                            .build(),
-                                        contentDescription = "UV-strength icon."
-                                    )
-                                    //Text(text = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.", modifier = Modifier.padding(14.dp))
-                                }
-                                Text(
-                                    text = "UV styrke: ${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky}",
-                                    fontSize = 20.sp,
-                                    modifier = Modifier.padding(start = 23.dp)
-                                )
-                            }
-                        }
-                    }
-
-                     */
                 }
             }
 
