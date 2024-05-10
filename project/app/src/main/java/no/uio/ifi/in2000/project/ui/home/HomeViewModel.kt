@@ -33,6 +33,8 @@ import java.util.Date
 import no.uio.ifi.in2000.project.model.sunrise.Geometry as SunriseGeometry
 import no.uio.ifi.in2000.project.model.sunrise.Properties as SunriseProperties
 
+// Dataklasse for å representere temperaturprognosen for en dag
+data class TemperatureForecast(val date: String, val maxTemperature: Int, val minTemperature: Int)
 
 class HomeViewModel : ViewModel(){
     private val locationForecastRep = LocationForecastRepository()
@@ -152,6 +154,8 @@ class HomeViewModel : ViewModel(){
 
     val focusRequester by mutableStateOf(FocusRequester())
 
+    var currentTime by mutableStateOf("")
+        private set
 
     // Placeholdere for innholdet. Disse må være initialisert, derfor er det placeholdere.
     //Parametere for LocationForecast
@@ -319,5 +323,4 @@ class HomeViewModel : ViewModel(){
     fun getAlertIcons(): Map<String, String> {
         return metAlertsRep.alertIcons
     }
-
 }

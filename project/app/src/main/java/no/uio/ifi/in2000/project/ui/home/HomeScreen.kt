@@ -833,6 +833,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
 
                             Line()
 
+                            // Vis maks- og minimumstemperaturene for dagen
                             DayTemperatureItem(
                                 date = formattedDate,
                                 maxTemperature = maxTemp!!,
@@ -847,6 +848,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
             }
     }
 }
+
 
 @Composable
 fun DisplayItems(items: List<ApiProperties>?) {
@@ -1041,7 +1043,6 @@ fun DropdownRow(
     ) {
         Text(text = title, fontSize = 16.sp)
     }
-
 }
 
 //Composable to make the warning box
