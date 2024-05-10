@@ -35,7 +35,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
@@ -45,10 +45,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -74,6 +74,7 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -85,7 +86,6 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
@@ -160,314 +160,94 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
         //verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+        // Innstillingsboksen, åpnes på høyre hjørne
+        AnimatedVisibility(visible = showSettings) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateContentSize(
+                        animationSpec = tween(
+                            durationMillis = 300,
+                            easing = LinearOutSlowInEasing
+                        )
+                    ),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF38424D))
+            ) {
+
+                Row (
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    var celsius by remember { mutableStateOf(0xFFFFFFFF) }
+                    var fahrenheit by remember { mutableStateOf(0xFF8C9299) }
+                    var checked by remember { mutableStateOf(false) }
+
+                    Row (
+                        modifier = Modifier.padding(vertical = 10.dp)
+                    ) {
+                        SettingsText(17, color = celsius, content = "Celsius", 10, 5, 0, 5)
+                        SettingsText(17, color = 0xFFFFFFFF, content = " / ", 0, 5, 0, 5)
+                        SettingsText(17, color = fahrenheit, content = "Fahrenheit", 0, 5, 50, 5)
+
+                    Switch(
+                        modifier = Modifier
+                            .size(2.dp)
+                            .padding(0.dp, 18.dp, 0.dp, 0.dp),
+                        checked = checked,
+                        onCheckedChange = {
+                            checked = it
+                            if (celsius == 0xFFFFFFFF) {
+                                celsius = 0xFF8C9299
+                                fahrenheit = 0xFFFFFFFF
+                            } else {
+                                celsius = 0xFFFFFFFF
+                                fahrenheit = 0xFF8C9299
+                            }
+                            valgtTemperatur = if (valgtTemperatur == "Celsius") {
+                                "Fahrenheit" //add this to viewmodel so we can process this in repo?
+                            } else {
+                                "Celsius"
+                            } },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = Color(0xFF38424D),
+                            checkedTrackColor = Color(0xFFFFFFFF),
+                            uncheckedThumbColor = Color(0xFFFFFFFF),
+                            uncheckedTrackColor = Color(0xFF38424D),
+                            )
+                    )
+                    }
+                    IconButton(
+                        onClick = { showSettings = false }, // Lukker boksen når klikket
+                        modifier = Modifier
+                            .size(50.dp),
+                        colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
+                    ) {
+                        Icon(Icons.Default.Close, contentDescription = "Close settings")
+                    }
+                }
+            }
+        }
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Søkeikonet, alltid synlig
-            IconButton(
-                onClick = { showSearchbar = !showSearchbar },
-                modifier = Modifier.size(50.dp),
-                colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
-            ) {
-                Icon(Icons.Default.Search, contentDescription = "Search")
-            }
+            SearchBar(vm)
 
             // Innstillingsikonet, kun synlig når boksen ikke er åpen
-            AnimatedVisibility(visible = !showSettings) {
                 IconButton(
-                    onClick = { showSettings = true },
-                    modifier = Modifier.size(50.dp),
+                    onClick = { showSettings = !showSettings },
+                    modifier = Modifier.size(60.dp),
                     colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
                 ) {
                     Icon(Icons.Default.Settings, contentDescription = "Settings")
                 }
-            }
-
-            // Innstillingsboksen, åpnes på høyre hjørne
-            AnimatedVisibility(visible = showSettings) {
-                Card(
-                    modifier = Modifier
-                        .width(242.dp)
-                        .animateContentSize(
-                            animationSpec = tween(
-                                durationMillis = 300,
-                                easing = LinearOutSlowInEasing
-                            )
-                        ),
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF38424D))
-                ) {
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        // Innstillingsikonet inne i boksen
-                        IconButton(
-                            onClick = { showSettings = false }, // Lukker boksen når klikket
-                            modifier = Modifier
-                                .size(50.dp),
-                            colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
-                        ) {
-                            Icon(Icons.Default.Settings, contentDescription = "Close settings")
-                        }
-
-                        Row {
-                            SettingsText(
-                                14,
-                                color = 0xFFFFFFFF,
-                                content = "Posisjonsbasert værvarsel",
-                                10,
-                                5,
-                                12,
-                                5
-                            )
-                            SwitchButton()
-                        }
-                        Line()
-
-                        Row {
-                            var celsius by remember { mutableStateOf(0xFFFFFFFF) }
-                            var fahrenheit by remember { mutableStateOf(0xFF8C9299) }
-                            var checked by remember { mutableStateOf(false) }
-
-                            SettingsText(14, color = celsius, content = "Celsius", 10, 5, 0, 5)
-                            SettingsText(14, color = 0xFFFFFFFF, content = " / ", 0, 5, 0, 5)
-                            SettingsText(14, color = fahrenheit, content = "Fahrenheit", 0, 5, 50, 5)
-
-                            Switch(
-                                modifier = Modifier
-                                    .size(2.dp)
-                                    .padding(25.dp, 15.dp, 0.dp, 0.dp),
-                                checked = checked,
-                                onCheckedChange = {
-                                    checked = it
-                                    if (celsius == 0xFFFFFFFF) {
-                                        celsius = 0xFF8C9299
-                                        fahrenheit = 0xFFFFFFFF
-                                    } else {
-                                        celsius = 0xFFFFFFFF
-                                        fahrenheit = 0xFF8C9299
-                                    }
-                                    valgtTemperatur = if (valgtTemperatur == "Celsius") {
-                                        "Fahrenheit" //add this to viewmodel so we can process this in repo?
-                                    } else {
-                                        "Celsius"
-                                    }
-                                    Log.i("TEMPERATUR", valgtTemperatur)
-
-                                },
-                                colors = SwitchDefaults.colors(
-                                    checkedThumbColor = Color(0xFF38424D),
-                                    checkedTrackColor = Color(0xFFFFFFFF),
-                                    uncheckedThumbColor = Color(0xFFFFFFFF),
-                                    uncheckedTrackColor = Color(0xFF38424D),
-                                )
-                            )
-                        }
-                        Line()
-
-                        Row {
-                            SettingsText(
-                                14,
-                                color = 0xFFFFFFFF,
-                                content = "Varslinger",
-                                10,
-                                5,
-                                110,
-                                5
-                            )
-                            SwitchButton()
-                        }
-
-                    }
-                    Line()
-
-                    Row {
-
-
-                        SettingsText(14, color = 0xFFFFFFFF, content = "Språk", 10, 5, 15, 5)
-                        SettingsText(14, color = 0xFF8C9299, content = valgtSpråk, 10, 5, 20, 5)
-
-                        IconButton(
-                            modifier = Modifier
-                                .padding(40.dp, 0.dp, 10.dp, 0.dp)
-                                .rotate(rotationStateSettings),
-                            onClick = {
-                                expandedStateSettings = !expandedStateSettings
-
-                            },
-                            colors = IconButtonDefaults.iconButtonColors(
-                                contentColor = Color(0xFFFFFFFF)
-                            )
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.ArrowDropDown,
-                                contentDescription = "Drop-Down Arrow"
-                            )
-                        }
-
-                    }
-                    if (expandedStateSettings) {
-                        val notClicked = 0xFF272D34
-                        val clicked = 0xFF586471
-
-                        /* var nynorsk by remember{mutableStateOf(
-                         if (chosenLanguage == "Norsk (nynorsk)") clicked
-                         else notClicked
-                     ) }*/
-                        var bokmaal by remember {
-                            mutableStateOf(
-                                if (valgtSpråk == "Norsk") clicked
-                                else notClicked
-                            )
-                        }
-                        var engelsk by remember {
-                            mutableStateOf(
-                                if (valgtSpråk == "Engelsk") clicked
-                                else notClicked
-                            )
-                        }
-
-                        //In case we want to implement nynorsk:
-                        /*
-                                Box (modifier = Modifier
-                                    .clickable(onClick = {
-                                        nynorsk = clicked
-                                        bokmaal = notClicked
-                                        engelsk = notClicked
-
-                                        chosenLanguage = "Norsk (nynorsk)"
-
-                                    })
-                                    .padding(5.dp, 3.dp)
-                                    .fillMaxWidth()
-                                    .background(color = Color(nynorsk))
-
-                                ) {
-                                    SettingsText(fontSize = 14, color = 0xFFFFFFFF, content = "Norsk (Nynorsk)", start = 10, top = 5, end = 5, bottom = 5)
-                                }*/
-
-                        Box(
-                            modifier = Modifier
-                                .clickable(onClick = {
-                                    //nynorsk = notClicked
-                                    bokmaal = clicked
-                                    engelsk = notClicked
-
-                                    valgtSpråk = "Norsk (bokmål)"
-                                })
-                                .padding(5.dp, 3.dp)
-                                .fillMaxWidth()
-                                .background(color = Color(bokmaal))
-
-                        ) {
-                            SettingsText(
-                                fontSize = 14,
-                                color = 0xFFFFFFFF,
-                                content = "Norsk (Bokmål)",
-                                start = 10,
-                                top = 5,
-                                end = 5,
-                                bottom = 5
-                            )
-                        }
-
-                        Box(
-                            modifier = Modifier
-                                .clickable(onClick = {
-                                    //nynorsk = notClicked
-                                    bokmaal = notClicked
-                                    engelsk = clicked
-
-                                    valgtSpråk = "Engelsk"
-                                })
-                                .padding(5.dp, 3.dp)
-                                .fillMaxWidth()
-                                .background(color = Color(engelsk))
-
-                        ) {
-                            SettingsText(
-                                fontSize = 14,
-                                color = 0xFFFFFFFF,
-                                content = "Engelsk",
-                                start = 10,
-                                top = 5,
-                                end = 5,
-                                bottom = 5
-                            )
-                        }
-                    }
-                }
-            }
-        }
-        /*
-        ExposedDropdownMenuBox(expanded = expandedSpråk,
-            onExpandedChange = { expandedSpråk = !expandedSpråk }) {
-            TextField(
-                modifier = Modifier
-                    .menuAnchor()
-                    .padding(top = 20.dp),
-                value = valgtSpråk,
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSpråk) },
-                label = { Text("Velg språk!") })
-
-            ExposedDropdownMenu(expanded = expandedSpråk,
-                onDismissRequest = { expandedSpråk = false }) {
-                språk.forEach {
-                    DropdownMenuItem(text = { Text(it.value) },
-                        onClick = {
-                            valgtSpråk = it.value
-                            expandedSpråk = false
-                            vm.lang = it.key
-                            vm.loadAlerts(vm.lang, vm.lat, vm.lon)
-                        }
-                    )
-                }
-            }
-        }*/
-
-        if(showSearchbar){
-            SearchBar(vm)
         }
 
-        /*
-        For å vise resultater fra API kall dersom dropdown ikke kommer opp
-        Column {
-            DisplayItems(items = vm.suggestions)
-        }
-         */
-        /*Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-                    .weight(1f),
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(modifier = Modifier.padding(8.dp), text = "Celsius/Fahrenheit")
-            }
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-                    .weight(1f),
-                horizontalAlignment = Alignment.End
-            ) {
-                Switch(checked = switchChecked, onCheckedChange = {
-                    switchChecked = !switchChecked
-                    valgtTemperatur = if (valgtTemperatur == "Celsius") {
-                        "Fahrenheit" //add this to viewmodel so we can process this in repo?
-                    } else {
-                        "Celsius"
-                    }
-                    Log.i("TEMPERATUR", valgtTemperatur)
-                })
-            }
-        }
-*/
 
         if (vm.initialized) {
             //null check for null-safety
@@ -878,7 +658,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                         val boxHeight = this.maxHeight
 
                         Row(modifier = Modifier.horizontalScroll(scrollState)) {
-                            for (i in 1..13) {
+                            for (i in 1..35) {
                                 var time: Int =
                                     vm.weatherData!!.properties.timeseries[i].time.removeRange(
                                         0,
@@ -1106,104 +886,6 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                     }
                 }
             }
-
-
-
-
-                    /*
-                    Row(modifier = Modifier.horizontalScroll(scrollState)) {
-                        for (i in 1..13) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center,
-                                modifier = Modifier.size(120.dp, 280.dp)
-                            ) {
-                                var time: Int =
-                                    vm.weatherData!!.properties.timeseries[i].time.removeRange(
-                                        0,
-                                        11
-                                    )
-                                        .removeRange(2, 9)
-                                        .toInt()+vm.offset //local time since locationForecast is in UTC/STD.
-                                if (time >= 24){
-                                    time -= 24
-                                }
-                                Text(text = "kl. $time", fontSize = 30.sp)
-                                AsyncImage(
-                                    modifier = Modifier.size(70.dp),
-                                    model = ImageRequest.Builder(LocalContext.current)
-                                        .data(vm.locationForecastIcons[i])
-                                        .decoderFactory(SvgDecoder.Factory())
-                                        .build(),
-                                    contentDescription = "Weather icon",
-                                )
-                                if (valgtTemperatur == "Celsius") {
-                                    Text(
-                                        text = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature.roundToInt()}°C",
-                                        fontSize = 30.sp,
-                                        fontWeight = Bold
-                                    )
-                                } else if (valgtTemperatur == "Fahrenheit") {
-                                    Text(
-                                        text = "${(vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F",
-                                        fontSize = 30.sp,
-                                        fontWeight = Bold
-                                    )
-                                }
-                                Text(
-                                    text = "Vind: ${vm.weatherData!!.properties.timeseries[i].data.instant.details.wind_speed}m/s",
-                                    fontSize = 15.sp
-                                )
-
-                                Text(
-                                    text = "Nedbør: ${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount}mm",
-                                    fontSize = 15.sp
-                                )
-
-                                if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 3.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 6.0) {
-                                    AsyncImage(
-                                        modifier = Modifier
-                                            .size(40.dp),
-                                        model = ImageRequest.Builder(LocalContext.current)
-                                            .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-yellow.svg")
-                                            .decoderFactory(SvgDecoder.Factory())
-                                            .build(),
-                                        contentDescription = "UV-strength icon."
-                                    )
-                                    //Text(text = "Husk å ta på solkrem hvis du skal være ute lenge!", modifier = Modifier.padding(14.dp))
-                                } else if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 6.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 8.0) {
-                                    AsyncImage(
-                                        modifier = Modifier
-                                            .size(40.dp),
-                                        model = ImageRequest.Builder(LocalContext.current)
-                                            .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-orange.svg")
-                                            .decoderFactory(SvgDecoder.Factory())
-                                            .build(),
-                                        contentDescription = "UV-strength icon."
-                                    )
-                                    //Text(text = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola.", modifier = Modifier.padding(14.dp))
-                                } else if (vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 8.0) {
-                                    AsyncImage(
-                                        modifier = Modifier
-                                            .size(40.dp),
-                                        model = ImageRequest.Builder(LocalContext.current)
-                                            .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-red.svg")
-                                            .decoderFactory(SvgDecoder.Factory())
-                                            .build(),
-                                        contentDescription = "UV-strength icon."
-                                    )
-                                    //Text(text = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.", modifier = Modifier.padding(14.dp))
-                                }
-                                Text(
-                                    text = "UV styrke: ${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky}",
-                                    fontSize = 20.sp,
-                                    modifier = Modifier.padding(start = 23.dp)
-                                )
-                            }
-                        }
-                    }
-
-                     */
                 }
             }
 
@@ -1216,7 +898,6 @@ fun DisplayItems(items: List<ApiProperties>?) {
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SearchBar(vm: HomeViewModel) {
@@ -1225,10 +906,6 @@ fun SearchBar(vm: HomeViewModel) {
     val sug = mutableListOf<String>()
     items.forEach { item ->
         sug.add(item.formatted)
-    }
-
-    var category by remember {
-        mutableStateOf("")
     }
 
     val heightTextFields by remember {
@@ -1247,12 +924,14 @@ fun SearchBar(vm: HomeViewModel) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
+    val configuration = LocalConfiguration.current
+
     // Category Field
     Column(
         modifier = Modifier
-            .padding(top = 30.dp)
-            .padding(horizontal = 30.dp)
-            .fillMaxWidth()
+            .padding(top = 5.dp)
+            .padding(horizontal = 10.dp)
+            .width((configuration.screenWidthDp - 75).dp)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
@@ -1266,15 +945,15 @@ fun SearchBar(vm: HomeViewModel) {
         Column(modifier = Modifier.fillMaxWidth()) {
 
             Row(modifier = Modifier.fillMaxWidth()) {
-                TextField(
+                OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(heightTextFields)
-                        .clip(RoundedCornerShape(50.dp))
+                        .clip(RoundedCornerShape(30.dp))
                         .border(
-                            width = 1.8.dp,
-                            color = Color.Black,
-                            shape = RoundedCornerShape(50.dp)
+                            width = 2.dp,
+                            color = Color.White,
+                            shape = RoundedCornerShape(30.dp)
                         )
                         .focusRequester(vm.focusRequester)
                         .onKeyEvent { event ->
@@ -1289,22 +968,22 @@ fun SearchBar(vm: HomeViewModel) {
                         .onGloballyPositioned { coordinates ->
                             textFieldSize = coordinates.size.toSize()
                         },
-                    value = category,
+                    value = vm.searchField,
                     onValueChange = {
-                        category = it
+                        vm.searchField = it
                         vm.expanded = true
                         vm.loadSuggestions(it)
                     },
-                    placeholder = { Text("Søk i lokasjoner") },
+                    placeholder = { Text("Søk på sted") },
                     colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color(0xFFFFFFFF),
-                        focusedIndicatorColor = Color(0xFFFFFFFF),
-                        unfocusedIndicatorColor = Color(0xFFFFFFFF),
-                        cursorColor = Color.Black
+                        containerColor = Color(0xFF272D34),
+                        focusedIndicatorColor = Color(0xFF272D34),
+                        unfocusedIndicatorColor = Color(0xFF272D34),
+                        cursorColor = Color.White
                     ),
                     textStyle = TextStyle(
-                        color = Color.Black,
-                        fontSize = 16.sp
+                        color = Color.White,
+                        fontSize = 18.sp
                     ),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Text,
@@ -1313,12 +992,12 @@ fun SearchBar(vm: HomeViewModel) {
                     singleLine = true,
                     trailingIcon = {
                             Row {
-                                if (category.isNotEmpty()) {
-                                    IconButton(onClick = { category = "" }) {
+                                if (vm.searchField.isNotEmpty()) {
+                                    IconButton(onClick = { vm.searchField = "" }) {
                                         Icon(
                                             imageVector = Icons.Rounded.Clear,
                                             contentDescription = "Clear",
-                                            tint = Color.Black
+                                            tint = Color.White
                                         )
                                     }
                                 }
@@ -1327,7 +1006,7 @@ fun SearchBar(vm: HomeViewModel) {
                                         modifier = Modifier.size(24.dp),
                                         imageVector = Icons.Rounded.KeyboardArrowDown,
                                         contentDescription = "arrow",
-                                        tint = Color.Black
+                                        tint = Color.White
                                     )
                                 }
                         }
@@ -1347,17 +1026,17 @@ fun SearchBar(vm: HomeViewModel) {
                         modifier = Modifier.heightIn(max = 850.dp),
                     ) {
 
-                        if (category.isNotEmpty()) {
+                        if (vm.searchField.isNotEmpty()) {
                             items(
                                 sug.filter {
                                     it.lowercase()
-                                        .contains(category.lowercase()) || it.lowercase()
+                                        .contains(vm.searchField.lowercase()) || it.lowercase()
                                         .contains("others")
                                 }
                                     .sorted()
                             ) {
                                 DropdownRow(vm, focusManager, keyboardController, title = it) { title ->
-                                    category = title
+                                    vm.searchField = title
                                     vm.expanded = true
                                 }
                             }
@@ -1366,7 +1045,7 @@ fun SearchBar(vm: HomeViewModel) {
                                 sug.sorted()
                             ) {
                                 DropdownRow(vm, focusManager, keyboardController, title = it) { title ->
-                                    category = title
+                                    vm.searchField = title
                                     vm.expanded = true
                                 }
                             }
@@ -1397,6 +1076,7 @@ fun DropdownRow(
                 vm.expanded = false
                 kb?.hide()
                 fm.clearFocus()
+                vm.searchField = ""
             }
             .padding(10.dp)
     ) {

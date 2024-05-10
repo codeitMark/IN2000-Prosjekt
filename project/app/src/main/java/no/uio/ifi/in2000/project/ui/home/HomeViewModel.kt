@@ -99,6 +99,8 @@ class HomeViewModel : ViewModel(){
 
     var firstLoad = true
 
+    var searchField: String by mutableStateOf("")
+
     // Filled with placeholders. This is because we have to create an instance of the class.
     var sunrise: SunriseResponse? by mutableStateOf(
         SunriseResponse(
