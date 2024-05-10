@@ -1023,7 +1023,8 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                     )
 
                     Column(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
@@ -1055,6 +1056,18 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             Text(
                                 text = "Høyest / Lavest",
                                 modifier = Modifier
+                                    .padding(start = 8.dp)
+                                    .weight(1f),
+                                textAlign = TextAlign.Center,
+                                fontWeight = Bold,
+                                style = TextStyle(
+                                    color = Color.White
+                                )
+                            )
+                            Text(
+                                text = "Vær",
+                                modifier = Modifier
+                                    .padding(end = 12.dp)
                                     .weight(1f),
                                 textAlign = TextAlign.End,
                                 fontWeight = Bold,
@@ -1096,12 +1109,12 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                             val formattedDate = "$dayOfWeekText, $dayOfMonth. $monthText"
 
                             Line()
-                            // Vis maks- og minimumstemperaturene for dagen
+
                             DayTemperatureItem(
                                 date = formattedDate,
                                 maxTemperature = maxTemp!!,
                                 minTemperature = minTemp!!,
-                                valgtTemperatur = valgtTemperatur
+                                valgtTemperatur = valgtTemperatur,
                             )
                         }
                         Line()
@@ -1902,18 +1915,20 @@ fun BoxComponent(
 fun DayTemperatureItem(date: String, maxTemperature: Int, minTemperature: Int, valgtTemperatur: String) {
     Row(
         modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .padding(start = 35.dp, end = 35.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 3.dp)
+            .padding(start = 25.dp, end = 25.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = date,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f),
             style = TextStyle(
                 color = Color.White
             )
         )
-        Spacer(modifier = Modifier.width(10.dp))
         val formattedMaxTemp = if (valgtTemperatur == "Celsius") {
             "$maxTemperature°C"
         } else {
@@ -1929,10 +1944,15 @@ fun DayTemperatureItem(date: String, maxTemperature: Int, minTemperature: Int, v
         Text(
             text = "$formattedMaxTemp / $formattedMinTemp",
             modifier = Modifier.weight(1f),
-            textAlign = TextAlign.End,
             style = TextStyle(
                 color = Color.White
             )
+        )
+        // Placeholder for værsymbol
+        Image(
+            painter = painterResource(id = R.drawable.clearsky_day),
+            contentDescription = "Weather Icon",
+            modifier = Modifier.size(40.dp)
         )
     }
 }
