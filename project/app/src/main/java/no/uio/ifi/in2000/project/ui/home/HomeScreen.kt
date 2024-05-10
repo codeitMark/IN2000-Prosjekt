@@ -621,10 +621,10 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                     }
 
                     Text(
-                        text = "  Idag",
+                        text = "Neste timer",
                         fontSize = 30.sp,
                         modifier = Modifier
-                            .padding(bottom = 10.dp)
+                            .padding(bottom = 10.dp, start = 20.dp)
                             .align(Alignment.Start),
                         style = TextStyle(
                             color = Color.White
