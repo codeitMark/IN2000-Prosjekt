@@ -36,7 +36,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
@@ -50,7 +49,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -88,7 +86,6 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
@@ -1011,10 +1008,6 @@ fun SearchBar(vm: HomeViewModel) {
         sug.add(item.formatted)
     }
 
-    var category by remember {
-        mutableStateOf("")
-    }
-
     val heightTextFields by remember {
         mutableStateOf(55.dp)
     }
@@ -1075,13 +1068,13 @@ fun SearchBar(vm: HomeViewModel) {
                         .onGloballyPositioned { coordinates ->
                             textFieldSize = coordinates.size.toSize()
                         },
-                    value = category,
+                    value = vm.searchField,
                     onValueChange = {
-                        category = it
+                        vm.searchField = it
                         vm.expanded = true
                         vm.loadSuggestions(it)
                     },
-                    placeholder = { Text("Søk i lokasjoner") },
+                    placeholder = { Text("Søk på sted") },
                     colors = TextFieldDefaults.textFieldColors(
                         containerColor = Color(0xFF272D34),
                         focusedIndicatorColor = Color(0xFF272D34),
@@ -1099,8 +1092,8 @@ fun SearchBar(vm: HomeViewModel) {
                     singleLine = true,
                     trailingIcon = {
                             Row {
-                                if (category.isNotEmpty()) {
-                                    IconButton(onClick = { category = "" }) {
+                                if (vm.searchField.isNotEmpty()) {
+                                    IconButton(onClick = { vm.searchField = "" }) {
                                         Icon(
                                             imageVector = Icons.Rounded.Clear,
                                             contentDescription = "Clear",
@@ -1133,17 +1126,17 @@ fun SearchBar(vm: HomeViewModel) {
                         modifier = Modifier.heightIn(max = 850.dp),
                     ) {
 
-                        if (category.isNotEmpty()) {
+                        if (vm.searchField.isNotEmpty()) {
                             items(
                                 sug.filter {
                                     it.lowercase()
-                                        .contains(category.lowercase()) || it.lowercase()
+                                        .contains(vm.searchField.lowercase()) || it.lowercase()
                                         .contains("others")
                                 }
                                     .sorted()
                             ) {
                                 DropdownRow(vm, focusManager, keyboardController, title = it) { title ->
-                                    category = title
+                                    vm.searchField = title
                                     vm.expanded = true
                                 }
                             }
@@ -1152,7 +1145,7 @@ fun SearchBar(vm: HomeViewModel) {
                                 sug.sorted()
                             ) {
                                 DropdownRow(vm, focusManager, keyboardController, title = it) { title ->
-                                    category = title
+                                    vm.searchField = title
                                     vm.expanded = true
                                 }
                             }
@@ -1183,6 +1176,7 @@ fun DropdownRow(
                 vm.expanded = false
                 kb?.hide()
                 fm.clearFocus()
+                vm.searchField = ""
             }
             .padding(10.dp)
     ) {
