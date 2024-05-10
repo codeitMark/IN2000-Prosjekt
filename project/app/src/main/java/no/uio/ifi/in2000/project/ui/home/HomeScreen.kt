@@ -271,7 +271,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                         Text(
                             text = "Idag",
                             fontSize = 20.sp,
-                            modifier = Modifier.padding(start = 15.dp),
+                            modifier = Modifier.padding(start = 15.dp, top = 25.dp, bottom = 5.dp),
                             style = TextStyle(
                                 color = Color.White
                             )
