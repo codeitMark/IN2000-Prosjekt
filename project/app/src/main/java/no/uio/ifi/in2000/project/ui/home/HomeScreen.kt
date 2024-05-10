@@ -16,7 +16,6 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,6 +29,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -155,6 +155,8 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                 detectTapGestures(onTap = { //hides keyboard when clicking out
                     keyboardController?.hide()
                     //vm.expanded = false //hides suggestions when clicking out.
+                    showSettings = false
+                    //hides settings when user clicking out
                 })
             },
         //verticalArrangement = Arrangement.Center,
@@ -263,7 +265,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 20.dp, bottom = 20.dp),
+                            .padding(bottom = 20.dp),
                         horizontalAlignment = Alignment.Start
                     ) {
                         Text(
@@ -289,8 +291,8 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
 
                         Row(
                             modifier = Modifier
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                                .padding(start = 25.dp, end = 40.dp),
+                                .padding(vertical = 8.dp)
+                                .padding(start = 20.dp, end = 20.dp, bottom = 50.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             val iconid = LocalContext.current.resources.getIdentifier(vm.locationForecastIcons[0], "drawable", LocalContext.current.packageName) //ignore warning. It makes R.drawable dynamic instead of static, allowing us to apply variable names (since weather icons change a lot)
@@ -302,86 +304,85 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                                 contentDescription = "Weather icon"
                             )
 
-
                             VerticalLine()
-                        // Kolonne for temperatur og værbeskrivelse
-                        Column(
-                            modifier = Modifier
-                                .padding(bottom = 60.dp)
-                        ) {
-                            val temperatureText = if (valgtTemperatur == "Celsius") {
-                                "  ${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C"
-                            } else {
-                                "  ${(vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F"
-                            }
 
-                            val currentWeatherDescription =
-                                when (vm.weatherData!!.properties.timeseries[0].data.next_1_hours.summary.symbol_code) {
-                                    "clearsky_day", "clearsky_night", "clearsky_polartwilight" -> "er klar himmel"
-                                    "fair_day", "fair_night", "fair_polartwilight" -> "er lettskyet"
-                                    "partlycloudy_day", "partlycloudy_night", "partlycloudy_polartwilight" -> "er delvis skyet"
-                                    "cloudy" -> "er overskyet"
-                                    "rainshowers_day", "rainshowers_night", "rainshowers_polartwilight" -> "er regnbyger"
-                                    "rainshowersandthunder_day", "rainshowersandthunder_night", "rainshowersandthunder_polartwilight" -> "er regnbyger og torden"
-                                    "sleetshowers_day", "sleetshowers_night", "sleetshowers_polartwilight" -> "er sluddbyger"
-                                    "snowshowers_day", "snowshowers_night", "snowshowers_polartwilight" -> "er snøbyger"
-                                    "rain" -> "regner"
-                                    "heavyrain" -> "er kraftig regn"
-                                    "heavyrainandthunder" -> "er kraftig regn og torden"
-                                    "sleet" -> "er sludd"
-                                    "snow" -> "snør"
-                                    "snowandthunder" -> "er snø og torden"
-                                    "fog" -> "er tåkete"
-                                    "sleetshowersandthunder_day", "sleetshowersandthunder_night", "sleetshowersandthunder_polartwilight" -> "er sluddbyger og torden"
-                                    "snowshowersandthunder_day", "snowshowersandthunder_night", "snowshowersandthunder_polartwilight" -> "er snøbyger og torden"
-                                    "rainandthunder" -> "er regn og torden"
-                                    "sleetandthunder" -> "er sludd og torden"
-                                    "lightrainshowersandthunder_day", "lightrainshowersandthunder_night", "lightrainshowersandthunder_polartwilight" -> "er lette regnbyger og torden"
-                                    "heavyrainshowersandthunder_day", "heavyrainshowersandthunder_night", "heavyrainshowersandthunder_polartwilight" -> "er kraftige regnbyger og torden"
-                                    "lightsleetshowersandthunder_day", "lightsleetshowersandthunder_night", "lightsleetshowersandthunder_polartwilight" -> "er lette sluddbyger og torden"
-                                    "heavysleetshowersandthunder_day", "heavysleetshowersandthunder_night", "heavysleetshowersandthunder_polartwilight" -> "er kraftige sluddbyger og torden"
-                                    "lightsnowshowersandthunder_day", "lightsnowshowersandthunder_night", "lightsnowshowersandthunder_polartwilight" -> "er lette snøbyger og torden"
-                                    "heavysnowshowersandthunder_day", "heavysnowshowersandthunder_night", "heavysnowshowersandthunder_polartwilight" -> "er kraftige snøbyger og torden"
-                                    "lightrainandthunder" -> "er lett regn og torden"
-                                    "lightsleetandthunder" -> "er lett sludd og torden"
-                                    "heavysleetandthunder" -> "er kraftig sludd og torden"
-                                    "lightsnowandthunder" -> "er lett snø og torden"
-                                    "heavysnowandthunder" -> "er kraftig snø og torden"
-                                    "lightrainshowers_day", "lightrainshowers_night", "lightrainshowers_polartwilight" -> "er lette regnbyger"
-                                    "heavyrainshowers_day", "heavyrainshowers_night", "heavyrainshowers_polartwilight" -> "er kraftige regnbyger"
-                                    "lightsleetshowers_day", "lightsleetshowers_night", "lightsleetshowers_polartwilight" -> "er lette sluddbyger"
-                                    "heavysleetshowers_day", "heavysleetshowers_night", "heavysleetshowers_polartwilight" -> "er kraftige sluddbyger"
-                                    "lightsnowshowers_day", "lightsnowshowers_night", "lightsnowshowers_polartwilight" -> "er lette snøbyger"
-                                    "heavysnowshowers_day", "heavysnowshowers_night", "heavysnowshowers_polartwilight" -> "er kraftige snøbyger"
-                                    "lightrain" -> "er lett regn"
-                                    "lightsleet" -> "er lett sludd"
-                                    "heavysleet" -> "er kraftig sludd"
-                                    "lightsnow" -> "er lett snø"
-                                    "heavysnow" -> "snør kraftig"
-                                    else -> null
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                            ) {
+                                val temperatureText = if (valgtTemperatur == "Celsius") {
+                                    "${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C"
+                                } else {
+                                    "${(vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F"
                                 }
 
-                            Text(
-                                modifier = Modifier.padding(vertical = 4.dp),
-                                text = temperatureText,
-                                fontSize = 50.sp,
-                                style = TextStyle(
-                                    color = Color.White
-                                )
-                            )
+                                val currentWeatherDescription =
+                                    when (vm.weatherData!!.properties.timeseries[0].data.next_1_hours.summary.symbol_code) {
+                                        "clearsky_day", "clearsky_night", "clearsky_polartwilight" -> "er klar himmel"
+                                        "fair_day", "fair_night", "fair_polartwilight" -> "er lettskyet"
+                                        "partlycloudy_day", "partlycloudy_night", "partlycloudy_polartwilight" -> "er delvis skyet"
+                                        "cloudy" -> "er overskyet"
+                                        "rainshowers_day", "rainshowers_night", "rainshowers_polartwilight" -> "er regnbyger"
+                                        "rainshowersandthunder_day", "rainshowersandthunder_night", "rainshowersandthunder_polartwilight" -> "er regnbyger og torden"
+                                        "sleetshowers_day", "sleetshowers_night", "sleetshowers_polartwilight" -> "er sluddbyger"
+                                        "snowshowers_day", "snowshowers_night", "snowshowers_polartwilight" -> "er snøbyger"
+                                        "rain" -> "regner"
+                                        "heavyrain" -> "er kraftig regn"
+                                        "heavyrainandthunder" -> "er kraftig regn og torden"
+                                        "sleet" -> "er sludd"
+                                        "snow" -> "snør"
+                                        "snowandthunder" -> "er snø og torden"
+                                        "fog" -> "er tåkete"
+                                        "sleetshowersandthunder_day", "sleetshowersandthunder_night", "sleetshowersandthunder_polartwilight" -> "er sluddbyger og torden"
+                                        "snowshowersandthunder_day", "snowshowersandthunder_night", "snowshowersandthunder_polartwilight" -> "er snøbyger og torden"
+                                        "rainandthunder" -> "er regn og torden"
+                                        "sleetandthunder" -> "er sludd og torden"
+                                        "lightrainshowersandthunder_day", "lightrainshowersandthunder_night", "lightrainshowersandthunder_polartwilight" -> "er lette regnbyger og torden"
+                                        "heavyrainshowersandthunder_day", "heavyrainshowersandthunder_night", "heavyrainshowersandthunder_polartwilight" -> "er kraftige regnbyger og torden"
+                                        "lightsleetshowersandthunder_day", "lightsleetshowersandthunder_night", "lightsleetshowersandthunder_polartwilight" -> "er lette sluddbyger og torden"
+                                        "heavysleetshowersandthunder_day", "heavysleetshowersandthunder_night", "heavysleetshowersandthunder_polartwilight" -> "er kraftige sluddbyger og torden"
+                                        "lightsnowshowersandthunder_day", "lightsnowshowersandthunder_night", "lightsnowshowersandthunder_polartwilight" -> "er lette snøbyger og torden"
+                                        "heavysnowshowersandthunder_day", "heavysnowshowersandthunder_night", "heavysnowshowersandthunder_polartwilight" -> "er kraftige snøbyger og torden"
+                                        "lightrainandthunder" -> "er lett regn og torden"
+                                        "lightsleetandthunder" -> "er lett sludd og torden"
+                                        "heavysleetandthunder" -> "er kraftig sludd og torden"
+                                        "lightsnowandthunder" -> "er lett snø og torden"
+                                        "heavysnowandthunder" -> "er kraftig snø og torden"
+                                        "lightrainshowers_day", "lightrainshowers_night", "lightrainshowers_polartwilight" -> "er lette regnbyger"
+                                        "heavyrainshowers_day", "heavyrainshowers_night", "heavyrainshowers_polartwilight" -> "er kraftige regnbyger"
+                                        "lightsleetshowers_day", "lightsleetshowers_night", "lightsleetshowers_polartwilight" -> "er lette sluddbyger"
+                                        "heavysleetshowers_day", "heavysleetshowers_night", "heavysleetshowers_polartwilight" -> "er kraftige sluddbyger"
+                                        "lightsnowshowers_day", "lightsnowshowers_night", "lightsnowshowers_polartwilight" -> "er lette snøbyger"
+                                        "heavysnowshowers_day", "heavysnowshowers_night", "heavysnowshowers_polartwilight" -> "er kraftige snøbyger"
+                                        "lightrain" -> "er lett regn"
+                                        "lightsleet" -> "er lett sludd"
+                                        "heavysleet" -> "er kraftig sludd"
+                                        "lightsnow" -> "er lett snø"
+                                        "heavysnow" -> "snør kraftig"
+                                        else -> null
+                                    }
 
-                            if (currentWeatherDescription != null) {
-                                val weatherSentence = "  Det $currentWeatherDescription"
                                 Text(
-                                    text = weatherSentence,
-                                    fontSize = 18.sp,
+                                    modifier = Modifier.padding(vertical = 4.dp),
+                                    text = temperatureText,
+                                    fontSize = 50.sp,
                                     style = TextStyle(
                                         color = Color.White
                                     )
                                 )
+
+                                if (currentWeatherDescription != null) {
+                                    val weatherSentence = "Det $currentWeatherDescription"
+                                    Text(
+                                        text = weatherSentence,
+                                        fontSize = 18.sp,
+                                        style = TextStyle(
+                                            color = Color.White
+                                        )
+                                    )
+                                }
                             }
-                        }
-                    }
+                         }
 
                     Column(
                         modifier = Modifier
@@ -524,8 +525,6 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                         Text(
                             text = "UV-indeks",
                             fontSize = 20.sp,
-                            modifier = Modifier
-                                .padding(start = 8.dp),
                             style = TextStyle(
                                 color = Color.White
                             )
@@ -549,9 +548,10 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                     ) {
                         UVScale(uvIndex = uvStyrkeNå)
                         Text(
+                            modifier = Modifier
+                                .padding(top = 10.dp),
                             text = "$uvStyrkeNå - $uvStyrkeTekst",
                             fontSize = 20.sp,
-                            modifier = Modifier.padding(top = 5.dp, bottom = 10.dp),
                             style = TextStyle(
                                 color = Color.White
                             ),
@@ -592,31 +592,13 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                     }
                 }
 
-
-                /*
-                    AsyncImage(
-                        modifier = Modifier
-                            .size(100.dp),
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/icon-warning-generic-red.svg")
-                            .decoderFactory(SvgDecoder.Factory())
-                            .build(),
-                        contentDescription = "UV-strength icon"
-                    )
-                    Text(
-                        text = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.",
-                        modifier = Modifier.padding(14.dp)
-                    )
-
-                 */
-
                     Column(
                         modifier = Modifier
                             .padding(start = 30.dp, end = 30.dp, top = 30.dp, bottom = 30.dp)
                     ) {
                         if (uvStyrkeNå >= 8.0) {
                             WarningBox(
-                                headline = "Veldig høy UV-indeks!",
+                                headline = "Veldig høy\nUV-indeks!",
                                 subtitle = "",
                                 info = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.",
                                 iconResourceId = R.drawable.icon_warning_generic_red
@@ -653,10 +635,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 20.dp)
-                ) {
-                    BoxWithConstraints {
-                        val boxHeight = this.maxHeight
-
+                    ) {
                         Row(modifier = Modifier.horizontalScroll(scrollState)) {
                             for (i in 1..35) {
                                 var time: Int =
@@ -673,7 +652,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                                     time += 24
                                 }
 
-                                var formattedTime = String.format(
+                                val formattedTime = String.format(
                                     "%02d:00",
                                     time
                                 )// Formatere tiden til alltid å ha to sifre
@@ -687,14 +666,9 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                                     },
                                     windSpeed = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.wind_speed}m/s",
                                     precipitation = "${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount}mm",
-                                    uvStyrke = when {
-                                        vm.weatherData != null && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 3.0 -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Lavt"
-                                        vm.weatherData != null && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 3.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 6.0 -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Medium"
-                                        vm.weatherData != null && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky >= 6.0 && vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky < 8.0 -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Høyt"
-                                        else -> "${vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky} Veldig høyt"
-                                    },
-                                    width = 130,
-                                    height = 280,
+                                    uvStyrke = vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky,
+                                    width = 140,
+                                    height = 278,
                                     expanded = allBoxesExpanded,
                                     weatherIcon = {
                                         val iconids = LocalContext.current.resources.getIdentifier(vm.locationForecastIcons[i], "drawable", LocalContext.current.packageName) //ignore warning. It makes R.drawable dynamic instead of static, allowing us to apply variable names (since weather icons change a lot)
@@ -705,21 +679,18 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                                             painter = painterResource(id = iconids),
                                             contentDescription = "Weather icon"
                                         )
-
                                     }
-
-
                                 )
                                 Spacer(modifier = Modifier.width(16.dp))
                             }
                         }
                     }
-                }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 20.dp),
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(
                         onClick = {
@@ -731,49 +702,19 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                             imageVector = Icons.Default.ArrowDropDown,
                             contentDescription = "Drop-Down Arrow",
                             tint = Color.White,
-                            modifier = Modifier.size(200.dp)
+                            modifier = Modifier.size(300.dp)
                         )
                     }
+                    // Tekst som endres basert på om pilen er trykket på eller ikke
+                    Text(
+                        text = if (allBoxesExpanded.value) "Vis mindre" else "Vis mer",
+                        color = Color.White,
+                        modifier = Modifier
+                            .clickable {
+                                allBoxesExpanded.value = !allBoxesExpanded.value
+                            }.padding(start = 8.dp)
+                    )
                 }
-
-                //Small box component -> only time and icons
-                    /*
-                    Row(modifier = Modifier.horizontalScroll(scrollState)) {
-                        for (i in 1..13) {
-                            var time: Int =
-                                vm.weatherData!!.properties.timeseries[i].time.removeRange(0, 11)
-                                    .removeRange(2, 9)
-                                    .toInt() + vm.offset // Lokal tid siden locationForecast er i UTC/STD.
-                            var formattedTime = String.format(
-                                "%02d:00",
-                                time
-                            ) // Formatere tiden til alltid å ha to sifre
-                            if (time >= 24) {
-                                time -= 24
-                                formattedTime = String.format(
-                                    "%02d:00",
-                                    time
-                                ) // Formatere tiden på nytt hvis den overstiger 24 timer
-                            }
-                            SmallBoxComponent(
-                                time = formattedTime,
-                                width = 100,
-                                height = 150,
-                                weatherIcon = {
-                                    AsyncImage(
-                                        modifier = Modifier.size(70.dp),
-                                        model = ImageRequest.Builder(LocalContext.current)
-                                            .data(vm.locationForecastIcons[i])
-                                            .decoderFactory(SvgDecoder.Factory())
-                                            .build(),
-                                        contentDescription = "Weather icon"
-                                    )
-                                }
-                            )
-                            Spacer(modifier = Modifier.width(16.dp))
-                        }
-                    }
-                    */
 
                     val monthMap = mapOf(
                         1 to "januar",
@@ -801,14 +742,15 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                     )
 
                     Column(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
                             text = "Kommende dager:",
                             fontSize = 30.sp,
                             modifier = Modifier
-                                .padding(top = 10.dp, bottom = 30.dp),
+                                .padding(top = 10.dp, bottom = 25.dp),
                             style = TextStyle(
                                 color = Color.White
                             )
@@ -817,7 +759,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                         Row(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp, vertical = 8.dp)
-                                .padding(start = 35.dp, end = 35.dp),
+                                .padding(start = 47.dp, end = 23.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Text(
@@ -833,6 +775,17 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                             Text(
                                 text = "Høyest / Lavest",
                                 modifier = Modifier
+                                    .weight(1f),
+                                textAlign = TextAlign.Center,
+                                fontWeight = Bold,
+                                style = TextStyle(
+                                    color = Color.White
+                                )
+                            )
+                            Text(
+                                text = "Vær",
+                                modifier = Modifier
+                                    .padding(end = 18.dp)
                                     .weight(1f),
                                 textAlign = TextAlign.End,
                                 fontWeight = Bold,
@@ -873,21 +826,27 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                             // Formattert dato (ukedag, dato, måned)
                             val formattedDate = "$dayOfWeekText, $dayOfMonth. $monthText"
 
+                            val symbolCode = vm.weatherData!!.properties.timeseries.find {
+                                val time = it.time
+                                time == "${date}T06:00:00Z"
+                            }!!.data.next_12_hours.summary.symbol_code
+
                             Line()
-                            // Vis maks- og minimumstemperaturene for dagen
+
                             DayTemperatureItem(
                                 date = formattedDate,
                                 maxTemperature = maxTemp!!,
                                 minTemperature = minTemp!!,
-                                valgtTemperatur = valgtTemperatur
+                                valgtTemperatur = valgtTemperatur,
+                                weatherIcon = symbolCode
                             )
                         }
                         Line()
                     }
                 }
             }
-                }
-            }
+    }
+}
 
 @Composable
 fun DisplayItems(items: List<ApiProperties>?) {
@@ -1098,6 +1057,7 @@ fun WarningBox(headline: String, subtitle: String, info: String,  iconResourceId
             containerColor = Color(0xFFFFCF72),
         ),
         modifier = Modifier
+            .padding(top = 10.dp)
             .clickable { expandedState = !expandedState }
             .fillMaxWidth()
             .animateContentSize(
@@ -1115,16 +1075,18 @@ fun WarningBox(headline: String, subtitle: String, info: String,  iconResourceId
                     painter = painterResource(id = iconResourceId),
                     contentDescription = "Warning icon",
                     modifier = Modifier
-                        .size(130.dp)
-                        .padding(top = 20.dp, bottom = 20.dp)
+                        .size(120.dp)
+                        .padding(start = 20.dp, top = 20.dp, end = 10.dp)
                 )
 
                 Column {
                     Text(
                         text = headline,
+                        modifier = Modifier
+                            .padding(top = 10.dp),
                         style = TextStyle(
                             fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
+                            fontWeight = Bold,
                             color = Color(0xFF000000),
                         )
                     )
@@ -1202,7 +1164,7 @@ fun Line(){
 fun VerticalLine(){
     Spacer(
         Modifier
-            .padding(start = 40.dp, end = 40.dp)
+            .padding(start = 30.dp, end = 30.dp)
             .width(1.dp)
             .height(100.dp)
             .background(color = Color(0xFFFFFFFF))
@@ -1433,12 +1395,21 @@ fun BoxComponent(
     temperature: String,
     windSpeed: String,
     precipitation: String,
-    uvStyrke: String,
+    uvStyrke: Float,
     width: Int,
     height: Int,
     weatherIcon: @Composable () -> Unit,
     expanded: MutableState<Boolean>
 ) {
+    val uvColor = when {
+        uvStyrke <= 2 -> Color(0xFF14FC00)
+        uvStyrke <= 4 -> Color(0xFFDEEF17)
+        uvStyrke <= 6 -> Color(0xFFFFAA06)
+        uvStyrke <= 8 -> Color(0xFFFD6C06)
+        uvStyrke <= 12 -> Color(0xFFFB0606)
+        else -> Color(0xFF9E06FB)
+    }
+
     Card(
         modifier = Modifier
             .border(
@@ -1482,7 +1453,9 @@ fun BoxComponent(
             )
             if (expanded.value) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .padding(top = 10.dp)
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Column(
@@ -1526,42 +1499,62 @@ fun BoxComponent(
                         )
                     }
                 }
-                Image(
-                    painter = painterResource(id = R.drawable.uvicon),
-                    contentDescription = "UV Icon",
-                    modifier = Modifier.size(23.dp)
-                )
-                Text(
-                    text = uvStyrke,
-                    style = TextStyle(
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Normal,
-                        color = Color.White,
-                    ),
-                    textAlign = TextAlign.Center,
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.padding(8.dp)
-                )
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.uvicon),
+                        contentDescription = "UV Icon",
+                        modifier = Modifier.size(23.dp)
+                    )
+                    Text(
+                        text = "$uvStyrke",
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Normal,
+                            color = Color.White,
+                        ),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .size(15.dp)
+                            .background(
+                                color = uvColor,
+                                shape = CircleShape
+                            )
+                            .border(
+                                width = 1.dp,
+                                color = Color.White,
+                                shape = CircleShape
+                            )
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun DayTemperatureItem(date: String, maxTemperature: Int, minTemperature: Int, valgtTemperatur: String) {
+fun DayTemperatureItem(date: String, maxTemperature: Int, minTemperature: Int, valgtTemperatur: String, weatherIcon: String) {
     Row(
         modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .padding(start = 35.dp, end = 35.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 3.dp)
+            .padding(start = 25.dp, end = 25.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = date,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f),
             style = TextStyle(
                 color = Color.White
             )
         )
-        Spacer(modifier = Modifier.width(10.dp))
         val formattedMaxTemp = if (valgtTemperatur == "Celsius") {
             "$maxTemperature°C"
         } else {
@@ -1577,10 +1570,15 @@ fun DayTemperatureItem(date: String, maxTemperature: Int, minTemperature: Int, v
         Text(
             text = "$formattedMaxTemp / $formattedMinTemp",
             modifier = Modifier.weight(1f),
-            textAlign = TextAlign.End,
             style = TextStyle(
                 color = Color.White
             )
+        )
+        Image(
+            painter = painterResource(id = LocalContext.current.resources.getIdentifier(weatherIcon, "drawable", LocalContext.current.packageName)),
+            contentDescription = "Weather icon",
+            modifier = Modifier
+                .size(50.dp)
         )
     }
 }
