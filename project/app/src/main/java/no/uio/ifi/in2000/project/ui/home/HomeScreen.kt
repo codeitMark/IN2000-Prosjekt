@@ -910,7 +910,7 @@ fun HomeScreen(vm: HomeViewModel = viewModel()) {
                                     precipitation = "${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount}mm",
                                     uvStyrke = vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky,
                                     width = 140,
-                                    height = 268,
+                                    height = 278,
                                     expanded = allBoxesExpanded,
                                     weatherIcon = {
                                         val iconids = LocalContext.current.resources.getIdentifier(vm.locationForecastIcons[i], "drawable", LocalContext.current.packageName) //ignore warning. It makes R.drawable dynamic instead of static, allowing us to apply variable names (since weather icons change a lot)
@@ -1814,7 +1814,9 @@ fun BoxComponent(
             )
             if (expanded.value) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .padding(top = 10.dp)
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Column(
