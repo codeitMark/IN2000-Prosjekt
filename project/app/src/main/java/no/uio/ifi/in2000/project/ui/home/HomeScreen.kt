@@ -1,6 +1,9 @@
 package no.uio.ifi.in2000.project.ui.home
 
+import android.content.Context
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -97,10 +100,11 @@ import java.util.Calendar
 import java.util.Locale
 import kotlin.math.roundToInt
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 //@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
+fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
 
     val scrollState = rememberScrollState()
     val scrollStateVertical = rememberScrollState()
@@ -268,14 +272,25 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                             .padding(bottom = 20.dp),
                         horizontalAlignment = Alignment.Start
                     ) {
-                        Text(
-                            text = "Idag",
-                            fontSize = 20.sp,
-                            modifier = Modifier.padding(start = 15.dp),
-                            style = TextStyle(
-                                color = Color.White
+                        Row (
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = "Idag",
+                                fontSize = 20.sp,
+                                modifier = Modifier.padding(15.dp),
+                                style = TextStyle(
+                                    color = Color.White
+                                )
                             )
-                        )
+                            Text(
+                                text = "${ vm.streak.toString() } dager streak",
+                                fontSize = 20.sp,
+                                modifier = Modifier.padding(15.dp),
+                                style = TextStyle(color = Color.White)
+                            )
+                        }
 
                         Text(
                             text = vm.currentFormatted,
@@ -712,7 +727,8 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                         modifier = Modifier
                             .clickable {
                                 allBoxesExpanded.value = !allBoxesExpanded.value
-                            }.padding(start = 8.dp)
+                            }
+                            .padding(start = 8.dp)
                     )
                 }
 

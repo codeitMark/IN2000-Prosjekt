@@ -1,8 +1,12 @@
 package no.uio.ifi.in2000.project.ui.home
 
+import android.content.Context
 import android.icu.util.TimeZone
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusRequester
@@ -15,6 +19,7 @@ import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.project.data.alerts.MetAlertsRepository
 import no.uio.ifi.in2000.project.data.forecast.LocationForecastRepository
 import no.uio.ifi.in2000.project.data.search.SearchRepository
+import no.uio.ifi.in2000.project.data.streak.StreakRepository
 import no.uio.ifi.in2000.project.data.sunrise.SunriseRepository
 import no.uio.ifi.in2000.project.model.alerts.MetAlertsResponse
 import no.uio.ifi.in2000.project.model.forecast.Geometry
@@ -29,6 +34,10 @@ import no.uio.ifi.in2000.project.model.sunrise.Sunrise
 import no.uio.ifi.in2000.project.model.sunrise.SunriseResponse
 import no.uio.ifi.in2000.project.model.sunrise.Sunset
 import no.uio.ifi.in2000.project.model.sunrise.When
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.Period
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import no.uio.ifi.in2000.project.model.sunrise.Geometry as SunriseGeometry
 import no.uio.ifi.in2000.project.model.sunrise.Properties as SunriseProperties
@@ -36,11 +45,45 @@ import no.uio.ifi.in2000.project.model.sunrise.Properties as SunriseProperties
 // Dataklasse for å representere temperaturprognosen for en dag
 data class TemperatureForecast(val date: String, val maxTemperature: Int, val minTemperature: Int)
 
-class HomeViewModel : ViewModel(){
+@RequiresApi(Build.VERSION_CODES.O)
+class HomeViewModel(
+    private val streakRep: StreakRepository
+) : ViewModel(){
     private val locationForecastRep = LocationForecastRepository()
     private val metAlertsRep = MetAlertsRepository()
     private val sunriseRep = SunriseRepository()
     private val searchRep = SearchRepository()
+
+
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val today = LocalDate.now()
+    //val today = LocalDate.parse("2024-05-15", formatter)  --- Use this to test if it works, manually take one day at a time
+
+    var streak by mutableIntStateOf(0)
+
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            var storedData = streakRep.fetchInitialPreferences()
+            Log.d("StreakTest", "Last date: ${storedData.lastDate}")
+            Log.d("StreakTest", "Streak: ${storedData.streak}")
+
+            if (storedData.lastDate == "9999-99-99") {
+                streakRep.resetStreak(today.format(formatter))
+            } else {
+                val last = LocalDate.parse(storedData.lastDate, formatter)
+
+                val periodLastToday = Period.between(last, today)
+                if (periodLastToday.years == 0 && periodLastToday.months == 0 && periodLastToday.days == 1) {
+                    streakRep.updateLastDate(today.format(formatter), (storedData.streak + 1))
+                } else if (periodLastToday.years != 0 || periodLastToday.months != 0 || periodLastToday.days != 1) {
+                    streakRep.resetStreak(today.format(formatter))
+                }
+                storedData = streakRep.fetchInitialPreferences()
+                streak = storedData.streak
+            }
+        }
+
+    }
 
     var responseStatus by mutableStateOf(false) //made mutableStateOf so HomeScreen updates if responseStatus changes. Without this it will NOT update since the combination of weatherData and alertsData in init takes too long.
 
