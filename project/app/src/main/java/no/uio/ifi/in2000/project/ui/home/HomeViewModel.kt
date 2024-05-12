@@ -12,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.project.data.alerts.MetAlertsRepository
 import no.uio.ifi.in2000.project.data.forecast.LocationForecastRepository
@@ -90,6 +91,7 @@ class HomeViewModel : ViewModel(){
 
     var loadingScreen by mutableStateOf(true)
     var loadingSearch by mutableStateOf(false)
+    var noResultsToast by mutableStateOf(false)
 
     var alertsData: MetAlertsResponse? by mutableStateOf(MetAlertsResponse(listOf(), String(), String(), String()))
         private set
@@ -199,7 +201,16 @@ class HomeViewModel : ViewModel(){
             }
             suggestions = list
             loadingSearch = false
+            if (suggestions.isEmpty() && text.length > 3) {
+                noResultsToast = true
+                setTimerToast()
+            }
         }
+    }
+
+    private suspend fun setTimerToast() {
+        delay(3000)
+        noResultsToast = false
     }
 
     //fun loadData(lat: Double, lon: Double, county:String, lang: String){

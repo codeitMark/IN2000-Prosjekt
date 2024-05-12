@@ -162,7 +162,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        // Innstillingsboksen, åpnes på høyre hjørne
+        // Innstillingsboksen, åpnes øverst
         AnimatedVisibility(visible = vm.showSettings) {
             Card(
                 modifier = Modifier
@@ -227,6 +227,30 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                     ) {
                         Icon(Icons.Default.Close, contentDescription = "Close settings")
                     }
+                }
+            }
+        }
+
+        AnimatedVisibility(visible = vm.noResultsToast) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateContentSize(
+                        animationSpec = tween(
+                            durationMillis = 300,
+                            easing = LinearOutSlowInEasing
+                        )
+                    ),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF38424D))
+            ) {
+
+                Row (
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)
+                ) {
+                    Text(text = "Søket ditt gav ingen treff", color = Color.White)
                 }
             }
         }
@@ -1060,7 +1084,9 @@ fun SearchBar(vm: HomeViewModel) {
                             Row (verticalAlignment = Alignment.CenterVertically) {
                                 if (vm.loadingSearch) {
                                     CircularProgressIndicator(
-                                        modifier = Modifier.width(20.dp) .padding(0.dp, 16.dp, 0.dp, 0.dp),
+                                        modifier = Modifier
+                                            .width(20.dp)
+                                            .padding(0.dp, 16.dp, 0.dp, 0.dp),
                                         color = MaterialTheme.colorScheme.secondary,
                                         trackColor = MaterialTheme.colorScheme.surfaceVariant,
                                     )
