@@ -15,6 +15,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import no.uio.ifi.in2000.project.data.alerts.MetAlertsRepository
 import no.uio.ifi.in2000.project.data.forecast.LocationForecastRepository
@@ -143,6 +144,7 @@ class HomeViewModel(
         private set
 
     var firstLoad = true
+    var showStreak by mutableStateOf(true)
 
     var searchField: String by mutableStateOf("")
 
@@ -276,6 +278,7 @@ class HomeViewModel(
             loadData(lang, lat, lon, timeZone)
             }
             //loadData(59.9133301, 10.7389701)
+            timeoutStreak()
         }
     }
 
@@ -365,5 +368,10 @@ class HomeViewModel(
     // I ViewModel
     fun getAlertIcons(): Map<String, String> {
         return metAlertsRep.alertIcons
+    }
+
+    private suspend fun timeoutStreak() {
+        delay(4000)
+        showStreak = false
     }
 }
