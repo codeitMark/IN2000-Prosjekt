@@ -436,9 +436,9 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                             horizontalArrangement = Arrangement.Start
                         ) {
                             val vind =
-                                vm.weatherData!!.properties.timeseries[0].data.instant.details.wind_speed
+                                vm.weatherData!!.properties.timeseries[0].data.instant.details.wind_speed.roundToInt()
                             Text(
-                                text = "${vind}m/s",
+                                text = "${vind} m/s",
                                 fontSize = 18.sp,
                                 style = TextStyle(
                                     color = Color.White
@@ -448,9 +448,9 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                             Spacer(modifier = Modifier.weight(1f))
 
                             val nedbør =
-                                vm.weatherData!!.properties.timeseries[0].data.next_1_hours.details.precipitation_amount
+                                vm.weatherData!!.properties.timeseries[0].data.next_1_hours.details.precipitation_amount.roundToInt()
                             Text(
-                                text = "${nedbør}mm",
+                                text = "${nedbør} mm",
                                 fontSize = 18.sp,
                                 style = TextStyle(
                                     color = Color.White
@@ -660,8 +660,8 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                                     } else {
                                         "${(vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F"
                                     },
-                                    windSpeed = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.wind_speed}m/s",
-                                    precipitation = "${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount}mm",
+                                    windSpeed = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.wind_speed.roundToInt()} m/s",
+                                    precipitation = "${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount.roundToInt()} mm",
                                     uvStyrke = vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky,
                                     width = 140,
                                     height = 278,
