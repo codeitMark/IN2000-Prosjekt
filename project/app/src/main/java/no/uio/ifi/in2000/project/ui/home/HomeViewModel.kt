@@ -260,24 +260,26 @@ class HomeViewModel : ViewModel(){
             }
             suggestions = list
 
-            //kræsjer hawaiian isles. Trenger vi null-safety sjekk?
-            currentFormatted = suggestions[0].formatted
-            name = suggestions[0].timezone.name
-            lat = suggestions[0].lat
-            lon = suggestions[0].lon
-            sjekkDST(name)
-            if (dst){
-                timeZone = suggestions[0].timezone.offset_DST //Daylight Saving Time. Sommertid.
-                offset = suggestions[0].timezone.offset_DST_seconds/60/60
-            } else{
-                timeZone = suggestions[0].timezone.offset_STD //Standard Time. Norge er i DST, mens steder som New Zealand er i STD.
-                offset = suggestions[0].timezone.offset_STD_seconds/60/60
+            if (suggestions.isNotEmpty()) {
+                currentFormatted = suggestions[0].formatted
+                name = suggestions[0].timezone.name
+                lat = suggestions[0].lat
+                lon = suggestions[0].lon
+                sjekkDST(name)
+                if (dst) {
+                    timeZone = suggestions[0].timezone.offset_DST //Daylight Saving Time. Sommertid.
+                    offset = suggestions[0].timezone.offset_DST_seconds / 60 / 60
+                } else {
+                    timeZone =
+                        suggestions[0].timezone.offset_STD //Standard Time. Norge er i DST, mens steder som New Zealand er i STD.
+                    offset = suggestions[0].timezone.offset_STD_seconds / 60 / 60
+                }
+                Log.d("TestSearch1000", "LAT: $lat --- LON: $lon")
+                Log.i("timeZonesjekk", timeZone)
+                loadingScreen = false
+                loadData(lang, lat, lon, timeZone)
+                // loadData(59.9133301, 10.7389701)
             }
-            Log.d("TestSearch1000", "LAT: $lat --- LON: $lon")
-            Log.i("timeZonesjekk", timeZone)
-            loadingScreen = false
-            loadData(lang, lat, lon, timeZone)
-            //loadData(59.9133301, 10.7389701)
         }
     }
 

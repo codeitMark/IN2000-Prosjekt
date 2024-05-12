@@ -153,7 +153,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
             .pointerInput(Unit) {
                 detectTapGestures(onTap = { //hides keyboard when clicking out
                     keyboardController?.hide()
-                    //vm.expanded = false //hides suggestions when clicking out.
+                    vm.expanded = false //hides suggestions when clicking out.
                     vm.showSettings = false
                     //hides settings when user clicking out
                 })
@@ -1024,7 +1024,7 @@ fun SearchBar(vm: HomeViewModel) {
                         .focusRequester(vm.focusRequester)
                         .onKeyEvent { event ->
                             if (event.type == KeyEventType.KeyUp && event.key == Key.Enter) {
-                                vm.expanded = false
+                                //vm.expanded = false
                                 keyboardController?.hide()
                                 true
                             } else {
