@@ -261,6 +261,7 @@ class HomeViewModel : ViewModel(){
     fun loadCurrent(text: String) {
         viewModelScope.launch(Dispatchers.IO) {
             loadingScreen = true
+            expandTable = mutableStateListOf(false, false, false, false, false, false, false)
             val response = searchRep.fetchSuggestions(text)
             val items = response?.features
             val list = mutableListOf<ApiProperties>()
