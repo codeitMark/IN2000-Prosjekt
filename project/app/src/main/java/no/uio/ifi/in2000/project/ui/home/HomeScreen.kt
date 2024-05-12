@@ -86,6 +86,7 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
@@ -118,10 +119,6 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
         mutableStateOf(false)
     }
 
-    var valgtTemperatur by remember {
-        mutableStateOf("Celsius") //Default value will be Celsius. Can choose Fahrenheit.
-    }
-
     var expandedStateSettings by remember { mutableStateOf(false) }
     val rotationStateSettings by animateFloatAsState(
         targetValue = if (expandedStateSettings) 180f else 0f, label = ""
@@ -137,7 +134,6 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
     var valgtSpråk by remember {
         mutableStateOf("Norsk") //Default value will be "no", norsk.
     }
-    var showSettings by remember {mutableStateOf(false)}
     var showSearchbar by remember{ mutableStateOf(false)}
 
     val allBoxesExpanded = remember { mutableStateOf(false) }
@@ -155,7 +151,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                 detectTapGestures(onTap = { //hides keyboard when clicking out
                     keyboardController?.hide()
                     //vm.expanded = false //hides suggestions when clicking out.
-                    showSettings = false
+                    vm.showSettings = false
                     //hides settings when user clicking out
                 })
             },
@@ -164,7 +160,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
     ) {
 
         // Innstillingsboksen, åpnes på høyre hjørne
-        AnimatedVisibility(visible = showSettings) {
+        AnimatedVisibility(visible = vm.showSettings) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -207,7 +203,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                                 celsius = 0xFFFFFFFF
                                 fahrenheit = 0xFF8C9299
                             }
-                            valgtTemperatur = if (valgtTemperatur == "Celsius") {
+                            vm.valgtTemperatur = if (vm.valgtTemperatur == "Celsius") {
                                 "Fahrenheit" //add this to viewmodel so we can process this in repo?
                             } else {
                                 "Celsius"
@@ -221,7 +217,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                     )
                     }
                     IconButton(
-                        onClick = { showSettings = false }, // Lukker boksen når klikket
+                        onClick = { vm.showSettings = false }, // Lukker boksen når klikket
                         modifier = Modifier
                             .size(50.dp),
                         colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
@@ -242,7 +238,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
 
             // Innstillingsikonet, kun synlig når boksen ikke er åpen
                 IconButton(
-                    onClick = { showSettings = !showSettings },
+                    onClick = { vm.showSettings = !vm.showSettings },
                     modifier = Modifier.size(60.dp),
                     colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
                 ) {
@@ -310,7 +306,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                                 modifier = Modifier
                                     .weight(1f)
                             ) {
-                                val temperatureText = if (valgtTemperatur == "Celsius") {
+                                val temperatureText = if (vm.valgtTemperatur == "Celsius") {
                                     "${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C"
                                 } else {
                                     "${(vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F"
@@ -659,7 +655,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
 
                                 BoxComponent(
                                     time = formattedTime, // Legger til tid som en parameter i BoxComponent
-                                    temperature = if (valgtTemperatur == "Celsius") {
+                                    temperature = if (vm.valgtTemperatur == "Celsius") {
                                         "${vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature.roundToInt()}°C"
                                     } else {
                                         "${(vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F"
@@ -712,7 +708,8 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                         modifier = Modifier
                             .clickable {
                                 allBoxesExpanded.value = !allBoxesExpanded.value
-                            }.padding(start = 8.dp)
+                            }
+                            .padding(start = 8.dp)
                     )
                 }
 
@@ -819,6 +816,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
 
                             // Hent data for den aktuelle dagen fra API-et
                             val dayData = vm.getTemperatureForDay(vm.weatherData!!, date)
+                            val dayDataDetails = vm.getDayDataDetails(date)
 
                             val maxTemp = dayData?.first?.roundToInt()
                             val minTemp = dayData?.second?.roundToInt()
@@ -835,12 +833,18 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
 
                             // Vis maks- og minimumstemperaturene for dagen
                             DayTemperatureItem(
+                                vm = vm,
+                                id = index,
                                 date = formattedDate,
                                 maxTemperature = maxTemp!!,
                                 minTemperature = minTemp!!,
-                                valgtTemperatur = valgtTemperatur,
+                                valgtTemperatur = vm.valgtTemperatur,
                                 weatherIcon = symbolCode
                             )
+                            AnimatedVisibility(visible = vm.expandTable[index]) {
+                                ExtendedTableItem(dayDataDetails)
+                            }
+
                         }
                         Line()
                     }
@@ -849,6 +853,86 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
     }
 }
 
+@Composable
+fun ExtendedTableItem(data: List<List<Any>>) {
+
+    Row (
+        modifier = Modifier
+            .fillMaxWidth()
+
+    ) {
+
+        LazyColumn(
+            Modifier
+                .fillMaxWidth()
+                .height(205.dp)) {
+            item {
+                Spacer(modifier = Modifier
+                    .padding(5.dp, 5.dp)
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(Color(0xFF999999))
+                )
+                Row (modifier = Modifier
+                    .fillMaxWidth()
+                    .height(23.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                    Spacer(modifier = Modifier.width(50.dp))
+                    Image(
+                        painter = painterResource(id = R.drawable.temperature),
+                        contentDescription = "Temperature Icon",
+                        modifier = Modifier.size(23.dp)
+                    )
+
+                    Image(
+                        painter = painterResource(id = R.drawable.windicon),
+                        contentDescription = "Wind Icon",
+                        modifier = Modifier.size(23.dp)
+                    )
+                    Image(
+                        painter = painterResource(id = R.drawable.rainicon),
+                        contentDescription = "Rain Icon",
+                        modifier = Modifier.size(23.dp)
+                    )
+                    Spacer(modifier = Modifier.width(50.dp))
+                }
+                Spacer(modifier = Modifier
+                    .padding(5.dp, 5.dp)
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(Color(0xFF999999))
+                )
+            }
+            items(data) {
+                val lists = it
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp),
+                    horizontalArrangement = Arrangement.SpaceAround
+
+                ) {
+                    Text(text = lists[0].toString(), color = Color.White)
+                    Text(text = lists[1].toString(), color = Color.White)
+                    Text(text = "${lists[2]} m/s", color = Color.White)
+                    Text(text = "${lists[3]} mm", color = Color.White)
+                    Image(
+                        painter = painterResource(id = LocalContext.current.resources.getIdentifier(lists[4].toString(), "drawable", LocalContext.current.packageName)),
+                        contentDescription = "Weather icon",
+                        modifier = Modifier
+                            .size(23.dp)
+                    )
+                }
+                Spacer(modifier = Modifier
+                    .padding(5.dp, 5.dp)
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(Color(0xFF555555))
+                )
+            }
+        }
+    }
+}
 
 @Composable
 fun DisplayItems(items: List<ApiProperties>?) {
@@ -1041,6 +1125,7 @@ fun DropdownRow(
             }
             .padding(10.dp)
     ) {
+
         Text(text = title, fontSize = 16.sp)
     }
 }
@@ -1539,9 +1624,19 @@ fun BoxComponent(
 }
 
 @Composable
-fun DayTemperatureItem(date: String, maxTemperature: Int, minTemperature: Int, valgtTemperatur: String, weatherIcon: String) {
+fun DayTemperatureItem(vm: HomeViewModel, id: Int, date: String, maxTemperature: Int, minTemperature: Int, valgtTemperatur: String, weatherIcon: String) {
+
     Row(
         modifier = Modifier
+            .clickable(onClick = {
+                for (i in 0..6) {
+                    if (i == id) {
+                        vm.expandTable[id] = !vm.expandTable[id]
+                    } else {
+                        vm.expandTable[i] = false
+                    }
+                }
+            })
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 3.dp)
             .padding(start = 25.dp, end = 25.dp),

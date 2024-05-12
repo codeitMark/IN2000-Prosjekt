@@ -3,6 +3,7 @@ package no.uio.ifi.in2000.project.ui.home
 import android.icu.util.TimeZone
 import android.util.Log
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusRequester
@@ -30,6 +31,7 @@ import no.uio.ifi.in2000.project.model.sunrise.SunriseResponse
 import no.uio.ifi.in2000.project.model.sunrise.Sunset
 import no.uio.ifi.in2000.project.model.sunrise.When
 import java.util.Date
+import kotlin.math.roundToInt
 import no.uio.ifi.in2000.project.model.sunrise.Geometry as SunriseGeometry
 import no.uio.ifi.in2000.project.model.sunrise.Properties as SunriseProperties
 
@@ -147,10 +149,14 @@ class HomeViewModel : ViewModel(){
     var suggestions by mutableStateOf<List<ApiProperties>>(emptyList())
         private set
 
+    var valgtTemperatur by mutableStateOf("Celsius")
+
     var currentFormatted by mutableStateOf("")
         private set
 
     var expanded by mutableStateOf(false)
+    var showSettings by mutableStateOf(false)
+    var expandTable = mutableStateListOf(false, false, false, false, false, false, false)
 
     val focusRequester by mutableStateOf(FocusRequester())
 
@@ -318,6 +324,50 @@ class HomeViewModel : ViewModel(){
             }
         }
         return Pair(maxTemp, minTemp)
+    }
+
+    fun getDayDataDetails(inDate: String): List<List<Any>> {
+        val timeseries = weatherData?.properties?.timeseries
+
+        val retList = mutableListOf<List<Any>>()
+        val timeFormat = mapOf<String, String>(
+            "00:00:00Z" to "00-06",
+            "06:00:00Z" to "06-12",
+            "12:00:00Z" to "12-18",
+            "18:00:00Z" to "18-00"
+        )
+
+        if (timeseries != null) {
+            for (item in timeseries) {
+                val date = item.time.split("T")[0]
+                val time = item.time.split("T")[1]// Hent bare dato-delen av tiden
+                if (date == inDate) {
+                    if (time == "00:00:00Z" ||
+                        time == "06:00:00Z" ||
+                        time == "12:00:00Z" ||
+                        time == "18:00:00Z") {
+
+                        val values = mutableListOf<Any>()
+                        values.add(timeFormat[time].toString())
+
+
+                        val temperatureText = if (valgtTemperatur == "Celsius") {
+                            "${((item.data.next_6_hours.details.air_temperature_max + item.data.next_6_hours.details.air_temperature_min) / 2).roundToInt()}°C"
+                        } else {
+                            "${(((item.data.next_6_hours.details.air_temperature_max + item.data.next_6_hours.details.air_temperature_min) / 2) * 1.8 + 32).roundToInt()}°F"
+                        }
+
+                        values.add(temperatureText)
+                        values.add(item.data.instant.details.wind_speed.roundToInt())
+                        values.add(item.data.next_6_hours.details.precipitation_amount.roundToInt())
+                        values.add(item.data.next_6_hours.summary.symbol_code)
+                        retList.add(values)
+                    }
+                }
+            }
+        }
+
+        return retList
     }
     // I ViewModel
     fun getAlertIcons(): Map<String, String> {
