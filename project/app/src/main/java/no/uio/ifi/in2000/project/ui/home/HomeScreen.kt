@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -41,10 +42,12 @@ import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -244,6 +247,21 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                 ) {
                     Icon(Icons.Default.Settings, contentDescription = "Settings")
                 }
+        }
+
+        AnimatedVisibility(visible = vm.loadingScreen) {
+            Column (modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier
+                    .height(250.dp)
+                    .fillMaxWidth())
+                CircularProgressIndicator(
+                    modifier = Modifier.width(90.dp),
+                    color = MaterialTheme.colorScheme.secondary,
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                    )
+            }
         }
 
 
@@ -1036,7 +1054,14 @@ fun SearchBar(vm: HomeViewModel) {
                     ),
                     singleLine = true,
                     trailingIcon = {
-                            Row {
+                            Row (verticalAlignment = Alignment.CenterVertically) {
+                                if (vm.loadingSearch) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.width(20.dp) .padding(0.dp, 16.dp, 0.dp, 0.dp),
+                                        color = MaterialTheme.colorScheme.secondary,
+                                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    )
+                                }
                                 if (vm.searchField.isNotEmpty()) {
                                     IconButton(onClick = { vm.searchField = "" }) {
                                         Icon(
@@ -1046,6 +1071,8 @@ fun SearchBar(vm: HomeViewModel) {
                                         )
                                     }
                                 }
+                                /*
+
                                 IconButton(onClick = { vm.expanded = !vm.expanded }) {
                                     Icon(
                                         modifier = Modifier.size(24.dp),
@@ -1054,6 +1081,7 @@ fun SearchBar(vm: HomeViewModel) {
                                         tint = Color.White
                                     )
                                 }
+                                 */
                         }
                     }
                 )

@@ -88,6 +88,8 @@ class HomeViewModel : ViewModel(){
     //private set gjør at variabelen kan kun endres inni klassen. Dette sørger for at det ikke kan endres av noe fra HomeScreen/utenfor HVM.
 
 
+    var loadingScreen by mutableStateOf(true)
+    var loadingSearch by mutableStateOf(false)
 
     var alertsData: MetAlertsResponse? by mutableStateOf(MetAlertsResponse(listOf(), String(), String(), String()))
         private set
@@ -186,6 +188,7 @@ class HomeViewModel : ViewModel(){
     fun loadSuggestions(text: String) {
 
         viewModelScope.launch(Dispatchers.IO) {
+            loadingSearch = true
             val response = searchRep.fetchSuggestions(text)
             val items = response?.features
             val list = mutableListOf<ApiProperties>()
@@ -195,6 +198,7 @@ class HomeViewModel : ViewModel(){
                 }
             }
             suggestions = list
+            loadingSearch = false
         }
     }
 
@@ -217,6 +221,7 @@ class HomeViewModel : ViewModel(){
             }
             //Log.i("HOMEVIEWMODEL INIT", "Initiated.")
             //weatherUiState = weatherUiState.copy(weather = weather) //same functionality as weatherData = locationForecastRep.fetchWeather(lat, lon)
+            loadingScreen = false
         }
     }
 
