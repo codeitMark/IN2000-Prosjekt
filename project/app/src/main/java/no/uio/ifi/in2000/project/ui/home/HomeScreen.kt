@@ -261,6 +261,9 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                     color = MaterialTheme.colorScheme.secondary,
                     trackColor = MaterialTheme.colorScheme.surfaceVariant,
                     )
+                Spacer(modifier = Modifier
+                    .height(800.dp)
+                    .fillMaxWidth())
             }
         }
 

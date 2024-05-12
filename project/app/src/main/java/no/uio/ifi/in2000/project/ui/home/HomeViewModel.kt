@@ -249,6 +249,7 @@ class HomeViewModel : ViewModel(){
 
     fun loadCurrent(text: String) {
         viewModelScope.launch(Dispatchers.IO) {
+            loadingScreen = true
             val response = searchRep.fetchSuggestions(text)
             val items = response?.features
             val list = mutableListOf<ApiProperties>()
@@ -274,7 +275,7 @@ class HomeViewModel : ViewModel(){
             }
             Log.d("TestSearch1000", "LAT: $lat --- LON: $lon")
             Log.i("timeZonesjekk", timeZone)
-
+            loadingScreen = false
             loadData(lang, lat, lon, timeZone)
             //loadData(59.9133301, 10.7389701)
         }
