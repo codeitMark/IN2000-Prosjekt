@@ -602,10 +602,10 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
                     }
 
                     Text(
-                        text = "  I dag",
+                        text = "Neste timer",
                         fontSize = 30.sp,
                         modifier = Modifier
-                            .padding(bottom = 10.dp)
+                            .padding(start = 25.dp, bottom = 10.dp)
                             .align(Alignment.Start),
                         style = TextStyle(
                             color = Color.White
@@ -1544,7 +1544,7 @@ fun DayTemperatureItem(vm: HomeViewModel, id: Int, date: String, maxTemperature:
 }
 
 @Composable
-fun UVScale(uvIndex: Float, modifier: Modifier = Modifier) {
+fun UVScale(uvIndex: Float) {
     val gradientColors = listOf(
         Color(0xFF14FC00),
         Color(0xFFDEEF17),
@@ -1555,7 +1555,7 @@ fun UVScale(uvIndex: Float, modifier: Modifier = Modifier) {
     )
 
     Box(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .padding(start = 30.dp, end = 30.dp)
             .height(10.dp)
