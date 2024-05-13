@@ -1460,7 +1460,7 @@ fun BoxComponent(
         uvStyrke <= 4 -> Color(0xFFDEEF17)
         uvStyrke <= 6 -> Color(0xFFFFAA06)
         uvStyrke <= 8 -> Color(0xFFFD6C06)
-        uvStyrke <= 12 -> Color(0xFFFB0606)
+        uvStyrke <= 10 -> Color(0xFFFB0606)
         else -> Color(0xFF9E06FB)
     }
 
