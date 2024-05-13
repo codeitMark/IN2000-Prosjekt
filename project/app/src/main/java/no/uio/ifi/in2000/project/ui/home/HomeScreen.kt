@@ -1518,7 +1518,7 @@ fun DayTemperatureItem(vm: HomeViewModel, id: Int, date: String, maxTemperature:
 }
 
 @Composable
-fun UVScale(uvIndex: Float, modifier: Modifier = Modifier) {
+fun UVScale(uvIndex: Float) {
     val gradientColors = listOf(
         Color(0xFF14FC00),
         Color(0xFFDEEF17),
@@ -1529,7 +1529,7 @@ fun UVScale(uvIndex: Float, modifier: Modifier = Modifier) {
     )
 
     Box(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .padding(start = 30.dp, end = 30.dp)
             .height(10.dp)
