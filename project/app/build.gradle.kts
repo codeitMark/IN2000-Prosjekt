@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+
     kotlin("plugin.serialization").version("1.9.10")
 }
 
@@ -88,4 +89,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.8")
 
     implementation("com.google.android.gms:play-services-location:21.2.0")
+
+    // DataStore
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 }

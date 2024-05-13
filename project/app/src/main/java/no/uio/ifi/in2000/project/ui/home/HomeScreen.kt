@@ -1,6 +1,9 @@
 package no.uio.ifi.in2000.project.ui.home
 
+import android.content.Context
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -86,10 +89,13 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
+import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.delay
 import no.uio.ifi.in2000.project.R
 import no.uio.ifi.in2000.project.model.search.ApiProperties
 import java.text.SimpleDateFormat
@@ -97,10 +103,11 @@ import java.util.Calendar
 import java.util.Locale
 import kotlin.math.roundToInt
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 //@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
+fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
 
     val scrollState = rememberScrollState()
     val scrollStateVertical = rememberScrollState()
@@ -262,32 +269,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                     Text(text = "", fontSize = 0.sp, fontWeight = Bold)
                 }
 
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 20.dp),
-                        horizontalAlignment = Alignment.Start
-                    ) {
-                        Text(
-                            text = "Idag",
-                            fontSize = 20.sp,
-                            modifier = Modifier.padding(start = 15.dp),
-                            style = TextStyle(
-                                color = Color.White
-                            )
-                        )
-
-                        Text(
-                            text = vm.currentFormatted,
-                            fontSize = 30.sp,
-                            style = TextStyle(
-                                color = Color.White
-                            ),
-                            modifier = Modifier.padding(start = 15.dp, bottom = 20.dp)
-                        )
-                    }
-
-
+                    HeaderComponent(vm)
 
                         Row(
                             modifier = Modifier
@@ -621,7 +603,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                     }
 
                     Text(
-                        text = "  Idag",
+                        text = "  I dag",
                         fontSize = 30.sp,
                         modifier = Modifier
                             .padding(bottom = 10.dp)
@@ -712,7 +694,8 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel = viewModel()) {
                         modifier = Modifier
                             .clickable {
                                 allBoxesExpanded.value = !allBoxesExpanded.value
-                            }.padding(start = 8.dp)
+                            }
+                            .padding(start = 8.dp)
                     )
                 }
 
@@ -859,6 +842,7 @@ fun DisplayItems(items: List<ApiProperties>?) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SearchBar(vm: HomeViewModel) {
@@ -1018,6 +1002,79 @@ fun SearchBar(vm: HomeViewModel) {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun HeaderComponent(vm: HomeViewModel) {
+
+    val streak = vm.streak
+    val streakText = if (streak == 1) {
+        "$streak dag streak"
+    } else {
+        "$streak dager streak"
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 50.dp, top = 15.dp, end = 20.dp),
+        horizontalAlignment = Alignment.Start
+    ) {
+        Row (
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = "I dag",
+                fontSize = 20.sp,
+                modifier = Modifier.padding(15.dp),
+                style = TextStyle(
+                    color = Color.White
+                )
+            )
+
+            Row (
+                horizontalArrangement = Arrangement.spacedBy((-23).dp)
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.streakfire),
+                    contentDescription = "Warning icon",
+                    modifier = Modifier
+                        .size(37.dp)
+                        .zIndex(1f)
+                        .clickable { vm.showStreak = !vm.showStreak }
+
+                )
+                AnimatedVisibility(visible = vm.showStreak) {
+                    Box (
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(Color(0xFFFF6D00))
+                    ) {
+                        Text(
+                            text = streakText,
+                            fontSize = 20.sp,
+                            modifier = Modifier
+                                .padding(start = 30.dp, top = 4.dp, end = 10.dp, bottom = 4.dp),
+                            style = TextStyle(color = Color.White)
+                        )
+                    }
+                }
+            }
+        }
+
+        Text(
+            text = vm.currentFormatted,
+            fontSize = 30.sp,
+            style = TextStyle(
+                color = Color.White
+            ),
+            modifier = Modifier.padding(start = 15.dp, bottom = 20.dp)
+        )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun DropdownRow(
