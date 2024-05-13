@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -43,10 +44,12 @@ import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -121,10 +124,6 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
         mutableStateOf(false)
     }
 
-    var valgtTemperatur by remember {
-        mutableStateOf("Celsius") //Default value will be Celsius. Can choose Fahrenheit.
-    }
-
     var expandedStateSettings by remember { mutableStateOf(false) }
     val rotationStateSettings by animateFloatAsState(
         targetValue = if (expandedStateSettings) 180f else 0f, label = ""
@@ -140,7 +139,6 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
     var valgtSpråk by remember {
         mutableStateOf("Norsk") //Default value will be "no", norsk.
     }
-    var showSettings by remember {mutableStateOf(false)}
     var showSearchbar by remember{ mutableStateOf(false)}
 
     val allBoxesExpanded = remember { mutableStateOf(false) }
@@ -157,8 +155,8 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
             .pointerInput(Unit) {
                 detectTapGestures(onTap = { //hides keyboard when clicking out
                     keyboardController?.hide()
-                    //vm.expanded = false //hides suggestions when clicking out.
-                    showSettings = false
+                    vm.expanded = false //hides suggestions when clicking out.
+                    vm.showSettings = false
                     //hides settings when user clicking out
                 })
             },
@@ -166,8 +164,8 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        // Innstillingsboksen, åpnes på høyre hjørne
-        AnimatedVisibility(visible = showSettings) {
+        // Innstillingsboksen, åpnes øverst
+        AnimatedVisibility(visible = vm.showSettings) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -210,7 +208,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
                                 celsius = 0xFFFFFFFF
                                 fahrenheit = 0xFF8C9299
                             }
-                            valgtTemperatur = if (valgtTemperatur == "Celsius") {
+                            vm.valgtTemperatur = if (vm.valgtTemperatur == "Celsius") {
                                 "Fahrenheit" //add this to viewmodel so we can process this in repo?
                             } else {
                                 "Celsius"
@@ -224,13 +222,37 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
                     )
                     }
                     IconButton(
-                        onClick = { showSettings = false }, // Lukker boksen når klikket
+                        onClick = { vm.showSettings = false }, // Lukker boksen når klikket
                         modifier = Modifier
                             .size(50.dp),
                         colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
                     ) {
                         Icon(Icons.Default.Close, contentDescription = "Close settings")
                     }
+                }
+            }
+        }
+
+        AnimatedVisibility(visible = vm.noResultsToast) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateContentSize(
+                        animationSpec = tween(
+                            durationMillis = 300,
+                            easing = LinearOutSlowInEasing
+                        )
+                    ),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF38424D))
+            ) {
+
+                Row (
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)
+                ) {
+                    Text(text = "Søket ditt gav ingen treff", color = Color.White)
                 }
             }
         }
@@ -245,12 +267,30 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
 
             // Innstillingsikonet, kun synlig når boksen ikke er åpen
                 IconButton(
-                    onClick = { showSettings = !showSettings },
+                    onClick = { vm.showSettings = !vm.showSettings },
                     modifier = Modifier.size(60.dp),
                     colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
                 ) {
                     Icon(Icons.Default.Settings, contentDescription = "Settings")
                 }
+        }
+
+        AnimatedVisibility(visible = vm.loadingScreen) {
+            Column (modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier
+                    .height(250.dp)
+                    .fillMaxWidth())
+                CircularProgressIndicator(
+                    modifier = Modifier.width(90.dp),
+                    color = MaterialTheme.colorScheme.secondary,
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                    )
+                Spacer(modifier = Modifier
+                    .height(800.dp)
+                    .fillMaxWidth())
+            }
         }
 
 
@@ -288,7 +328,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
                                 modifier = Modifier
                                     .weight(1f)
                             ) {
-                                val temperatureText = if (valgtTemperatur == "Celsius") {
+                                val temperatureText = if (vm.valgtTemperatur == "Celsius") {
                                     "${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C"
                                 } else {
                                     "${(vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F"
@@ -418,9 +458,9 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
                             horizontalArrangement = Arrangement.Start
                         ) {
                             val vind =
-                                vm.weatherData!!.properties.timeseries[0].data.instant.details.wind_speed
+                                vm.weatherData!!.properties.timeseries[0].data.instant.details.wind_speed.roundToInt()
                             Text(
-                                text = "${vind}m/s",
+                                text = "${vind} m/s",
                                 fontSize = 18.sp,
                                 style = TextStyle(
                                     color = Color.White
@@ -430,9 +470,9 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
                             Spacer(modifier = Modifier.weight(1f))
 
                             val nedbør =
-                                vm.weatherData!!.properties.timeseries[0].data.next_1_hours.details.precipitation_amount
+                                vm.weatherData!!.properties.timeseries[0].data.next_1_hours.details.precipitation_amount.roundToInt()
                             Text(
-                                text = "${nedbør}mm",
+                                text = "${nedbør} mm",
                                 fontSize = 18.sp,
                                 style = TextStyle(
                                     color = Color.White
@@ -637,13 +677,13 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
 
                                 BoxComponent(
                                     time = formattedTime, // Legger til tid som en parameter i BoxComponent
-                                    temperature = if (valgtTemperatur == "Celsius") {
+                                    temperature = if (vm.valgtTemperatur == "Celsius") {
                                         "${vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature.roundToInt()}°C"
                                     } else {
                                         "${(vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F"
                                     },
-                                    windSpeed = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.wind_speed}m/s",
-                                    precipitation = "${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount}mm",
+                                    windSpeed = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.wind_speed.roundToInt()} m/s",
+                                    precipitation = "${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount.roundToInt()} mm",
                                     uvStyrke = vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky,
                                     width = 140,
                                     height = 278,
@@ -798,6 +838,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
 
                             // Hent data for den aktuelle dagen fra API-et
                             val dayData = vm.getTemperatureForDay(vm.weatherData!!, date)
+                            val dayDataDetails = vm.getDayDataDetails(date)
 
                             val maxTemp = dayData?.first?.roundToInt()
                             val minTemp = dayData?.second?.roundToInt()
@@ -814,12 +855,18 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
 
                             // Vis maks- og minimumstemperaturene for dagen
                             DayTemperatureItem(
+                                vm = vm,
+                                id = index,
                                 date = formattedDate,
                                 maxTemperature = maxTemp!!,
                                 minTemperature = minTemp!!,
-                                valgtTemperatur = valgtTemperatur,
+                                valgtTemperatur = vm.valgtTemperatur,
                                 weatherIcon = symbolCode
                             )
+                            AnimatedVisibility(visible = vm.expandTable[index]) {
+                                ExtendedTableItem(dayDataDetails)
+                            }
+
                         }
                         Line()
                     }
@@ -828,6 +875,86 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
     }
 }
 
+@Composable
+fun ExtendedTableItem(data: List<List<Any>>) {
+
+    Row (
+        modifier = Modifier
+            .fillMaxWidth()
+
+    ) {
+
+        LazyColumn(
+            Modifier
+                .fillMaxWidth()
+                .height(205.dp)) {
+            item {
+                Spacer(modifier = Modifier
+                    .padding(5.dp, 5.dp)
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(Color(0xFF999999))
+                )
+                Row (modifier = Modifier
+                    .fillMaxWidth()
+                    .height(23.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                    Spacer(modifier = Modifier.width(50.dp))
+                    Image(
+                        painter = painterResource(id = R.drawable.temperature),
+                        contentDescription = "Temperature Icon",
+                        modifier = Modifier.size(23.dp)
+                    )
+
+                    Image(
+                        painter = painterResource(id = R.drawable.windicon),
+                        contentDescription = "Wind Icon",
+                        modifier = Modifier.size(23.dp)
+                    )
+                    Image(
+                        painter = painterResource(id = R.drawable.rainicon),
+                        contentDescription = "Rain Icon",
+                        modifier = Modifier.size(23.dp)
+                    )
+                    Spacer(modifier = Modifier.width(50.dp))
+                }
+                Spacer(modifier = Modifier
+                    .padding(5.dp, 5.dp)
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(Color(0xFF999999))
+                )
+            }
+            items(data) {
+                val lists = it
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp),
+                    horizontalArrangement = Arrangement.SpaceAround
+
+                ) {
+                    Text(text = lists[0].toString(), color = Color.White)
+                    Text(text = lists[1].toString(), color = Color.White)
+                    Text(text = "${lists[2]} m/s", color = Color.White)
+                    Text(text = "${lists[3]} mm", color = Color.White)
+                    Image(
+                        painter = painterResource(id = LocalContext.current.resources.getIdentifier(lists[4].toString(), "drawable", LocalContext.current.packageName)),
+                        contentDescription = "Weather icon",
+                        modifier = Modifier
+                            .size(23.dp)
+                    )
+                }
+                Spacer(modifier = Modifier
+                    .padding(5.dp, 5.dp)
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(Color(0xFF555555))
+                )
+            }
+        }
+    }
+}
 
 @Composable
 fun DisplayItems(items: List<ApiProperties>?) {
@@ -899,7 +1026,7 @@ fun SearchBar(vm: HomeViewModel) {
                         .focusRequester(vm.focusRequester)
                         .onKeyEvent { event ->
                             if (event.type == KeyEventType.KeyUp && event.key == Key.Enter) {
-                                vm.expanded = false
+                                //vm.expanded = false
                                 keyboardController?.hide()
                                 true
                             } else {
@@ -932,7 +1059,16 @@ fun SearchBar(vm: HomeViewModel) {
                     ),
                     singleLine = true,
                     trailingIcon = {
-                            Row {
+                            Row (verticalAlignment = Alignment.CenterVertically) {
+                                if (vm.loadingSearch) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier
+                                            .width(20.dp)
+                                            .padding(0.dp, 16.dp, 0.dp, 0.dp),
+                                        color = MaterialTheme.colorScheme.secondary,
+                                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    )
+                                }
                                 if (vm.searchField.isNotEmpty()) {
                                     IconButton(onClick = { vm.searchField = "" }) {
                                         Icon(
@@ -942,6 +1078,8 @@ fun SearchBar(vm: HomeViewModel) {
                                         )
                                     }
                                 }
+                                /*
+
                                 IconButton(onClick = { vm.expanded = !vm.expanded }) {
                                     Icon(
                                         modifier = Modifier.size(24.dp),
@@ -950,6 +1088,7 @@ fun SearchBar(vm: HomeViewModel) {
                                         tint = Color.White
                                     )
                                 }
+                                 */
                         }
                     }
                 )
@@ -1094,6 +1233,7 @@ fun DropdownRow(
             }
             .padding(10.dp)
     ) {
+
         Text(text = title, fontSize = 16.sp)
     }
 }
@@ -1592,9 +1732,19 @@ fun BoxComponent(
 }
 
 @Composable
-fun DayTemperatureItem(date: String, maxTemperature: Int, minTemperature: Int, valgtTemperatur: String, weatherIcon: String) {
+fun DayTemperatureItem(vm: HomeViewModel, id: Int, date: String, maxTemperature: Int, minTemperature: Int, valgtTemperatur: String, weatherIcon: String) {
+
     Row(
         modifier = Modifier
+            .clickable(onClick = {
+                for (i in 0..6) {
+                    if (i == id) {
+                        vm.expandTable[id] = !vm.expandTable[id]
+                    } else {
+                        vm.expandTable[i] = false
+                    }
+                }
+            })
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 3.dp)
             .padding(start = 25.dp, end = 25.dp),

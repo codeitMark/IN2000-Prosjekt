@@ -6,6 +6,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -40,6 +41,7 @@ import java.time.LocalDateTime
 import java.time.Period
 import java.time.format.DateTimeFormatter
 import java.util.Date
+import kotlin.math.roundToInt
 import no.uio.ifi.in2000.project.model.sunrise.Geometry as SunriseGeometry
 import no.uio.ifi.in2000.project.model.sunrise.Properties as SunriseProperties
 
@@ -130,6 +132,9 @@ class HomeViewModel(
     //private set gjør at variabelen kan kun endres inni klassen. Dette sørger for at det ikke kan endres av noe fra HomeScreen/utenfor HVM.
 
 
+    var loadingScreen by mutableStateOf(true)
+    var loadingSearch by mutableStateOf(false)
+    var noResultsToast by mutableStateOf(false)
 
     var alertsData: MetAlertsResponse? by mutableStateOf(MetAlertsResponse(listOf(), String(), String(), String()))
         private set
@@ -192,10 +197,14 @@ class HomeViewModel(
     var suggestions by mutableStateOf<List<ApiProperties>>(emptyList())
         private set
 
+    var valgtTemperatur by mutableStateOf("Celsius")
+
     var currentFormatted by mutableStateOf("")
         private set
 
     var expanded by mutableStateOf(false)
+    var showSettings by mutableStateOf(false)
+    var expandTable = mutableStateListOf(false, false, false, false, false, false, false)
 
     val focusRequester by mutableStateOf(FocusRequester())
 
@@ -225,6 +234,7 @@ class HomeViewModel(
     fun loadSuggestions(text: String) {
 
         viewModelScope.launch(Dispatchers.IO) {
+            loadingSearch = true
             val response = searchRep.fetchSuggestions(text)
             val items = response?.features
             val list = mutableListOf<ApiProperties>()
@@ -234,7 +244,17 @@ class HomeViewModel(
                 }
             }
             suggestions = list
+            loadingSearch = false
+            if (suggestions.isEmpty() && text.length > 3) {
+                noResultsToast = true
+                setTimerToast()
+            }
         }
+    }
+
+    private suspend fun setTimerToast() {
+        delay(3000)
+        noResultsToast = false
     }
 
     //fun loadData(lat: Double, lon: Double, county:String, lang: String){
@@ -256,6 +276,7 @@ class HomeViewModel(
             }
             //Log.i("HOMEVIEWMODEL INIT", "Initiated.")
             //weatherUiState = weatherUiState.copy(weather = weather) //same functionality as weatherData = locationForecastRep.fetchWeather(lat, lon)
+            loadingScreen = false
         }
     }
 
@@ -284,6 +305,8 @@ class HomeViewModel(
 
     fun loadCurrent(text: String) {
         viewModelScope.launch(Dispatchers.IO) {
+            loadingScreen = true
+            expandTable = mutableStateListOf(false, false, false, false, false, false, false)
             val response = searchRep.fetchSuggestions(text)
             val items = response?.features
             val list = mutableListOf<ApiProperties>()
@@ -294,24 +317,26 @@ class HomeViewModel(
             }
             suggestions = list
 
-            //kræsjer hawaiian isles. Trenger vi null-safety sjekk?
-            currentFormatted = suggestions[0].formatted
-            name = suggestions[0].timezone.name
-            lat = suggestions[0].lat
-            lon = suggestions[0].lon
-            sjekkDST(name)
-            if (dst){
-                timeZone = suggestions[0].timezone.offset_DST //Daylight Saving Time. Sommertid.
-                offset = suggestions[0].timezone.offset_DST_seconds/60/60
-            } else{
-                timeZone = suggestions[0].timezone.offset_STD //Standard Time. Norge er i DST, mens steder som New Zealand er i STD.
-                offset = suggestions[0].timezone.offset_STD_seconds/60/60
+            if (suggestions.isNotEmpty()) {
+                currentFormatted = suggestions[0].formatted
+                name = suggestions[0].timezone.name
+                lat = suggestions[0].lat
+                lon = suggestions[0].lon
+                sjekkDST(name)
+                if (dst) {
+                    timeZone = suggestions[0].timezone.offset_DST //Daylight Saving Time. Sommertid.
+                    offset = suggestions[0].timezone.offset_DST_seconds / 60 / 60
+                } else {
+                    timeZone =
+                        suggestions[0].timezone.offset_STD //Standard Time. Norge er i DST, mens steder som New Zealand er i STD.
+                    offset = suggestions[0].timezone.offset_STD_seconds / 60 / 60
+                }
+                Log.d("TestSearch1000", "LAT: $lat --- LON: $lon")
+                Log.i("timeZonesjekk", timeZone)
+                loadingScreen = false
+                loadData(lang, lat, lon, timeZone)
+                // loadData(59.9133301, 10.7389701)
             }
-            Log.d("TestSearch1000", "LAT: $lat --- LON: $lon")
-            Log.i("timeZonesjekk", timeZone)
-
-            loadData(lang, lat, lon, timeZone)
-            //loadData(59.9133301, 10.7389701)
         }
     }
 
@@ -365,11 +390,54 @@ class HomeViewModel(
         }
         return Pair(maxTemp, minTemp)
     }
+
+    fun getDayDataDetails(inDate: String): List<List<Any>> {
+        val timeseries = weatherData?.properties?.timeseries
+
+        val retList = mutableListOf<List<Any>>()
+        val timeFormat = mapOf<String, String>(
+            "00:00:00Z" to "00-06",
+            "06:00:00Z" to "06-12",
+            "12:00:00Z" to "12-18",
+            "18:00:00Z" to "18-00"
+        )
+
+        if (timeseries != null) {
+            for (item in timeseries) {
+                val date = item.time.split("T")[0]
+                val time = item.time.split("T")[1]// Hent bare dato-delen av tiden
+                if (date == inDate) {
+                    if (time == "00:00:00Z" ||
+                        time == "06:00:00Z" ||
+                        time == "12:00:00Z" ||
+                        time == "18:00:00Z") {
+
+                        val values = mutableListOf<Any>()
+                        values.add(timeFormat[time].toString())
+
+
+                        val temperatureText = if (valgtTemperatur == "Celsius") {
+                            "${((item.data.next_6_hours.details.air_temperature_max + item.data.next_6_hours.details.air_temperature_min) / 2).roundToInt()}°C"
+                        } else {
+                            "${(((item.data.next_6_hours.details.air_temperature_max + item.data.next_6_hours.details.air_temperature_min) / 2) * 1.8 + 32).roundToInt()}°F"
+                        }
+
+                        values.add(temperatureText)
+                        values.add(item.data.instant.details.wind_speed.roundToInt())
+                        values.add(item.data.next_6_hours.details.precipitation_amount.roundToInt())
+                        values.add(item.data.next_6_hours.summary.symbol_code)
+                        retList.add(values)
+                    }
+                }
+            }
+        }
+
+        return retList
+    }
     // I ViewModel
     fun getAlertIcons(): Map<String, String> {
         return metAlertsRep.alertIcons
     }
-
     private suspend fun timeoutStreak() {
         delay(4000)
         showStreak = false
