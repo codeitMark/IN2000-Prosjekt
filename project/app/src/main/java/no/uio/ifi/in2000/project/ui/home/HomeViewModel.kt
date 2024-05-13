@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.project.ui.home
 
-import android.content.Context
 import android.icu.util.TimeZone
 import android.os.Build
 import android.util.Log
@@ -13,8 +12,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusRequester
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -37,16 +34,12 @@ import no.uio.ifi.in2000.project.model.sunrise.SunriseResponse
 import no.uio.ifi.in2000.project.model.sunrise.Sunset
 import no.uio.ifi.in2000.project.model.sunrise.When
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.Period
 import java.time.format.DateTimeFormatter
 import java.util.Date
 import kotlin.math.roundToInt
 import no.uio.ifi.in2000.project.model.sunrise.Geometry as SunriseGeometry
 import no.uio.ifi.in2000.project.model.sunrise.Properties as SunriseProperties
-
-// Dataklasse for å representere temperaturprognosen for en dag
-data class TemperatureForecast(val date: String, val maxTemperature: Int, val minTemperature: Int)
 
 @RequiresApi(Build.VERSION_CODES.O)
 class HomeViewModel(
@@ -58,9 +51,9 @@ class HomeViewModel(
     private val searchRep = SearchRepository()
 
 
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    val today = LocalDate.now()
-    //val today = LocalDate.parse("2024-05-15", formatter)  --- Use this to test if it works, manually take one day at a time
+    private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    private val today: LocalDate = LocalDate.now()
+    // private val today = LocalDate.parse("2024-05-16", formatter)  // Use this to test if it works, manually take one day at a time
 
     var streak by mutableIntStateOf(0)
 
@@ -139,14 +132,12 @@ class HomeViewModel(
     var alertsData: MetAlertsResponse? by mutableStateOf(MetAlertsResponse(listOf(), String(), String(), String()))
         private set
 
-    var sortedAlerts: LinkedHashMap<String, String> = LinkedHashMap()
+    private var sortedAlerts: LinkedHashMap<String, String> = LinkedHashMap()
+
+    var locationForecastIcons: MutableList<String> = mutableListOf()
         private set
 
-    var locationForecastIcons: MutableList<String> = mutableListOf<String>()
-        private set
-
-    var metAlertsIcons: MutableList<String>? = mutableListOf<String>()
-        private set
+    private var metAlertsIcons: MutableList<String>? = mutableListOf()
 
     var firstLoad = true
     var showStreak by mutableStateOf(true)
@@ -208,20 +199,17 @@ class HomeViewModel(
 
     val focusRequester by mutableStateOf(FocusRequester())
 
-    var currentTime by mutableStateOf("")
-        private set
-
     // Placeholdere for innholdet. Disse må være initialisert, derfor er det placeholdere.
-    //Parametere for LocationForecast
+    // Parametere for LocationForecast
     var lat = 0.0
     var lon = 0.0
 
-    //Parametere for MetAlerts
-    var lang = "no"
+    // Parametere for MetAlerts
+    private var lang = "no"
     var initialized by mutableStateOf(false)
 
-    //Parameter for Sunrise
-    var timeZone = "+00:00"
+    // Parameter for Sunrise
+    private var timeZone = "+00:00"
     var offset = 0
     private var name = "" //For timeZone objekt. Sjekker om stedet er i DST eller STD.
     private var dst = false
@@ -259,7 +247,7 @@ class HomeViewModel(
 
     //fun loadData(lat: Double, lon: Double, county:String, lang: String){
     //Tester uten alerts (Lite sannsynlig for at det er alerts)
-    fun loadData(lang: String, lat: Double, lon: Double, timeZone: String){
+    private fun loadData(lang: String, lat: Double, lon: Double, timeZone: String){
         viewModelScope.launch(Dispatchers.IO){
             weatherData = locationForecastRep.fetchWeather(lat, lon)
             Log.d("VIEWMODEL_HOMESCREEN", "API-kall weather") //sjekker antall API-kall vi gjør gjennom ViewModel. Vi fetcher ikke flere ganger, så det gir mening.
@@ -287,7 +275,7 @@ class HomeViewModel(
                 val item = response.results[0]
                 currentFormatted = item.formatted
                 name = item.timezone.name
-            sjekkDST(name)
+            sjekkDST()
             if (dst){
                 timeZone = item.timezone.offset_DST //Daylight Saving Time. Sommertid.
                 offset = item.timezone.offset_DST_seconds/60/60
@@ -322,7 +310,7 @@ class HomeViewModel(
                 name = suggestions[0].timezone.name
                 lat = suggestions[0].lat
                 lon = suggestions[0].lon
-                sjekkDST(name)
+                sjekkDST()
                 if (dst) {
                     timeZone = suggestions[0].timezone.offset_DST //Daylight Saving Time. Sommertid.
                     offset = suggestions[0].timezone.offset_DST_seconds / 60 / 60
@@ -341,7 +329,7 @@ class HomeViewModel(
     }
 
     //Seperat loadAlerts så vi slipper å kalle på LocationForecast på nytt hvis man bytter språk
-    fun loadAlerts(lang: String, lat: Double, lon: Double){
+    private fun loadAlerts(lang: String, lat: Double, lon: Double){
         viewModelScope.launch(Dispatchers.IO){
             //Prevents app from crashing. There are no locations chosen.
             if (!initialized){
@@ -355,14 +343,14 @@ class HomeViewModel(
         }
     }
 
-    private fun sjekkDST(sted: String){
+    private fun sjekkDST(){
         val tz = TimeZone.getTimeZone(name)
         val currentDate = Date()
         dst = tz.inDaylightTime(currentDate)
     }
 
     // Hjelpefunksjon for å hente ut maksimums- og minimumstemperaturene for en dag
-    fun getTemperatureForDay(response: LocationForecastResponse, date: String): Pair<Double?, Double?>? {
+    fun getTemperatureForDay(response: LocationForecastResponse, date: String): Pair<Double?, Double?> {
         val timeseries = response.properties.timeseries
 
         var maxTemp: Double? = null
@@ -395,7 +383,7 @@ class HomeViewModel(
         val timeseries = weatherData?.properties?.timeseries
 
         val retList = mutableListOf<List<Any>>()
-        val timeFormat = mapOf<String, String>(
+        val timeFormat = mapOf(
             "00:00:00Z" to "00-06",
             "06:00:00Z" to "06-12",
             "12:00:00Z" to "12-18",

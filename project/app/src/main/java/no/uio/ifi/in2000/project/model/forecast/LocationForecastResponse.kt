@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.project.model.forecast
 
 import kotlinx.serialization.Serializable
-import java.io.Serial
 
 @Serializable
 data class LocationForecastResponse(

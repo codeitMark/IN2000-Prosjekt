@@ -1,7 +1,6 @@
 package no.uio.ifi.in2000.project.ui.home
 
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -21,7 +20,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -41,11 +39,9 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.rounded.Clear
-import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -58,6 +54,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -96,50 +93,26 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.zIndex
 import no.uio.ifi.in2000.project.R
-import no.uio.ifi.in2000.project.model.search.ApiProperties
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 import kotlin.math.roundToInt
 
 @RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
-//@Preview(showBackground = true, showSystemUi = true)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
 
     val scrollState = rememberScrollState()
     val scrollStateVertical = rememberScrollState()
 
-    var expandedSpråk by remember {
-        mutableStateOf(false)
-    }
-
     if (lat != 0.0 && lon != 0.0 && vm.firstLoad) {
         vm.loadCurrentFromCoordinates(lat, lon)
         vm.firstLoad = false
     }
 
-    var switchChecked by remember {
-        mutableStateOf(false)
-    }
-
-    var expandedStateSettings by remember { mutableStateOf(false) }
-    val rotationStateSettings by animateFloatAsState(
-        targetValue = if (expandedStateSettings) 180f else 0f, label = ""
-    )
-
     //duplicate of same thing in SearchBar()
     val keyboardController = LocalSoftwareKeyboardController.current
-
-    val språk = LinkedHashMap<String, String>()
-    språk["no"] = "Norsk"
-    språk["en"] = "English"
-
-    var valgtSpråk by remember {
-        mutableStateOf("Norsk") //Default value will be "no", norsk.
-    }
-    var showSearchbar by remember{ mutableStateOf(false)}
 
     val allBoxesExpanded = remember { mutableStateOf(false) }
     val rotationState = animateFloatAsState(
@@ -160,7 +133,6 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
                     //hides settings when user clicking out
                 })
             },
-        //verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -183,8 +155,8 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
                     modifier = Modifier
                         .fillMaxWidth()
                 ) {
-                    var celsius by remember { mutableStateOf(0xFFFFFFFF) }
-                    var fahrenheit by remember { mutableStateOf(0xFF8C9299) }
+                    var celsius by remember { mutableLongStateOf(0xFFFFFFFF) }
+                    var fahrenheit by remember { mutableLongStateOf(0xFF8C9299) }
                     var checked by remember { mutableStateOf(false) }
 
                     Row (
@@ -430,7 +402,6 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
                                         .size(40.dp)
                                 )
                             }
-                            //Spacer(modifier = Modifier.weight(1f))
 
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Image(
@@ -449,7 +420,6 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
                                 )
                             }
                         }
-                        //Spacer(modifier = Modifier.height(10.dp))
 
                         Row(
                             modifier = Modifier
@@ -460,7 +430,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
                             val vind =
                                 vm.weatherData!!.properties.timeseries[0].data.instant.details.wind_speed.roundToInt()
                             Text(
-                                text = "${vind} m/s",
+                                text = "$vind m/s",
                                 fontSize = 18.sp,
                                 style = TextStyle(
                                     color = Color.White
@@ -469,10 +439,10 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
 
                             Spacer(modifier = Modifier.weight(1f))
 
-                            val nedbør =
+                            val regn =
                                 vm.weatherData!!.properties.timeseries[0].data.next_1_hours.details.precipitation_amount
                             Text(
-                                text = "${nedbør} mm",
+                                text = "$regn mm",
                                 fontSize = 18.sp,
                                 style = TextStyle(
                                     color = Color.White
@@ -549,13 +519,13 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
                         )
                     }
 
-                    val uvStyrkeNå =
+                    val uvNow =
                         vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky
 
-                    val uvStyrkeTekst = when {
-                        vm.weatherData != null && uvStyrkeNå < 3.0 -> "Lavt"
-                        vm.weatherData != null && uvStyrkeNå >= 3.0 && uvStyrkeNå < 6.0 -> "Medium"
-                        vm.weatherData != null && uvStyrkeNå >= 6.0 && uvStyrkeNå < 8.0 -> "Høyt"
+                    val uvText = when {
+                        vm.weatherData != null && uvNow < 3.0 -> "Lavt"
+                        vm.weatherData != null && uvNow >= 3.0 && uvNow < 6.0 -> "Medium"
+                        vm.weatherData != null && uvNow >= 6.0 && uvNow < 8.0 -> "Høyt"
                         else -> "Veldig høyt"
                     }
 
@@ -564,11 +534,11 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        UVScale(uvIndex = uvStyrkeNå)
+                        UVScale(uvIndex = uvNow)
                         Text(
                             modifier = Modifier
                                 .padding(top = 10.dp),
-                            text = "$uvStyrkeNå - $uvStyrkeTekst",
+                            text = "$uvNow - $uvText",
                             fontSize = 20.sp,
                             style = TextStyle(
                                 color = Color.White
@@ -586,15 +556,8 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
                             .padding(start = 30.dp, end = 30.dp, top = 30.dp)
                     ) {
                         var i = 0
-                        //noe hardkodet teller for metAlertsIcons. Mulig med bedre løsning, men kan ta tid å finne.
-                        // vm.sortedAlerts.forEach //Bruk denne for å fjerne duplikater.
-                        // Problem: I tilfellet det er duplikater, vil vm.metAlertsIcons[i] vise feil ikoner.
-                        // Det vil iterere over ikonene som om det ikke er duplikater = gust gust vs. gust flood (filtered).
-                        // Den første vil vise riktige ikoner. Den andre vil vise gust gust fortsatt.
+
                         vm.alertsData!!.features.forEach {
-                            //drop for løkke, make map then set of eventawarenessname and instruction.
-                            // compare feature with feature? if already in there or smth like that.
-                            // this processing should happen in ViewModel. Map is already unique by default :)
                             val event = it.properties.event
                             val riskMatrixColor = it.properties.riskMatrixColor.lowercase()
                             val iconResourceName = "${alertIcons[event]}_$riskMatrixColor"
@@ -614,21 +577,21 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
                         modifier = Modifier
                             .padding(start = 30.dp, end = 30.dp, top = 30.dp, bottom = 30.dp)
                     ) {
-                        if (uvStyrkeNå >= 8.0) {
+                        if (uvNow >= 8.0) {
                             WarningBox(
                                 headline = "Veldig høy\nUV-indeks!",
                                 subtitle = "",
                                 info = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.",
                                 iconResourceId = R.drawable.icon_warning_generic_red
                             )
-                        } else if (uvStyrkeNå >= 6.0 && uvStyrkeNå < 8) {
+                        } else if (uvNow >= 6.0 && uvNow < 8) {
                             WarningBox(
                                 headline = "Høy UV-indeks!",
                                 subtitle = "",
                                 info = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola.",
                                 iconResourceId = R.drawable.icon_warning_generic_orange
                             )
-                        } else if (uvStyrkeNå >= 3 && uvStyrkeNå < 6) {
+                        } else if (uvNow >= 3 && uvNow < 6) {
                             WarningBox(
                                 headline = "Middels UV-indeks",
                                 subtitle = "",
@@ -684,7 +647,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
                                     },
                                     windSpeed = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.wind_speed.roundToInt()} m/s",
                                     precipitation = "${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount} mm",
-                                    uvStyrke = vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky,
+                                    uvIndex = vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky,
                                     width = 140,
                                     height = 278,
                                     expanded = allBoxesExpanded,
@@ -887,18 +850,10 @@ fun ExtendedTableItem(data: List<List<Any>>) {
             userScrollEnabled = false,
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color(0xFF4A535D))
+                .background(Color(0xFF38424D))
                 .height(209.dp)) {
             item {
-                /*
 
-                Spacer(modifier = Modifier
-                    .padding(5.dp, 5.dp)
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(Color(0xFF999999))
-                )
-                 */
                 Line()
                 Row (modifier = Modifier
                     .fillMaxWidth()
@@ -951,31 +906,13 @@ fun ExtendedTableItem(data: List<List<Any>>) {
                             .size(23.dp)
                     )
                 }
-                /*
-
-                Spacer(modifier = Modifier
-                    .padding(5.dp, 5.dp)
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(Color(0xFF555555))
-                )
-                 */
             }
         }
     }
 }
 
-@Composable
-fun DisplayItems(items: List<ApiProperties>?) {
-    Column {
-        items?.forEach { item ->
-            Text(text = item.formatted)
-        }
-    }
-}
-
 @RequiresApi(Build.VERSION_CODES.O)
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchBar(vm: HomeViewModel) {
 
@@ -1022,6 +959,7 @@ fun SearchBar(vm: HomeViewModel) {
         Column(modifier = Modifier.fillMaxWidth()) {
 
             Row(modifier = Modifier.fillMaxWidth()) {
+                val containerColor = Color(0xFF272D34)
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -1052,11 +990,13 @@ fun SearchBar(vm: HomeViewModel) {
                         vm.loadSuggestions(it)
                     },
                     placeholder = { Text("Søk på sted", color = Color(0xFF999999)) },
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color(0xFF272D34),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = containerColor,
+                        unfocusedContainerColor = containerColor,
+                        disabledContainerColor = containerColor,
+                        cursorColor = Color.White,
                         focusedIndicatorColor = Color(0xFF272D34),
                         unfocusedIndicatorColor = Color(0xFF272D34),
-                        cursorColor = Color.White
                     ),
                     textStyle = TextStyle(
                         color = Color.White,
@@ -1068,36 +1008,25 @@ fun SearchBar(vm: HomeViewModel) {
                     ),
                     singleLine = true,
                     trailingIcon = {
-                            Row (verticalAlignment = Alignment.CenterVertically) {
-                                if (vm.loadingSearch) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier
-                                            .width(20.dp)
-                                            .padding(0.dp, 16.dp, 0.dp, 0.dp),
-                                        color = MaterialTheme.colorScheme.secondary,
-                                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                                    )
-                                }
-                                if (vm.searchField.isNotEmpty()) {
-                                    IconButton(onClick = { vm.searchField = "" }) {
-                                        Icon(
-                                            imageVector = Icons.Rounded.Clear,
-                                            contentDescription = "Clear",
-                                            tint = Color.White
-                                        )
-                                    }
-                                }
-                                /*
-
-                                IconButton(onClick = { vm.expanded = !vm.expanded }) {
+                        Row (verticalAlignment = Alignment.CenterVertically) {
+                            if (vm.loadingSearch) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .width(20.dp)
+                                        .padding(0.dp, 16.dp, 0.dp, 0.dp),
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    trackColor = MaterialTheme.colorScheme.surfaceVariant
+                                )
+                            }
+                            if (vm.searchField.isNotEmpty()) {
+                                IconButton(onClick = { vm.searchField = "" }) {
                                     Icon(
-                                        modifier = Modifier.size(24.dp),
-                                        imageVector = Icons.Rounded.KeyboardArrowDown,
-                                        contentDescription = "arrow",
+                                        imageVector = Icons.Rounded.Clear,
+                                        contentDescription = "Clear",
                                         tint = Color.White
                                     )
                                 }
-                                 */
+                            }
                         }
                     }
                 )
@@ -1373,223 +1302,6 @@ fun VerticalLine(){
     )
 }
 
-//Makes switchbuttons
-@Composable
-fun SwitchButton(){
-    var checked by remember { mutableStateOf(true) }
-    Switch(
-        modifier = Modifier
-            .size(2.dp)
-            .padding(25.dp, 15.dp, 0.dp, 0.dp),
-        checked = checked,
-        onCheckedChange = {
-            checked = it
-        },
-        colors = SwitchDefaults.colors(
-            checkedThumbColor =  Color(0xFF38424D),
-            checkedTrackColor = Color(0xFFFFFFFF),
-            uncheckedThumbColor = Color(0xFFFFFFFF),
-            uncheckedTrackColor = Color(0xFF38424D),
-        )
-    )
-}
-
-//Makes the settings card
-@Composable
-fun SettingsCard(){
-    var expandedState by remember { mutableStateOf(false) }
-    val rotationState by animateFloatAsState(
-        targetValue = if (expandedState) 180f else 0f, label = ""
-    )
-
-    var chosenLanguage by remember { mutableStateOf("Norsk (bokmål)") }
-
-    var chosenTemperature by remember {
-        mutableStateOf("Celsius") //Default value will be Celsius. Can choose Fahrenheit.
-    }
-    Card (modifier = Modifier
-        .width(242.dp)
-        .animateContentSize(
-            animationSpec = tween(
-                durationMillis = 300,
-                easing = LinearOutSlowInEasing
-            )
-        ),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFF38424D),
-        )
-    ) {
-        Column (modifier = Modifier.fillMaxWidth()){
-            //Settings icon
-            IconButton(
-                modifier = Modifier
-                    .padding(190.dp, 0.dp, 0.dp, 0.dp)
-                    .size(50.dp),
-                onClick = {
-                },
-
-                colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = Color(0xFFFFFFFF)
-                )
-            ){
-                Icon(
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Settings"
-                )
-            }
-
-            Row {
-                SettingsText(14, color = 0xFFFFFFFF, content = "Posisjonsbasert værvarsel", 10, 5, 12, 5)
-                SwitchButton()
-            }
-            Line()
-
-            Row {
-                var celsius by remember { mutableStateOf(0xFFFFFFFF)}
-                var fahrenheit by remember { mutableStateOf(0xFF8C9299)}
-                var checked by remember { mutableStateOf(true) }
-
-                SettingsText(14, color = celsius, content = "Celsius", 10, 5, 0, 5)
-                SettingsText(14, color = 0xFFFFFFFF, content = " / ", 0, 5, 0, 5)
-                SettingsText(14, color = fahrenheit, content = "Fahrenheit", 0, 5, 50, 5)
-
-                Switch(
-                    modifier = Modifier
-                        .size(2.dp)
-                        .padding(25.dp, 15.dp, 0.dp, 0.dp),
-                    checked = checked,
-                    onCheckedChange = {
-                        checked = it
-                        if (celsius == 0xFFFFFFFF) {
-                            celsius = 0xFF8C9299
-                            fahrenheit = 0xFFFFFFFF
-                        }
-                        else {
-                            celsius = 0xFFFFFFFF
-                            fahrenheit = 0xFF8C9299
-                        }
-                        chosenTemperature = if (chosenTemperature == "Celsius") {
-                            "Fahrenheit" //add this to viewmodel so we can process this in repo?
-                        } else {
-                            "Celsius"
-                        }
-                        Log.i("TEMPERATUR", chosenTemperature)
-
-                    },
-                    colors = SwitchDefaults.colors(
-                        checkedThumbColor =  Color(0xFF38424D),
-                        checkedTrackColor = Color(0xFFFFFFFF),
-                        uncheckedThumbColor = Color(0xFFFFFFFF),
-                        uncheckedTrackColor = Color(0xFF38424D),
-                    )
-                )
-            }
-            Line()
-
-            Row {
-                SettingsText(14, color = 0xFFFFFFFF, content = "Varslinger", 10, 5, 110, 5)
-                SwitchButton()
-            }
-
-        }
-        Line()
-
-        Row {
-
-
-            SettingsText(14, color = 0xFFFFFFFF, content = "Språk", 10, 5, 15, 5)
-            SettingsText(14, color = 0xFF8C9299, content = chosenLanguage, 10, 5, 20, 5)
-
-            IconButton(
-                modifier = Modifier
-                    .padding(0.dp, 0.dp, 10.dp, 0.dp)
-                    .rotate(rotationState),
-                onClick = {
-                    expandedState = !expandedState
-
-                },
-                colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = Color(0xFFFFFFFF)
-                )
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "Drop-Down Arrow"
-                )
-            }
-
-        }
-        if (expandedState) {
-            val notClicked = 0xFF272D34
-            val clicked = 0xFF586471
-
-           /* var nynorsk by remember{mutableStateOf(
-                if (chosenLanguage == "Norsk (nynorsk)") clicked
-                else notClicked
-            ) }*/
-            var bokmaal by remember{mutableStateOf(
-                if (chosenLanguage == "Norsk (bokmål)") clicked
-                else notClicked
-            ) }
-            var engelsk by remember{mutableStateOf(
-                if (chosenLanguage == "Engelsk") clicked
-                else notClicked
-            ) }
-
-            //In case we want to implement nynorsk:
-/*
-            Box (modifier = Modifier
-                .clickable(onClick = {
-                    nynorsk = clicked
-                    bokmaal = notClicked
-                    engelsk = notClicked
-
-                    chosenLanguage = "Norsk (nynorsk)"
-
-                })
-                .padding(5.dp, 3.dp)
-                .fillMaxWidth()
-                .background(color = Color(nynorsk))
-
-            ) {
-                SettingsText(fontSize = 14, color = 0xFFFFFFFF, content = "Norsk (Nynorsk)", start = 10, top = 5, end = 5, bottom = 5)
-            }*/
-
-            Box (modifier = Modifier
-                .clickable(onClick = {
-                    //nynorsk = notClicked
-                    bokmaal = clicked
-                    engelsk = notClicked
-
-                    chosenLanguage = "Norsk (bokmål)"
-                })
-                .padding(5.dp, 3.dp)
-                .fillMaxWidth()
-                .background(color = Color(bokmaal))
-
-            ) {
-                SettingsText(fontSize = 14, color = 0xFFFFFFFF, content = "Norsk (Bokmål)", start = 10, top = 5, end = 5, bottom = 5)
-            }
-
-            Box (modifier = Modifier
-                .clickable(onClick = {
-                    //nynorsk = notClicked
-                    bokmaal = notClicked
-                    engelsk = clicked
-
-                    chosenLanguage = "Engelsk"
-                })
-                .padding(5.dp, 3.dp)
-                .fillMaxWidth()
-                .background(color = Color(engelsk))
-
-            ) {
-                SettingsText(fontSize = 14, color = 0xFFFFFFFF, content = "Engelsk", start = 10, top = 5, end = 5, bottom = 5)
-            }
-        }
-    }
-}
-
 //This box component is for the hour by hour weather forecast - if you want to use it!
 @Composable
 fun BoxComponent(
@@ -1597,18 +1309,18 @@ fun BoxComponent(
     temperature: String,
     windSpeed: String,
     precipitation: String,
-    uvStyrke: Float,
+    uvIndex: Float,
     width: Int,
     height: Int,
     weatherIcon: @Composable () -> Unit,
     expanded: MutableState<Boolean>
 ) {
     val uvColor = when {
-        uvStyrke <= 2 -> Color(0xFF14FC00)
-        uvStyrke <= 4 -> Color(0xFFDEEF17)
-        uvStyrke <= 6 -> Color(0xFFFFAA06)
-        uvStyrke <= 8 -> Color(0xFFFD6C06)
-        uvStyrke <= 10 -> Color(0xFFFB0606)
+        uvIndex <= 2 -> Color(0xFF14FC00)
+        uvIndex <= 4 -> Color(0xFFDEEF17)
+        uvIndex <= 6 -> Color(0xFFFFAA06)
+        uvIndex <= 8 -> Color(0xFFFD6C06)
+        uvIndex <= 10 -> Color(0xFFFB0606)
         else -> Color(0xFF9E06FB)
     }
 
@@ -1636,7 +1348,7 @@ fun BoxComponent(
                 text = time,
                 style = TextStyle(
                     fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = Bold,
                     color = Color.White,
                 ),
                 textAlign = TextAlign.Center,
@@ -1711,7 +1423,7 @@ fun BoxComponent(
                         modifier = Modifier.size(23.dp)
                     )
                     Text(
-                        text = "$uvStyrke",
+                        text = "$uvIndex",
                         style = TextStyle(
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Normal,

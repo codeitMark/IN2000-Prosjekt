@@ -15,14 +15,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import no.uio.ifi.in2000.project.data.streak.StreakRepository
@@ -96,6 +93,7 @@ class MainActivity : ComponentActivity() {
 }
 // Comment on main
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun MainScreen(lat: Double, lon: Double, vm: HomeViewModel){
     HomeScreen(lat, lon, vm)

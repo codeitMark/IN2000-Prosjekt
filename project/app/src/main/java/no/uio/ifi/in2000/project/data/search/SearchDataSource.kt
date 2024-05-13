@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.project.data.search
 
-import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.cio.CIO
@@ -15,7 +14,7 @@ import no.uio.ifi.in2000.project.model.search.ReverseGeocodingResponse
 data class SearchDataSource(private val path: String = "https://api.geoapify.com") {
     var authorized = false
     var connected = false
-    val apiKey = "19c993f3dda5470f99c6cebeb819fa9f"
+    private val apiKey = "19c993f3dda5470f99c6cebeb819fa9f"
     private val client = HttpClient(CIO){
         install(ContentNegotiation){
             gson()
