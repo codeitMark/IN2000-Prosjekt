@@ -424,7 +424,7 @@ class HomeViewModel(
 
                         values.add(temperatureText)
                         values.add(item.data.instant.details.wind_speed.roundToInt())
-                        values.add(item.data.next_6_hours.details.precipitation_amount.roundToInt())
+                        values.add(item.data.next_6_hours.details.precipitation_amount)
                         values.add(item.data.next_6_hours.summary.symbol_code)
                         retList.add(values)
                     }
