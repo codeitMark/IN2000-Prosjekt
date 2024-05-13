@@ -1443,6 +1443,7 @@ fun BoxComponent(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DayTemperatureItem(vm: HomeViewModel, id: Int, date: String, maxTemperature: Int, minTemperature: Int, valgtTemperatur: String, weatherIcon: String) {
+    var expanded by remember { mutableStateOf(false) }
 
     Row(
         modifier = Modifier
@@ -1450,6 +1451,7 @@ fun DayTemperatureItem(vm: HomeViewModel, id: Int, date: String, maxTemperature:
                 for (i in 0..6) {
                     if (i == id) {
                         vm.expandTable[id] = !vm.expandTable[id]
+                        expanded = !expanded
                     } else {
                         vm.expandTable[i] = false
                     }
@@ -1457,18 +1459,19 @@ fun DayTemperatureItem(vm: HomeViewModel, id: Int, date: String, maxTemperature:
             })
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 3.dp)
-            .padding(start = 25.dp, end = 25.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
+            .padding(start = 20.dp),
+        horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = date,
-            modifier = Modifier
-                .weight(1f),
             style = TextStyle(
                 color = Color.White
             )
         )
+
+        Spacer(modifier = Modifier.weight(1f))
+
         val formattedMaxTemp = if (valgtTemperatur == "Celsius") {
             "$maxTemperature°C"
         } else {
@@ -1483,17 +1486,34 @@ fun DayTemperatureItem(vm: HomeViewModel, id: Int, date: String, maxTemperature:
         }
         Text(
             text = "$formattedMaxTemp / $formattedMinTemp",
-            modifier = Modifier.weight(1f),
             style = TextStyle(
                 color = Color.White
             )
         )
+
+        Spacer(modifier = Modifier.weight(1f))
+
         Image(
             painter = painterResource(id = LocalContext.current.resources.getIdentifier(weatherIcon, "drawable", LocalContext.current.packageName)),
             contentDescription = "Weather icon",
             modifier = Modifier
                 .size(50.dp)
         )
+
+        IconButton(
+            onClick = {
+                expanded = !expanded
+                vm.expandTable[id] = !vm.expandTable[id]
+            },
+            modifier = Modifier
+                .rotate(if (expanded) 180f else 0f)
+        ) {
+            Icon(
+                imageVector = Icons.Default.ArrowDropDown,
+                contentDescription = "Drop-Down Arrow",
+                tint = Color.White,
+            )
+        }
     }
 }
 
