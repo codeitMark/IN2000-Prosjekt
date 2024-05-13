@@ -471,7 +471,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
 
                             val nedbør =
                                 vm.weatherData!!.properties.timeseries[0].data.next_1_hours.details.precipitation_amount
-                            Text(dd
+                            Text(
                                 text = "${nedbør} mm",
                                 fontSize = 18.sp,
                                 style = TextStyle(
@@ -683,7 +683,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
                                         "${(vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F"
                                     },
                                     windSpeed = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.wind_speed.roundToInt()} m/s",
-                                    precipitation = "${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount.roundToInt()} mm",
+                                    precipitation = "${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount} mm",
                                     uvStyrke = vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky,
                                     width = 140,
                                     height = 278,
