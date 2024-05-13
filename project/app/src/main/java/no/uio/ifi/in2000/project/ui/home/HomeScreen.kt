@@ -877,7 +877,6 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
 
 @Composable
 fun ExtendedTableItem(data: List<List<Any>>) {
-
     Row (
         modifier = Modifier
             .fillMaxWidth()
@@ -888,18 +887,24 @@ fun ExtendedTableItem(data: List<List<Any>>) {
             userScrollEnabled = false,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(205.dp)) {
+                .background(Color(0xFF4A535D))
+                .height(209.dp)) {
             item {
+                /*
+
                 Spacer(modifier = Modifier
                     .padding(5.dp, 5.dp)
                     .fillMaxWidth()
                     .height(1.dp)
                     .background(Color(0xFF999999))
                 )
+                 */
+                Line()
                 Row (modifier = Modifier
                     .fillMaxWidth()
-                    .height(23.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    .height(37.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                     ) {
                     Spacer(modifier = Modifier.width(50.dp))
                     Image(
@@ -931,7 +936,7 @@ fun ExtendedTableItem(data: List<List<Any>>) {
                 val lists = it
                 Row(modifier = Modifier
                     .fillMaxWidth()
-                    .padding(4.dp),
+                    .padding(5.dp, 8.dp),
                     horizontalArrangement = Arrangement.SpaceAround
 
                 ) {
@@ -946,12 +951,15 @@ fun ExtendedTableItem(data: List<List<Any>>) {
                             .size(23.dp)
                     )
                 }
+                /*
+
                 Spacer(modifier = Modifier
                     .padding(5.dp, 5.dp)
                     .fillMaxWidth()
                     .height(1.dp)
                     .background(Color(0xFF555555))
                 )
+                 */
             }
         }
     }
@@ -1347,7 +1355,6 @@ fun SettingsText(fontSize: Int, color: Long, content: String, start: Int, top: I
 @Composable
 fun Line(){
     Spacer(modifier = Modifier
-        .padding(5.dp, 5.dp)
         .fillMaxWidth()
         .height(1.dp)
         .background(Color(0xFFFFFFFF))
@@ -1732,6 +1739,7 @@ fun BoxComponent(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DayTemperatureItem(vm: HomeViewModel, id: Int, date: String, maxTemperature: Int, minTemperature: Int, valgtTemperatur: String, weatherIcon: String) {
 
