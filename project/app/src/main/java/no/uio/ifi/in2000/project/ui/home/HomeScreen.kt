@@ -441,7 +441,6 @@ fun SearchBar(vm: HomeViewModel) {
             )
     ) {
 
-
         Column(modifier = Modifier.fillMaxWidth()) {
 
             Row(modifier = Modifier.fillMaxWidth()) {

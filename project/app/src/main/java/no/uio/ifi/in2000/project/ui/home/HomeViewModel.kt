@@ -68,8 +68,6 @@ class HomeViewModel(
     init {
         viewModelScope.launch(Dispatchers.IO) {
             var storedData = streakRep.fetchInitialPreferences()
-            Log.d("StreakTest", "Last date: ${storedData.lastDate}")
-            Log.d("StreakTest", "Streak: ${storedData.streak}")
 
             if (storedData.lastDate == "9999-99-99") {
                 streakRep.resetStreak(today.format(formatter))
@@ -258,12 +256,10 @@ class HomeViewModel(
     private fun loadData(lang: String, lat: Double, lon: Double, timeZone: String){
         viewModelScope.launch(Dispatchers.IO){
             weatherData = locationForecastRep.fetchWeather(lat, lon)
-            Log.d("VIEWMODEL_HOMESCREEN", "API-kall weather") //sjekker antall API-kall vi gjør gjennom ViewModel. Vi fetcher ikke flere ganger, så det gir mening.
             locationForecastIcons = locationForecastRep.fetchLocationForecastIcons(weatherData)
             sunrise = sunriseRep.fetchSunrise(lat, lon, timeZone)
             sunriseTime = sunriseRep.fetchSunriseTime(sunrise)?.let { getTimeOnly(it) }.toString()
             sunsetTime = sunriseRep.fetchSunsetTime(sunrise)?.let { getTimeOnly(it) }.toString()
-            Log.d("VIEWMODEL_HOMESCREEN", "API-kall sunrise")
 
             responseStatus = true
             loadAlerts(lang, lat, lon)
@@ -327,8 +323,6 @@ class HomeViewModel(
                         suggestions[0].timezone.offset_STD //Standard Time. Norge er i DST, mens steder som New Zealand er i STD.
                     offset = suggestions[0].timezone.offset_STD_seconds / 60 / 60
                 }
-                Log.d("TestSearch1000", "LAT: $lat --- LON: $lon")
-                Log.i("timeZonesjekk", timeZone)
                 loadingScreen = false
                 loadData(lang, lat, lon, timeZone)
                 // loadData(59.9133301, 10.7389701)
@@ -344,7 +338,6 @@ class HomeViewModel(
                 return@launch
             }
             alertsData = metAlertsRep.fetchAlerts(lang, lat, lon)
-            Log.d("VIEWMODEL_HOMESCREEN", "API-kall alerts")
             sortedAlerts = metAlertsRep.sortAlerts(alertsData)
             metAlertsIcons = metAlertsRep.fetchAlertIcons(alertsData)
             responseStatus = true

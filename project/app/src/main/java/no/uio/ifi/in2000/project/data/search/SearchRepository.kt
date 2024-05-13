@@ -1,5 +1,6 @@
 package no.uio.ifi.in2000.project.data.search
 
+import android.util.Log
 import no.uio.ifi.in2000.project.model.search.AutoCompleteResponse
 import no.uio.ifi.in2000.project.model.search.ReverseGeocodingResponse
 
