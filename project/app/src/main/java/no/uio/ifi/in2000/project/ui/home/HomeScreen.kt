@@ -593,13 +593,13 @@ fun NextDaysComponent(vm: HomeViewModel) {
 
         Row(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-                .padding(start = 47.dp, end = 23.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Text(
                 text = "Dato",
                 modifier = Modifier
+                    .padding(start = 40.dp)
                     .weight(1f),
                 textAlign = TextAlign.Start,
                 fontWeight = Bold,
@@ -620,7 +620,7 @@ fun NextDaysComponent(vm: HomeViewModel) {
             Text(
                 text = "Vær",
                 modifier = Modifier
-                    .padding(end = 18.dp)
+                    .padding(end = 65.dp)
                     .weight(1f),
                 textAlign = TextAlign.End,
                 fontWeight = Bold,
