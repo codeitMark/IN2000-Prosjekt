@@ -855,19 +855,26 @@ fun ExtendedTableItem(data: List<List<Any>>) {
             item {
 
                 Line()
-                Row (modifier = Modifier
-                    .fillMaxWidth()
-                    .height(37.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(37.dp),
+                    horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically
-                    ) {
-                    Spacer(modifier = Modifier.width(50.dp))
+                ) {
+                    Text(
+                        text = "Tid",
+                        color = Color.White,
+                        fontSize = 15.sp,
+                        modifier = Modifier
+                            .width(30.dp)
+                            .padding(start = 5.dp)
+                    )
                     Image(
                         painter = painterResource(id = R.drawable.temperature),
                         contentDescription = "Temperature Icon",
                         modifier = Modifier.size(23.dp)
                     )
-
                     Image(
                         painter = painterResource(id = R.drawable.windicon),
                         contentDescription = "Wind Icon",
@@ -878,8 +885,15 @@ fun ExtendedTableItem(data: List<List<Any>>) {
                         contentDescription = "Rain Icon",
                         modifier = Modifier.size(23.dp)
                     )
-                    Spacer(modifier = Modifier.width(50.dp))
+                    Text(
+                        text = "Vær",
+                        color = Color.White,
+                        fontSize = 15.sp,
+                        modifier = Modifier
+                            .width(30.dp)
+                    )
                 }
+
                 Spacer(modifier = Modifier
                     .padding(5.dp, 5.dp)
                     .fillMaxWidth()
