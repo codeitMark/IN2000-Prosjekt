@@ -1043,7 +1043,7 @@ fun SearchBar(vm: HomeViewModel) {
                         vm.expanded = true
                         vm.loadSuggestions(it)
                     },
-                    placeholder = { Text("Søk på sted") },
+                    placeholder = { Text("Søk på sted", color = Color(0xFF999999)) },
                     colors = TextFieldDefaults.textFieldColors(
                         containerColor = Color(0xFF272D34),
                         focusedIndicatorColor = Color(0xFF272D34),
