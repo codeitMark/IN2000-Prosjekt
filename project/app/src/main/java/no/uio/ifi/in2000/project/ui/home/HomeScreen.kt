@@ -1,6 +1,5 @@
 package no.uio.ifi.in2000.project.ui.home
 
-import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -89,13 +88,10 @@ import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.zIndex
-import androidx.lifecycle.viewmodel.compose.viewModel
-import kotlinx.coroutines.delay
 import no.uio.ifi.in2000.project.R
 import no.uio.ifi.in2000.project.model.search.ApiProperties
 import java.text.SimpleDateFormat
@@ -1660,7 +1656,8 @@ fun UVScale(uvIndex: Float, modifier: Modifier = Modifier) {
             .background(
                 brush = Brush.horizontalGradient(
                     colors = gradientColors,
-                )
+                ),
+                shape = RoundedCornerShape(5.dp)
             )
     ) {
         Canvas(
@@ -1672,10 +1669,10 @@ fun UVScale(uvIndex: Float, modifier: Modifier = Modifier) {
             } else {
                 size.width // Hvis UV-indeksen er over 11, plasser prikken i enden av skalaen
             }
-            drawCircle(
+            drawOval(
                 color = Color.White,
-                center = Offset(uvIndexPosition, size.height / 2),
-                radius = 8.dp.toPx()
+                topLeft = Offset(uvIndexPosition - (10.dp.toPx() / 2), (size.height / 2) - (16.dp.toPx() / 2)), // Top-left hjørne av ovalen
+                size = Size(10.dp.toPx(), 16.dp.toPx()) // Størrelsen til ovalen
             )
         }
     }
