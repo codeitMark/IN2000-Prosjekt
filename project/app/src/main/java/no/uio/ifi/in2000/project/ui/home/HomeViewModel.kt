@@ -57,7 +57,7 @@ class HomeViewModel(
 
     private val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     private val today: LocalDate = LocalDate.now()
-    // private val today = LocalDate.parse("2024-05-16", formatter)  // Use this to test if it works, manually take one day at a time
+    // private val today = LocalDate.parse("2024-05-21", formatter)  // Use this to test if it works, manually take one day at a time
 
     var streak by mutableIntStateOf(0)
 
@@ -77,7 +77,11 @@ class HomeViewModel(
                 val periodLastToday = Period.between(last, today)
                 if (periodLastToday.years == 0 && periodLastToday.months == 0 && periodLastToday.days == 1) {
                     streakRep.updateLastDate(today.format(formatter), (storedData.streak + 1))
-                } else if (periodLastToday.years != 0 || periodLastToday.months != 0 || periodLastToday.days != 1) {
+                } else if (
+                    (periodLastToday.years != 0 || periodLastToday.months != 0 || periodLastToday.days != 1)
+                    &&
+                    !(periodLastToday.years == 0 && periodLastToday.months == 0 && periodLastToday.days == 0)
+                    ) {
                     streakRep.resetStreak(today.format(formatter))
                 }
                 storedData = streakRep.fetchInitialPreferences()

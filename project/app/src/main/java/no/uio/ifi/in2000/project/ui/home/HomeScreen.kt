@@ -1088,6 +1088,7 @@ fun HeaderComponent(vm: HomeViewModel) {
                         modifier = Modifier
                             .clip(RoundedCornerShape(8.dp))
                             .background(Color(0xFFFF6D00))
+                            .clickable { vm.showStreak = !vm.showStreak }
                     ) {
                         Text(
                             text = streakText,
