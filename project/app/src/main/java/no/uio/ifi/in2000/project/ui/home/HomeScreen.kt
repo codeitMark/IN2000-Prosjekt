@@ -470,8 +470,8 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
                             Spacer(modifier = Modifier.weight(1f))
 
                             val nedbør =
-                                vm.weatherData!!.properties.timeseries[0].data.next_1_hours.details.precipitation_amount.roundToInt()
-                            Text(
+                                vm.weatherData!!.properties.timeseries[0].data.next_1_hours.details.precipitation_amount
+                            Text(dd
                                 text = "${nedbør} mm",
                                 fontSize = 18.sp,
                                 style = TextStyle(
@@ -885,7 +885,8 @@ fun ExtendedTableItem(data: List<List<Any>>) {
     ) {
 
         LazyColumn(
-            Modifier
+            userScrollEnabled = false,
+            modifier = Modifier
                 .fillMaxWidth()
                 .height(205.dp)) {
             item {
