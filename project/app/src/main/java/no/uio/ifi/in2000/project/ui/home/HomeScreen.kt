@@ -344,10 +344,17 @@ fun ExtendedTableItem(data: List<List<Any>>) {
                 Row (modifier = Modifier
                     .fillMaxWidth()
                     .height(37.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically
                     ) {
-                    Spacer(modifier = Modifier.width(50.dp))
+                    Text(
+                        text = "Tid",
+                        color = Color.White,
+                        fontSize = 15.sp,
+                        modifier = Modifier
+                            .width(30.dp)
+                            .padding(start = 5.dp)
+                    )
                     Image(
                         painter = painterResource(id = R.drawable.temperature),
                         contentDescription = "Temperature Icon",
@@ -364,7 +371,13 @@ fun ExtendedTableItem(data: List<List<Any>>) {
                         contentDescription = "Rain Icon",
                         modifier = Modifier.size(23.dp)
                     )
-                    Spacer(modifier = Modifier.width(50.dp))
+                    Text(
+                        text = "Vær",
+                        color = Color.White,
+                        fontSize = 15.sp,
+                        modifier = Modifier
+                            .width(30.dp)
+                    )
                 }
                 Spacer(modifier = Modifier
                     .padding(5.dp, 5.dp)
@@ -580,13 +593,13 @@ fun NextDaysComponent(vm: HomeViewModel) {
 
         Row(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-                .padding(start = 47.dp, end = 23.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Text(
                 text = "Dato",
                 modifier = Modifier
+                    .padding(start = 40.dp)
                     .weight(1f),
                 textAlign = TextAlign.Start,
                 fontWeight = Bold,
@@ -607,7 +620,7 @@ fun NextDaysComponent(vm: HomeViewModel) {
             Text(
                 text = "Vær",
                 modifier = Modifier
-                    .padding(end = 18.dp)
+                    .padding(end = 65.dp)
                     .weight(1f),
                 textAlign = TextAlign.End,
                 fontWeight = Bold,
