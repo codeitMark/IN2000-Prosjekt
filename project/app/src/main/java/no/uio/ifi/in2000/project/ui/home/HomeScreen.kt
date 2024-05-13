@@ -9,6 +9,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -52,7 +53,7 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -93,6 +94,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.compose.ui.zIndex
 import no.uio.ifi.in2000.project.R
+import no.uio.ifi.in2000.project.data.Constants
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -111,15 +113,14 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
         vm.firstLoad = false
     }
 
-    //duplicate of same thing in SearchBar()
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    val allBoxesExpanded = remember { mutableStateOf(false) }
     val rotationState = animateFloatAsState(
-        targetValue = if (allBoxesExpanded.value) 180f else 0f,
+        targetValue = if (vm.allBoxesExpanded) 180f else 0f,
         label = ""
     )
 
+    // This spans the entire screen
     Column(
         modifier = Modifier
             .background(Color(0xFF272D34))
@@ -136,35 +137,152 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        // Innstillingsboksen, åpnes øverst
+        // Settings component, appears at the top of the screen
         AnimatedVisibility(visible = vm.showSettings) {
-            Card(
+            SettingsComponent(vm)
+        }
+
+        // Toast if search don't get results, appears at the top of the screen
+        AnimatedVisibility(visible = vm.noResultsToast) {
+            NoResultsToast()
+        }
+
+        TopRowComponent(vm)
+
+        AnimatedVisibility(visible = vm.loadingScreen) {
+            LoadingScreenComponent()
+        }
+
+
+        if (vm.initialized) {
+            //null check for null-safety
+            if (vm.weatherData == null || vm.alertsData == null) {
+                Text("Unable to get data.", fontSize = 35.sp, fontWeight = Bold)
+            } else {
+                if (!vm.responseStatus) {
+                    Text(text = "Loading...", fontSize = 50.sp, fontWeight = Bold)
+                } else {
+                    Text(text = "", fontSize = 0.sp, fontWeight = Bold)
+                }
+
+                HeaderComponent(vm)
+
+                IconAndTemperatureComponent(vm)
+
+                WindRainSunriseSunsetComponent(vm)
+
+                UvComponent(vm)
+
+                NormalWarningsComponent(vm)
+
+                UvWarningsComponent(vm)
+
+                WeatherPerHourComponent(vm, scrollState, rotationState)
+
+                NextDaysComponent(vm)
+
+            }
+        }
+    }
+}
+
+@Composable
+fun LoadingScreenComponent() {
+    Column (modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier
+            .height(250.dp)
+            .fillMaxWidth())
+        CircularProgressIndicator(
+            modifier = Modifier.width(90.dp),
+            color = MaterialTheme.colorScheme.secondary,
+            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+        )
+        Spacer(modifier = Modifier
+            .height(800.dp)
+            .fillMaxWidth())
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun TopRowComponent(vm: HomeViewModel) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        SearchBar(vm)
+
+        IconButton(
+            onClick = { vm.showSettings = !vm.showSettings },
+            modifier = Modifier
+                .size(80.dp)
+                .padding(end = 15.dp),
+            colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
+        ) {
+            Icon(Icons.Default.Settings, contentDescription = "Settings")
+        }
+    }
+}
+
+@Composable
+fun NoResultsToast() {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .animateContentSize(
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = LinearOutSlowInEasing
+                )
+            ),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF38424D))
+    ) {
+
+        Row (
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp)
+        ) {
+            Text(text = "Søket ditt gav ingen treff", color = Color.White)
+        }
+    }
+}
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun SettingsComponent(vm: HomeViewModel) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .animateContentSize(
+                    animationSpec = tween(
+                        durationMillis = 300,
+                        easing = LinearOutSlowInEasing
+                    )
+                ),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFF38424D))
+        ) {
+
+            Row (
+                horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .animateContentSize(
-                        animationSpec = tween(
-                            durationMillis = 300,
-                            easing = LinearOutSlowInEasing
-                        )
-                    ),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF38424D))
             ) {
+                var celsius by remember { mutableLongStateOf(0xFFFFFFFF) }
+                var fahrenheit by remember { mutableLongStateOf(0xFF8C9299) }
+                var checked by remember { mutableStateOf(false) }
 
                 Row (
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .fillMaxWidth()
+                    modifier = Modifier.padding(vertical = 10.dp)
                 ) {
-                    var celsius by remember { mutableLongStateOf(0xFFFFFFFF) }
-                    var fahrenheit by remember { mutableLongStateOf(0xFF8C9299) }
-                    var checked by remember { mutableStateOf(false) }
-
-                    Row (
-                        modifier = Modifier.padding(vertical = 10.dp)
-                    ) {
-                        SettingsText(17, color = celsius, content = "Celsius", 10, 5, 0, 5)
-                        SettingsText(17, color = 0xFFFFFFFF, content = " / ", 0, 5, 0, 5)
-                        SettingsText(17, color = fahrenheit, content = "Fahrenheit", 0, 5, 50, 5)
+                    SettingsText(17, color = celsius, content = "Celsius", 10, 5, 0, 5)
+                    SettingsText(17, color = 0xFFFFFFFF, content = " / ", 0, 5, 0, 5)
+                    SettingsText(17, color = fahrenheit, content = "Fahrenheit", 0, 5, 50, 5)
 
                     Switch(
                         modifier = Modifier
@@ -190,652 +308,20 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
                             checkedTrackColor = Color(0xFFFFFFFF),
                             uncheckedThumbColor = Color(0xFFFFFFFF),
                             uncheckedTrackColor = Color(0xFF38424D),
-                            )
-                    )
-                    }
-                    IconButton(
-                        onClick = { vm.showSettings = false }, // Lukker boksen når klikket
-                        modifier = Modifier
-                            .size(50.dp),
-                        colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
-                    ) {
-                        Icon(Icons.Default.Close, contentDescription = "Close settings")
-                    }
-                }
-            }
-        }
-
-        AnimatedVisibility(visible = vm.noResultsToast) {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .animateContentSize(
-                        animationSpec = tween(
-                            durationMillis = 300,
-                            easing = LinearOutSlowInEasing
                         )
-                    ),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF38424D))
-            ) {
-
-                Row (
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp)
-                ) {
-                    Text(text = "Søket ditt gav ingen treff", color = Color.White)
+                    )
                 }
-            }
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            SearchBar(vm)
-
-            // Innstillingsikonet, kun synlig når boksen ikke er åpen
                 IconButton(
-                    onClick = { vm.showSettings = !vm.showSettings },
-                    modifier = Modifier.size(60.dp),
+                    onClick = { vm.showSettings = false }, // Lukker boksen når klikket
+                    modifier = Modifier
+                        .size(50.dp),
                     colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
                 ) {
-                    Icon(Icons.Default.Settings, contentDescription = "Settings")
+                    Icon(Icons.Default.Close, contentDescription = "Close settings")
                 }
-        }
-
-        AnimatedVisibility(visible = vm.loadingScreen) {
-            Column (modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(modifier = Modifier
-                    .height(250.dp)
-                    .fillMaxWidth())
-                CircularProgressIndicator(
-                    modifier = Modifier.width(90.dp),
-                    color = MaterialTheme.colorScheme.secondary,
-                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                    )
-                Spacer(modifier = Modifier
-                    .height(800.dp)
-                    .fillMaxWidth())
             }
         }
 
-
-        if (vm.initialized) {
-            //null check for null-safety
-            if (vm.weatherData == null || vm.alertsData == null) {
-                Text("Unable to get data.", fontSize = 35.sp, fontWeight = Bold)
-            } else {
-                if (!vm.responseStatus) {
-                    Text(text = "Loading...", fontSize = 50.sp, fontWeight = Bold)
-                } else {
-                    Text(text = "", fontSize = 0.sp, fontWeight = Bold)
-                }
-
-                    HeaderComponent(vm)
-
-                        Row(
-                            modifier = Modifier
-                                .padding(vertical = 8.dp)
-                                .padding(start = 20.dp, end = 20.dp, bottom = 50.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            val iconid = LocalContext.current.resources.getIdentifier(vm.locationForecastIcons[0], "drawable", LocalContext.current.packageName) //ignore warning. It makes R.drawable dynamic instead of static, allowing us to apply variable names (since weather icons change a lot)
-                            Image(
-                                modifier = Modifier
-                                    .size(110.dp)
-                                    .weight(1f),
-                                painter = painterResource(id = iconid),
-                                contentDescription = "Weather icon"
-                            )
-
-                            VerticalLine()
-
-                            Column(
-                                modifier = Modifier
-                                    .weight(1f)
-                            ) {
-                                val temperatureText = if (vm.valgtTemperatur == "Celsius") {
-                                    "${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C"
-                                } else {
-                                    "${(vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F"
-                                }
-
-                                val currentWeatherDescription =
-                                    when (vm.weatherData!!.properties.timeseries[0].data.next_1_hours.summary.symbol_code) {
-                                        "clearsky_day", "clearsky_night", "clearsky_polartwilight" -> "er klar himmel"
-                                        "fair_day", "fair_night", "fair_polartwilight" -> "er lettskyet"
-                                        "partlycloudy_day", "partlycloudy_night", "partlycloudy_polartwilight" -> "er delvis skyet"
-                                        "cloudy" -> "er overskyet"
-                                        "rainshowers_day", "rainshowers_night", "rainshowers_polartwilight" -> "er regnbyger"
-                                        "rainshowersandthunder_day", "rainshowersandthunder_night", "rainshowersandthunder_polartwilight" -> "er regnbyger og torden"
-                                        "sleetshowers_day", "sleetshowers_night", "sleetshowers_polartwilight" -> "er sluddbyger"
-                                        "snowshowers_day", "snowshowers_night", "snowshowers_polartwilight" -> "er snøbyger"
-                                        "rain" -> "regner"
-                                        "heavyrain" -> "er kraftig regn"
-                                        "heavyrainandthunder" -> "er kraftig regn og torden"
-                                        "sleet" -> "er sludd"
-                                        "snow" -> "snør"
-                                        "snowandthunder" -> "er snø og torden"
-                                        "fog" -> "er tåkete"
-                                        "sleetshowersandthunder_day", "sleetshowersandthunder_night", "sleetshowersandthunder_polartwilight" -> "er sluddbyger og torden"
-                                        "snowshowersandthunder_day", "snowshowersandthunder_night", "snowshowersandthunder_polartwilight" -> "er snøbyger og torden"
-                                        "rainandthunder" -> "er regn og torden"
-                                        "sleetandthunder" -> "er sludd og torden"
-                                        "lightrainshowersandthunder_day", "lightrainshowersandthunder_night", "lightrainshowersandthunder_polartwilight" -> "er lette regnbyger og torden"
-                                        "heavyrainshowersandthunder_day", "heavyrainshowersandthunder_night", "heavyrainshowersandthunder_polartwilight" -> "er kraftige regnbyger og torden"
-                                        "lightsleetshowersandthunder_day", "lightsleetshowersandthunder_night", "lightsleetshowersandthunder_polartwilight" -> "er lette sluddbyger og torden"
-                                        "heavysleetshowersandthunder_day", "heavysleetshowersandthunder_night", "heavysleetshowersandthunder_polartwilight" -> "er kraftige sluddbyger og torden"
-                                        "lightsnowshowersandthunder_day", "lightsnowshowersandthunder_night", "lightsnowshowersandthunder_polartwilight" -> "er lette snøbyger og torden"
-                                        "heavysnowshowersandthunder_day", "heavysnowshowersandthunder_night", "heavysnowshowersandthunder_polartwilight" -> "er kraftige snøbyger og torden"
-                                        "lightrainandthunder" -> "er lett regn og torden"
-                                        "lightsleetandthunder" -> "er lett sludd og torden"
-                                        "heavysleetandthunder" -> "er kraftig sludd og torden"
-                                        "lightsnowandthunder" -> "er lett snø og torden"
-                                        "heavysnowandthunder" -> "er kraftig snø og torden"
-                                        "lightrainshowers_day", "lightrainshowers_night", "lightrainshowers_polartwilight" -> "er lette regnbyger"
-                                        "heavyrainshowers_day", "heavyrainshowers_night", "heavyrainshowers_polartwilight" -> "er kraftige regnbyger"
-                                        "lightsleetshowers_day", "lightsleetshowers_night", "lightsleetshowers_polartwilight" -> "er lette sluddbyger"
-                                        "heavysleetshowers_day", "heavysleetshowers_night", "heavysleetshowers_polartwilight" -> "er kraftige sluddbyger"
-                                        "lightsnowshowers_day", "lightsnowshowers_night", "lightsnowshowers_polartwilight" -> "er lette snøbyger"
-                                        "heavysnowshowers_day", "heavysnowshowers_night", "heavysnowshowers_polartwilight" -> "er kraftige snøbyger"
-                                        "lightrain" -> "er lett regn"
-                                        "lightsleet" -> "er lett sludd"
-                                        "heavysleet" -> "er kraftig sludd"
-                                        "lightsnow" -> "er lett snø"
-                                        "heavysnow" -> "snør kraftig"
-                                        else -> null
-                                    }
-
-                                Text(
-                                    modifier = Modifier.padding(vertical = 4.dp),
-                                    text = temperatureText,
-                                    fontSize = 50.sp,
-                                    style = TextStyle(
-                                        color = Color.White
-                                    )
-                                )
-
-                                if (currentWeatherDescription != null) {
-                                    val weatherSentence = "Det $currentWeatherDescription"
-                                    Text(
-                                        text = weatherSentence,
-                                        fontSize = 18.sp,
-                                        style = TextStyle(
-                                            color = Color.White
-                                        )
-                                    )
-                                }
-                            }
-                         }
-
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 30.dp),
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 20.dp, end = 20.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    text = "Vind",
-                                    fontSize = 18.sp,
-                                    style = TextStyle(
-                                        color = Color.White
-                                    )
-                                )
-                                Image(
-                                    painter = painterResource(id = R.drawable.windicon),
-                                    contentDescription = "Wind Icon",
-                                    modifier = Modifier
-                                        .padding(start = 5.dp)
-                                        .size(40.dp)
-                                )
-                            }
-
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.rainicon),
-                                    contentDescription = "Rain Icon",
-                                    modifier = Modifier
-                                        .padding(end = 5.dp)
-                                        .size(35.dp)
-                                )
-                                Text(
-                                    text = "Nedbør",
-                                    fontSize = 18.sp,
-                                    style = TextStyle(
-                                        color = Color.White
-                                    )
-                                )
-                            }
-                        }
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 20.dp, end = 20.dp),
-                            horizontalArrangement = Arrangement.Start
-                        ) {
-                            val vind =
-                                vm.weatherData!!.properties.timeseries[0].data.instant.details.wind_speed.roundToInt()
-                            Text(
-                                text = "$vind m/s",
-                                fontSize = 18.sp,
-                                style = TextStyle(
-                                    color = Color.White
-                                )
-                            )
-
-                            Spacer(modifier = Modifier.weight(1f))
-
-                            val regn =
-                                vm.weatherData!!.properties.timeseries[0].data.next_1_hours.details.precipitation_amount
-                            Text(
-                                text = "$regn mm",
-                                fontSize = 18.sp,
-                                style = TextStyle(
-                                    color = Color.White
-                                )
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(50.dp))
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.sunriseicon),
-                                    contentDescription = "Sunrise Icon",
-                                    modifier = Modifier
-                                        .padding(end = 10.dp)
-                                        .size(40.dp)
-                                )
-                                Text(
-                                    text = "Soloppgang\n${vm.sunriseTime}",
-                                    fontSize = 18.sp,
-                                    style = TextStyle(
-                                        color = Color.White
-                                    ),
-                                )
-                            }
-
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.End
-                            ) {
-                                Text(
-                                    text = "Solnedgang\n${vm.sunsetTime}",
-                                    fontSize = 18.sp,
-                                    style = TextStyle(
-                                        color = Color.White,
-                                        textAlign = TextAlign.End
-                                    )
-                                )
-                                Image(
-                                    painter = painterResource(id = R.drawable.sunseticon),
-                                    contentDescription = "Sunset Icon",
-                                    modifier = Modifier
-                                        .padding(start = 10.dp)
-                                        .size(40.dp)
-                                )
-                            }
-                        }
-                    }
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 70.dp, bottom = 20.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.uvicon),
-                            contentDescription = "UV Icon",
-                            modifier = Modifier.size(27.dp)
-                        )
-                        Text(
-                            text = "UV-indeks",
-                            fontSize = 20.sp,
-                            style = TextStyle(
-                                color = Color.White
-                            )
-                        )
-                    }
-
-                    val uvNow =
-                        vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky
-
-                    val uvText = when {
-                        vm.weatherData != null && uvNow < 3.0 -> "Lavt"
-                        vm.weatherData != null && uvNow >= 3.0 && uvNow < 6.0 -> "Medium"
-                        vm.weatherData != null && uvNow >= 6.0 && uvNow < 8.0 -> "Høyt"
-                        else -> "Veldig høyt"
-                    }
-
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        UVScale(uvIndex = uvNow)
-                        Text(
-                            modifier = Modifier
-                                .padding(top = 10.dp),
-                            text = "$uvNow - $uvText",
-                            fontSize = 20.sp,
-                            style = TextStyle(
-                                color = Color.White
-                            ),
-                            textAlign = TextAlign.Center
-                        )
-                    }
-
-                val alertIcons = vm.getAlertIcons()
-
-                if (vm.alertsData!!.features.isNotEmpty()) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .padding(start = 30.dp, end = 30.dp, top = 30.dp)
-                    ) {
-                        var i = 0
-
-                        vm.alertsData!!.features.forEach {
-                            val event = it.properties.event
-                            val riskMatrixColor = it.properties.riskMatrixColor.lowercase()
-                            val iconResourceName = "${alertIcons[event]}_$riskMatrixColor"
-
-                            WarningBox(
-                                headline = it.properties.eventAwarenessName,
-                                subtitle = "",
-                                info = it.properties.instruction,
-                                iconResourceId = LocalContext.current.resources.getIdentifier(iconResourceName, "drawable", LocalContext.current.packageName)
-                            )
-                            i++
-                        }
-                    }
-                }
-
-                    Column(
-                        modifier = Modifier
-                            .padding(start = 30.dp, end = 30.dp, top = 30.dp, bottom = 30.dp)
-                    ) {
-                        if (uvNow >= 8.0) {
-                            WarningBox(
-                                headline = "Veldig høy\nUV-indeks!",
-                                subtitle = "",
-                                info = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.",
-                                iconResourceId = R.drawable.icon_warning_generic_red
-                            )
-                        } else if (uvNow >= 6.0 && uvNow < 8) {
-                            WarningBox(
-                                headline = "Høy UV-indeks!",
-                                subtitle = "",
-                                info = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola.",
-                                iconResourceId = R.drawable.icon_warning_generic_orange
-                            )
-                        } else if (uvNow >= 3 && uvNow < 6) {
-                            WarningBox(
-                                headline = "Middels UV-indeks",
-                                subtitle = "",
-                                info = "Husk å ta på solkrem hvis du skal være ute lenge!",
-                                iconResourceId = R.drawable.icon_warning_generic_yellow
-                            )
-                        }
-                    }
-
-                    Text(
-                        text = "  I dag",
-                        fontSize = 30.sp,
-                        modifier = Modifier
-                            .padding(bottom = 10.dp)
-                            .align(Alignment.Start),
-                        style = TextStyle(
-                            color = Color.White
-                        )
-                    )
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp)
-                    ) {
-                        Row(modifier = Modifier.horizontalScroll(scrollState)) {
-                            for (i in 1..35) {
-                                var time: Int =
-                                    vm.weatherData!!.properties.timeseries[i].time.removeRange(
-                                        0,
-                                        11
-                                    )
-                                        .removeRange(2, 9)
-                                        .toInt() + vm.offset // Lokal tid siden locationForecast er i UTC/STD.
-
-                                if (time >= 24) { // Gjør time til lokal tid
-                                    time -= 24
-                                } else if (time < 0){ // For en eller annen grunn kan det bli negativt. Dette sørger for at det ikke skjer.
-                                    time += 24
-                                }
-
-                                val formattedTime = String.format(
-                                    "%02d:00",
-                                    time
-                                )// Formatere tiden til alltid å ha to sifre
-
-                                BoxComponent(
-                                    time = formattedTime, // Legger til tid som en parameter i BoxComponent
-                                    temperature = if (vm.valgtTemperatur == "Celsius") {
-                                        "${vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature.roundToInt()}°C"
-                                    } else {
-                                        "${(vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F"
-                                    },
-                                    windSpeed = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.wind_speed.roundToInt()} m/s",
-                                    precipitation = "${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount} mm",
-                                    uvIndex = vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky,
-                                    width = 140,
-                                    height = 278,
-                                    expanded = allBoxesExpanded,
-                                    weatherIcon = {
-                                        val iconids = LocalContext.current.resources.getIdentifier(vm.locationForecastIcons[i], "drawable", LocalContext.current.packageName) //ignore warning. It makes R.drawable dynamic instead of static, allowing us to apply variable names (since weather icons change a lot)
-                                        Image(
-                                            modifier = Modifier
-                                                .size(110.dp)
-                                                .weight(1f),
-                                            painter = painterResource(id = iconids),
-                                            contentDescription = "Weather icon"
-                                        )
-                                    }
-                                )
-                                Spacer(modifier = Modifier.width(16.dp))
-                            }
-                        }
-                    }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(bottom = 20.dp),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    IconButton(
-                        onClick = {
-                            allBoxesExpanded.value = !allBoxesExpanded.value
-                        },
-                        modifier = Modifier.rotate(rotationState.value)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowDropDown,
-                            contentDescription = "Drop-Down Arrow",
-                            tint = Color.White,
-                            modifier = Modifier.size(300.dp)
-                        )
-                    }
-                    // Tekst som endres basert på om pilen er trykket på eller ikke
-                    Text(
-                        text = if (allBoxesExpanded.value) "Vis mindre" else "Vis mer",
-                        color = Color.White,
-                        modifier = Modifier
-                            .clickable {
-                                allBoxesExpanded.value = !allBoxesExpanded.value
-                            }
-                            .padding(start = 8.dp)
-                    )
-                }
-
-                    val monthMap = mapOf(
-                        1 to "januar",
-                        2 to "februar",
-                        3 to "mars",
-                        4 to "april",
-                        5 to "mai",
-                        6 to "juni",
-                        7 to "juli",
-                        8 to "august",
-                        9 to "september",
-                        10 to "oktober",
-                        11 to "november",
-                        12 to "desember"
-                    )
-
-                    val dayOfWeekMap = mapOf(
-                        Calendar.MONDAY to "Man",
-                        Calendar.TUESDAY to "Tir",
-                        Calendar.WEDNESDAY to "Ons",
-                        Calendar.THURSDAY to "Tor",
-                        Calendar.FRIDAY to "Fre",
-                        Calendar.SATURDAY to "Lør",
-                        Calendar.SUNDAY to "Søn"
-                    )
-
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "Kommende dager:",
-                            fontSize = 30.sp,
-                            modifier = Modifier
-                                .padding(top = 10.dp, bottom = 25.dp),
-                            style = TextStyle(
-                                color = Color.White
-                            )
-                        )
-
-                        Row(
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                                .padding(start = 47.dp, end = 23.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(
-                                text = "Dato",
-                                modifier = Modifier
-                                    .weight(1f),
-                                textAlign = TextAlign.Start,
-                                fontWeight = Bold,
-                                style = TextStyle(
-                                    color = Color.White
-                                )
-                            )
-                            Text(
-                                text = "Høyest / Lavest",
-                                modifier = Modifier
-                                    .weight(1f),
-                                textAlign = TextAlign.Center,
-                                fontWeight = Bold,
-                                style = TextStyle(
-                                    color = Color.White
-                                )
-                            )
-                            Text(
-                                text = "Vær",
-                                modifier = Modifier
-                                    .padding(end = 18.dp)
-                                    .weight(1f),
-                                textAlign = TextAlign.End,
-                                fontWeight = Bold,
-                                style = TextStyle(
-                                    color = Color.White
-                                )
-                            )
-                        }
-
-                        // Opprett en Calendar-instans
-                        val calendar = Calendar.getInstance()
-
-                        repeat(7) { index ->
-                            // Beregn datoen for dagen
-                            calendar.timeInMillis = System.currentTimeMillis()
-                            calendar.add(Calendar.DATE, index + 1) // Legg til 1 dag til index
-
-                            // Hent ukedagen
-                            val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
-                            val dayOfWeekText = dayOfWeekMap[dayOfWeek]
-
-                            // Hent måneden
-                            val month = calendar.get(Calendar.MONTH) + 1
-                            val monthText = monthMap[month]
-                            val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
-
-                            val date = SimpleDateFormat(
-                                "yyyy-MM-dd",
-                                Locale.getDefault()
-                            ).format(calendar.time)
-
-                            // Hent data for den aktuelle dagen fra API-et
-                            val dayData = vm.getTemperatureForDay(vm.weatherData!!, date)
-                            val dayDataDetails = vm.getDayDataDetails(date)
-
-                            val maxTemp = dayData?.first?.roundToInt()
-                            val minTemp = dayData?.second?.roundToInt()
-
-                            // Formattert dato (ukedag, dato, måned)
-                            val formattedDate = "$dayOfWeekText, $dayOfMonth. $monthText"
-
-                            val symbolCode = vm.weatherData!!.properties.timeseries.find {
-                                val time = it.time
-                                time == "${date}T06:00:00Z"
-                            }!!.data.next_12_hours.summary.symbol_code
-
-                            Line()
-
-                            // Vis maks- og minimumstemperaturene for dagen
-                            DayTemperatureItem(
-                                vm = vm,
-                                id = index,
-                                date = formattedDate,
-                                maxTemperature = maxTemp!!,
-                                minTemperature = minTemp!!,
-                                valgtTemperatur = vm.valgtTemperatur,
-                                weatherIcon = symbolCode
-                            )
-                            AnimatedVisibility(visible = vm.expandTable[index]) {
-                                ExtendedTableItem(dayDataDetails)
-                            }
-
-                        }
-                        Line()
-                    }
-                }
-            }
-    }
 }
 
 @Composable
@@ -945,7 +431,7 @@ fun SearchBar(vm: HomeViewModel) {
         modifier = Modifier
             .padding(top = 5.dp)
             .padding(horizontal = 10.dp)
-            .width((configuration.screenWidthDp - 75).dp)
+            .width((configuration.screenWidthDp - 65).dp)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
@@ -1070,6 +556,486 @@ fun SearchBar(vm: HomeViewModel) {
                         }
                     }
                 }
+            }
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun NextDaysComponent(vm: HomeViewModel) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Kommende dager:",
+            fontSize = 30.sp,
+            modifier = Modifier
+                .padding(top = 10.dp, bottom = 25.dp),
+            style = TextStyle(
+                color = Color.White
+            )
+        )
+
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .padding(start = 47.dp, end = 23.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Dato",
+                modifier = Modifier
+                    .weight(1f),
+                textAlign = TextAlign.Start,
+                fontWeight = Bold,
+                style = TextStyle(
+                    color = Color.White
+                )
+            )
+            Text(
+                text = "Høyest / Lavest",
+                modifier = Modifier
+                    .weight(1f),
+                textAlign = TextAlign.Center,
+                fontWeight = Bold,
+                style = TextStyle(
+                    color = Color.White
+                )
+            )
+            Text(
+                text = "Vær",
+                modifier = Modifier
+                    .padding(end = 18.dp)
+                    .weight(1f),
+                textAlign = TextAlign.End,
+                fontWeight = Bold,
+                style = TextStyle(
+                    color = Color.White
+                )
+            )
+        }
+
+        // Opprett en Calendar-instans
+        val calendar = Calendar.getInstance()
+
+        repeat(7) { index ->
+            // Beregn datoen for dagen
+            calendar.timeInMillis = System.currentTimeMillis()
+            calendar.add(Calendar.DATE, index + 1) // Legg til 1 dag til index
+
+            // Hent ukedagen
+            val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
+            val dayOfWeekText = Constants.dayOfWeekMap[dayOfWeek]
+
+            // Hent måneden
+            val month = calendar.get(Calendar.MONTH) + 1
+            val monthText = Constants.monthMap[month]
+            val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
+
+            val date = SimpleDateFormat(
+                "yyyy-MM-dd",
+                Locale.getDefault()
+            ).format(calendar.time)
+
+            // Hent data for den aktuelle dagen fra API-et
+            val dayData = vm.getTemperatureForDay(vm.weatherData!!, date)
+            val dayDataDetails = vm.getDayDataDetails(date)
+
+            val maxTemp = dayData.first?.roundToInt()
+            val minTemp = dayData.second?.roundToInt()
+
+            // Formattert dato (ukedag, dato, måned)
+            val formattedDate = "$dayOfWeekText, $dayOfMonth. $monthText"
+
+            val symbolCode = vm.weatherData!!.properties.timeseries.find {
+                val time = it.time
+                time == "${date}T06:00:00Z"
+            }!!.data.next_12_hours.summary.symbol_code
+
+            Line()
+
+            // Vis maks- og minimumstemperaturene for dagen
+            DayTemperatureItem(
+                vm = vm,
+                id = index,
+                date = formattedDate,
+                maxTemperature = maxTemp!!,
+                minTemperature = minTemp!!,
+                valgtTemperatur = vm.valgtTemperatur,
+                weatherIcon = symbolCode
+            )
+            AnimatedVisibility(visible = vm.expandTable[index]) {
+                ExtendedTableItem(dayDataDetails)
+            }
+
+        }
+        Line()
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun WeatherPerHourComponent(vm: HomeViewModel, scrollState: ScrollState, rotationState: State<Float>) {
+    Text(
+        text = "  Time for time",
+        fontSize = 30.sp,
+        modifier = Modifier
+            .padding(bottom = 10.dp)
+            .fillMaxWidth(),
+        style = TextStyle(
+            color = Color.White
+        )
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 20.dp)
+    ) {
+        Row(modifier = Modifier.horizontalScroll(scrollState)) {
+            for (i in 1..35) {
+                BoxComponent(i, vm, weatherIcon = {
+                    val iconids = LocalContext.current.resources.getIdentifier(vm.locationForecastIcons[i], "drawable", LocalContext.current.packageName) //ignore warning. It makes R.drawable dynamic instead of static, allowing us to apply variable names (since weather icons change a lot)
+                    Image(
+                        modifier = Modifier
+                            .size(110.dp)
+                            .weight(1f),
+                        painter = painterResource(id = iconids),
+                        contentDescription = "Weather icon"
+                    )
+                })
+                Spacer(modifier = Modifier.width(16.dp))
+            }
+        }
+    }
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 20.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(
+            onClick = {
+                vm.allBoxesExpanded = !vm.allBoxesExpanded
+            },
+            modifier = Modifier.rotate(rotationState.value)
+        ) {
+            Icon(
+                imageVector = Icons.Default.ArrowDropDown,
+                contentDescription = "Drop-Down Arrow",
+                tint = Color.White,
+                modifier = Modifier.size(300.dp)
+            )
+        }
+        // Tekst som endres basert på om pilen er trykket på eller ikke
+        Text(
+            text = if (vm.allBoxesExpanded) "Vis mindre" else "Vis mer",
+            color = Color.White,
+            modifier = Modifier
+                .clickable {
+                    vm.allBoxesExpanded = !vm.allBoxesExpanded
+                }
+                .padding(start = 8.dp)
+        )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun UvWarningsComponent(vm: HomeViewModel) {
+    Column(
+        modifier = Modifier
+            .padding(start = 30.dp, end = 30.dp, top = 30.dp, bottom = 30.dp)
+    ) {
+        if (vm.uvNow >= 8.0) {
+            WarningBox(
+                headline = "Veldig høy\nUV-indeks!",
+                subtitle = "",
+                info = "Bruk solkrem med høy faktor flere ganger gjennom dagen. Søk etter skygge! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola ofte, spesielt under kl. 12-15.",
+                iconResourceId = R.drawable.icon_warning_generic_red
+            )
+        } else if (vm.uvNow >= 6.0 && vm.uvNow < 8) {
+            WarningBox(
+                headline = "Høy UV-indeks!",
+                subtitle = "",
+                info = "Husk å ta på solkrem med høy faktor! Bruk klær, hodeplagg og solbriller. Husk å ta pauser fra sola.",
+                iconResourceId = R.drawable.icon_warning_generic_orange
+            )
+        } else if (vm.uvNow >= 3 && vm.uvNow < 6) {
+            WarningBox(
+                headline = "Middels UV-indeks",
+                subtitle = "",
+                info = "Husk å ta på solkrem hvis du skal være ute lenge!",
+                iconResourceId = R.drawable.icon_warning_generic_yellow
+            )
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun NormalWarningsComponent(vm: HomeViewModel) {
+    val alertIcons = vm.getAlertIcons()
+
+    if (vm.alertsData!!.features.isNotEmpty()) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .padding(start = 30.dp, end = 30.dp, top = 30.dp)
+        ) {
+            var i = 0
+
+            vm.alertsData!!.features.forEach {
+                val event = it.properties.event
+                val riskMatrixColor = it.properties.riskMatrixColor.lowercase()
+                val iconResourceName = "${alertIcons[event]}_$riskMatrixColor"
+
+                WarningBox(
+                    headline = it.properties.eventAwarenessName,
+                    subtitle = "",
+                    info = it.properties.instruction,
+                    iconResourceId = LocalContext.current.resources.getIdentifier(iconResourceName, "drawable", LocalContext.current.packageName)
+                )
+                i++
+            }
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun UvComponent(vm: HomeViewModel) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 70.dp, bottom = 20.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.uvicon),
+            contentDescription = "UV Icon",
+            modifier = Modifier.size(27.dp)
+        )
+        Text(
+            text = "UV-indeks",
+            fontSize = 20.sp,
+            style = TextStyle(
+                color = Color.White
+            )
+        )
+    }
+
+    vm.uvNow = vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky
+
+    val uvText = when {
+        vm.weatherData != null && vm.uvNow < 3.0 -> "Lavt"
+        vm.weatherData != null && vm.uvNow >= 3.0 && vm.uvNow < 6.0 -> "Medium"
+        vm.weatherData != null && vm.uvNow >= 6.0 && vm.uvNow < 8.0 -> "Høyt"
+        else -> "Veldig høyt"
+    }
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        UVScale(uvIndex = vm.uvNow)
+        Text(
+            modifier = Modifier
+                .padding(top = 10.dp),
+            text = "${vm.uvNow} - $uvText",
+            fontSize = 20.sp,
+            style = TextStyle(
+                color = Color.White
+            ),
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun WindRainSunriseSunsetComponent(vm: HomeViewModel) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 30.dp),
+        verticalArrangement = Arrangement.Center
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 20.dp, end = 20.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = "Vind",
+                    fontSize = 18.sp,
+                    style = TextStyle(
+                        color = Color.White
+                    )
+                )
+                Image(
+                    painter = painterResource(id = R.drawable.windicon),
+                    contentDescription = "Wind Icon",
+                    modifier = Modifier
+                        .padding(start = 5.dp)
+                        .size(40.dp)
+                )
+            }
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Image(
+                    painter = painterResource(id = R.drawable.rainicon),
+                    contentDescription = "Rain Icon",
+                    modifier = Modifier
+                        .padding(end = 5.dp)
+                        .size(35.dp)
+                )
+                Text(
+                    text = "Nedbør",
+                    fontSize = 18.sp,
+                    style = TextStyle(
+                        color = Color.White
+                    )
+                )
+            }
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 20.dp, end = 20.dp),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            val vind =
+                vm.weatherData!!.properties.timeseries[0].data.instant.details.wind_speed.roundToInt()
+            Text(
+                text = "$vind m/s",
+                fontSize = 18.sp,
+                style = TextStyle(
+                    color = Color.White
+                )
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            val regn =
+                vm.weatherData!!.properties.timeseries[0].data.next_1_hours.details.precipitation_amount
+            Text(
+                text = "$regn mm",
+                fontSize = 18.sp,
+                style = TextStyle(
+                    color = Color.White
+                )
+            )
+        }
+
+        Spacer(modifier = Modifier.height(50.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.sunriseicon),
+                    contentDescription = "Sunrise Icon",
+                    modifier = Modifier
+                        .padding(end = 10.dp)
+                        .size(40.dp)
+                )
+                Text(
+                    text = "Soloppgang\n${vm.sunriseTime}",
+                    fontSize = 18.sp,
+                    style = TextStyle(
+                        color = Color.White
+                    ),
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End
+            ) {
+                Text(
+                    text = "Solnedgang\n${vm.sunsetTime}",
+                    fontSize = 18.sp,
+                    style = TextStyle(
+                        color = Color.White,
+                        textAlign = TextAlign.End
+                    )
+                )
+                Image(
+                    painter = painterResource(id = R.drawable.sunseticon),
+                    contentDescription = "Sunset Icon",
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .size(40.dp)
+                )
+            }
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun IconAndTemperatureComponent(vm: HomeViewModel) {
+    Row(
+        modifier = Modifier
+            .padding(vertical = 8.dp)
+            .padding(start = 20.dp, end = 20.dp, bottom = 50.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        val iconid = LocalContext.current.resources.getIdentifier(vm.locationForecastIcons[0], "drawable", LocalContext.current.packageName) //ignore warning. It makes R.drawable dynamic instead of static, allowing us to apply variable names (since weather icons change a lot)
+        Image(
+            modifier = Modifier
+                .size(110.dp)
+                .weight(1f),
+            painter = painterResource(id = iconid),
+            contentDescription = "Weather icon"
+        )
+
+        VerticalLine()
+
+        Column(
+            modifier = Modifier
+                .weight(1f)
+        ) {
+            val temperatureText = if (vm.valgtTemperatur == "Celsius") {
+                "${vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature.roundToInt()}°C"
+            } else {
+                "${(vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F"
+            }
+
+            val currentWeatherDescription = Constants.getWeatherDescription(vm.weatherData!!.properties.timeseries[0].data.next_1_hours.summary.symbol_code)
+
+            Text(
+                modifier = Modifier.padding(vertical = 4.dp),
+                text = temperatureText,
+                fontSize = 50.sp,
+                style = TextStyle(
+                    color = Color.White
+                )
+            )
+
+            if (currentWeatherDescription != null) {
+                val weatherSentence = "Det $currentWeatherDescription"
+                Text(
+                    text = weatherSentence,
+                    fontSize = 18.sp,
+                    style = TextStyle(
+                        color = Color.White
+                    )
+                )
             }
         }
     }
@@ -1303,18 +1269,41 @@ fun VerticalLine(){
 }
 
 //This box component is for the hour by hour weather forecast - if you want to use it!
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun BoxComponent(
-    time: String,
-    temperature: String,
-    windSpeed: String,
-    precipitation: String,
-    uvIndex: Float,
-    width: Int,
-    height: Int,
-    weatherIcon: @Composable () -> Unit,
-    expanded: MutableState<Boolean>
+    i: Int,
+    vm: HomeViewModel,
+    weatherIcon: @Composable () -> Unit
 ) {
+
+    var time: Int =
+        vm.weatherData!!.properties.timeseries[i].time.removeRange(0, 11)
+            .removeRange(2, 9)
+            .toInt() + vm.offset // Lokal tid siden locationForecast er i UTC/STD.
+
+    if (time >= 24) { // Gjør time til lokal tid
+        time -= 24
+    } else if (time < 0){ // For en eller annen grunn kan det bli negativt. Dette sørger for at det ikke skjer.
+        time += 24
+    }
+
+    val formattedTime = String.format(
+        "%02d:00",
+        time
+    )// Formatere tiden til alltid å ha to sifre
+
+    val temperature = if (vm.valgtTemperatur == "Celsius") {
+        "${vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature.roundToInt()}°C"
+    } else {
+        "${(vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F"
+    }
+    val windSpeed = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.wind_speed.roundToInt()} m/s"
+    val precipitation = "${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount} mm"
+    val uvIndex = vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky
+    val width = 140
+    val height = 278
+
     val uvColor = when {
         uvIndex <= 2 -> Color(0xFF14FC00)
         uvIndex <= 4 -> Color(0xFFDEEF17)
@@ -1332,8 +1321,8 @@ fun BoxComponent(
                 shape = RoundedCornerShape(size = 20.dp)
             )
             .width(width.dp)
-            .height(if (expanded.value) height.dp else 160.dp)
-            .clickable { expanded.value = !expanded.value }, // Oppdaterer den felles expanded-state'en
+            .height(if (vm.allBoxesExpanded) height.dp else 160.dp)
+            .clickable { vm.allBoxesExpanded = !vm.allBoxesExpanded }, // Oppdaterer den felles expanded-state'en
         colors = CardDefaults.cardColors(
             containerColor = Color(0xFF4A535D)
         ),
@@ -1345,7 +1334,7 @@ fun BoxComponent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = time,
+                text = formattedTime,
                 style = TextStyle(
                     fontSize = 20.sp,
                     fontWeight = Bold,
@@ -1365,7 +1354,7 @@ fun BoxComponent(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(8.dp)
             )
-            if (expanded.value) {
+            if (vm.allBoxesExpanded) {
                 Row(
                     modifier = Modifier
                         .padding(top = 10.dp)

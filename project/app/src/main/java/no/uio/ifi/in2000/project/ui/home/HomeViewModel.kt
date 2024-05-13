@@ -4,10 +4,13 @@ import android.icu.util.TimeZone
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusRequester
 import androidx.lifecycle.ViewModel
@@ -15,6 +18,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import no.uio.ifi.in2000.project.data.Constants
 import no.uio.ifi.in2000.project.data.alerts.MetAlertsRepository
 import no.uio.ifi.in2000.project.data.forecast.LocationForecastRepository
 import no.uio.ifi.in2000.project.data.search.SearchRepository
@@ -56,6 +60,10 @@ class HomeViewModel(
     // private val today = LocalDate.parse("2024-05-16", formatter)  // Use this to test if it works, manually take one day at a time
 
     var streak by mutableIntStateOf(0)
+
+    var uvNow by mutableFloatStateOf(0.0F)
+
+    var allBoxesExpanded by mutableStateOf(false)
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -383,12 +391,6 @@ class HomeViewModel(
         val timeseries = weatherData?.properties?.timeseries
 
         val retList = mutableListOf<List<Any>>()
-        val timeFormat = mapOf(
-            "00:00:00Z" to "00-06",
-            "06:00:00Z" to "06-12",
-            "12:00:00Z" to "12-18",
-            "18:00:00Z" to "18-00"
-        )
 
         if (timeseries != null) {
             for (item in timeseries) {
@@ -401,7 +403,7 @@ class HomeViewModel(
                         time == "18:00:00Z") {
 
                         val values = mutableListOf<Any>()
-                        values.add(timeFormat[time].toString())
+                        values.add(Constants.timeFormat[time].toString())
 
 
                         val temperatureText = if (valgtTemperatur == "Celsius") {

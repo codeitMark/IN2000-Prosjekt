@@ -36,8 +36,6 @@ private val Context.dataStore by preferencesDataStore(
 class MainActivity : ComponentActivity() {
 
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    // private var lat: Double = 0.0
-    //private var lon: Double = 0.0
     var lat: Double by mutableDoubleStateOf(0.0)
     var lon: Double by mutableDoubleStateOf(0.0)
 
