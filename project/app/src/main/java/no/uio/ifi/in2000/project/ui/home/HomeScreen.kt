@@ -208,13 +208,14 @@ fun TopRowComponent(vm: HomeViewModel) {
         modifier = Modifier
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.Top
     ) {
         Image(
             painter = painterResource(id = R.drawable.byge_logo_hvit),
             contentDescription = "App_Logo",
             modifier = Modifier
-                .size(45.dp)  // Endret fra 60.dp til 80.dp for å matche IconButton størrelse
+                .size(55.dp)
+                .padding(top = 5.dp)
         )
         SearchBar(vm)
         IconButton(
@@ -223,7 +224,11 @@ fun TopRowComponent(vm: HomeViewModel) {
                 .size(60.dp),
             colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
         ) {
-            Icon(Icons.Default.Settings, contentDescription = "Settings", modifier = Modifier.size(70.dp).padding(start = 5.dp, end = 10.dp))  // Justerer størrelsen på selve ikonet om nødvendig
+            Icon(Icons.Default.Settings, contentDescription = "Settings",
+                modifier = Modifier
+                    .size(70.dp)
+                    .padding(start = 5.dp, end = 10.dp)
+            )
         }
     }
 }
@@ -442,7 +447,7 @@ fun SearchBar(vm: HomeViewModel) {
         modifier = Modifier
             .padding(top = 5.dp)
             //.padding(horizontal = 10.dp)
-            .width((configuration.screenWidthDp - 90).dp)
+            .width((configuration.screenWidthDp - 105).dp)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
