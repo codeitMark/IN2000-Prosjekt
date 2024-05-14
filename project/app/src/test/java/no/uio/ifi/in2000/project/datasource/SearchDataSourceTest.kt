@@ -6,11 +6,12 @@ import org.junit.Test
 
 class SearchDataSourceTest {
     private val location = "Oslo, Norway"
+    private val lang = "no"
     private val source = SearchDataSource()
     @Test
     fun test_getConnection(){
         runBlocking {
-            val suggestionsData = source.getSuggestions(location)
+            val suggestionsData = source.getSuggestions(location, lang)
             println(suggestionsData)
             assert(source.connected)
         }
@@ -19,7 +20,7 @@ class SearchDataSourceTest {
     @Test
     fun test_getAlertsAccess(){
         runBlocking {
-            val suggestionsData = source.getSuggestions(location)
+            val suggestionsData = source.getSuggestions(location, lang)
             println(suggestionsData)
             assert(source.authorized)
         }

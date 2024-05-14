@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+
     kotlin("plugin.serialization").version("1.9.10")
 }
 
@@ -10,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId = "no.uio.ifi.in2000.project"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -88,4 +89,7 @@ dependencies {
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.8")
 
     implementation("com.google.android.gms:play-services-location:21.2.0")
+
+    // DataStore
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 }

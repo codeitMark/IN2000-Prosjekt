@@ -11,7 +11,6 @@ import no.uio.ifi.in2000.project.model.sunrise.SunriseResponse
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlin.math.ceil
 
 data class SunriseDataSource(private var path: String = "https://gw-uio.intark.uh-it.no/in2000/") {
     var authorized = false
