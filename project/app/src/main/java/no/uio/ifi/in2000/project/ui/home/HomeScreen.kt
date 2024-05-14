@@ -223,7 +223,7 @@ fun TopRowComponent(vm: HomeViewModel) {
                 .size(60.dp),
             colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
         ) {
-            Icon(Icons.Default.Settings, contentDescription = "Settings", modifier = Modifier.size(60.dp).padding(start = 5.dp, end = 5.dp))  // Justerer størrelsen på selve ikonet om nødvendig
+            Icon(Icons.Default.Settings, contentDescription = "Settings", modifier = Modifier.size(60.dp).padding(start = 5.dp, end = 10.dp))  // Justerer størrelsen på selve ikonet om nødvendig
         }
     }
 }
@@ -442,7 +442,7 @@ fun SearchBar(vm: HomeViewModel) {
         modifier = Modifier
             .padding(top = 5.dp)
             //.padding(horizontal = 10.dp)
-            .width((configuration.screenWidthDp - 80).dp)
+            .width((configuration.screenWidthDp - 85).dp)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
