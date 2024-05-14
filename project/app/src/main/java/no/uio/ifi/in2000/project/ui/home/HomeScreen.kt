@@ -1,7 +1,5 @@
 package no.uio.ifi.in2000.project.ui.home
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -19,7 +17,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,7 +26,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -227,7 +223,7 @@ fun TopRowComponent(vm: HomeViewModel) {
                 .size(60.dp),
             colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
         ) {
-            Icon(Icons.Default.Settings, contentDescription = "Settings", modifier = Modifier.size(60.dp))  // Justerer størrelsen på selve ikonet om nødvendig
+            Icon(Icons.Default.Settings, contentDescription = "Settings", modifier = Modifier.size(60.dp).padding(start = 5.dp, end = 5.dp))  // Justerer størrelsen på selve ikonet om nødvendig
         }
     }
 }
@@ -446,7 +442,7 @@ fun SearchBar(vm: HomeViewModel) {
         modifier = Modifier
             .padding(top = 5.dp)
             //.padding(horizontal = 10.dp)
-            .width((configuration.screenWidthDp - 65).dp)
+            .width((configuration.screenWidthDp - 80).dp)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
