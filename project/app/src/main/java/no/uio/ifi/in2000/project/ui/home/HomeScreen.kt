@@ -215,7 +215,7 @@ fun TopRowComponent(vm: HomeViewModel) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(id = R.drawable.byge_app_logo),
+            painter = painterResource(id = R.drawable.byge_logo_hvit),
             contentDescription = "App_Logo",
             modifier = Modifier
                 .size(45.dp)  // Endret fra 60.dp til 80.dp for å matche IconButton størrelse
@@ -253,7 +253,7 @@ fun NoResultsToast() {
                 .fillMaxWidth()
                 .padding(10.dp)
         ) {
-            Text(text = "Søket ditt gav ingen treff", color = Color.White)
+            Text(text = "Søket ditt ga ingen treff", color = Color.White)
         }
     }
 }
