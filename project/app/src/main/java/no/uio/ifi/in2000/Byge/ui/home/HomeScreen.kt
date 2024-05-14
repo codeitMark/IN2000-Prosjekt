@@ -162,6 +162,7 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
                     Text(text = "", fontSize = 0.sp, fontWeight = Bold)
                 }
 
+                //contains streak and location-header
                 HeaderComponent(vm)
 
                 IconAndTemperatureComponent(vm)
