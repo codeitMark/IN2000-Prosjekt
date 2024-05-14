@@ -214,8 +214,10 @@ class HomeViewModel(
     var lat = 0.0
     var lon = 0.0
 
+    //Parameter for både MetAlerts og Searchbar
+    private var lang = "en"
+
     // Parametere for MetAlerts
-    private var lang = "no"
     var initialized by mutableStateOf(false)
 
     // Parameter for Sunrise
@@ -233,7 +235,7 @@ class HomeViewModel(
 
         viewModelScope.launch(Dispatchers.IO) {
             loadingSearch = true
-            val response = searchRep.fetchSuggestions(text)
+            val response = searchRep.fetchSuggestions(text, lang)
             val items = response?.features
             val list = mutableListOf<ApiProperties>()
             if (items != null) {
@@ -278,7 +280,7 @@ class HomeViewModel(
 
     fun loadCurrentFromCoordinates(lat: Double, lon: Double) {
         viewModelScope.launch(Dispatchers.IO) {
-            val response = searchRep.fetchUserLocationData(lat, lon)
+            val response = searchRep.fetchUserLocationData(lat, lon, lang)
             if (response != null) {
                 val item = response.results[0]
                 currentFormatted = item.formatted
@@ -303,7 +305,7 @@ class HomeViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             loadingScreen = true
             expandTable = mutableStateListOf(false, false, false, false, false, false, false)
-            val response = searchRep.fetchSuggestions(text)
+            val response = searchRep.fetchSuggestions(text, lang)
             val items = response?.features
             val list = mutableListOf<ApiProperties>()
             if (items != null) {

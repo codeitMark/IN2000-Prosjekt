@@ -30,10 +30,11 @@ data class SearchDataSource(private val path: String = "https://api.geoapify.com
         }
     }
     // %C3%85lg%C3%A5rd
-    suspend fun getSuggestions(text: String): AutoCompleteResponse? {
+    suspend fun getSuggestions(text: String, lang: String): AutoCompleteResponse? {
         return try {
             val encoded = encode(text)
-            val httpResponse = client.get("/v1/geocode/autocomplete?text=${encoded}&lang=no&apiKey=$apiKey")
+            val httpResponse = client.get("/v1/geocode/autocomplete?text=${encoded}&lang=$lang&apiKey=$apiKey")
+            //Using lang variable for future implementation of language choice.
             connected = true
             if (httpResponse.status.value == 200){
                 authorized = true
@@ -46,9 +47,9 @@ data class SearchDataSource(private val path: String = "https://api.geoapify.com
         }
     }
 
-    suspend fun getUserLocation(lat: Double, lon: Double): ReverseGeocodingResponse? {
+    suspend fun getUserLocation(lat: Double, lon: Double, lang: String): ReverseGeocodingResponse? {
         return try {
-            val httpResponse = client.get("/v1/geocode/reverse?lat=$lat&lon=$lon&type=postcode&lang=en&limit=1&format=json&apiKey=$apiKey")
+            val httpResponse = client.get("/v1/geocode/reverse?lat=$lat&lon=$lon&type=postcode&lang=$lang&limit=1&format=json&apiKey=$apiKey")
             connected = true
             if (httpResponse.status.value == 200) {
                 authorized = true

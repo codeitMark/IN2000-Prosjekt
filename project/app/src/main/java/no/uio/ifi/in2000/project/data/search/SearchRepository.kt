@@ -6,11 +6,11 @@ import no.uio.ifi.in2000.project.model.search.ReverseGeocodingResponse
 
 class SearchRepository {
     private val locationForecastSource = SearchDataSource()
-    suspend fun fetchSuggestions(text: String): AutoCompleteResponse? {
-        return locationForecastSource.getSuggestions(text)
+    suspend fun fetchSuggestions(text: String, lang: String): AutoCompleteResponse? {
+        return locationForecastSource.getSuggestions(text, lang)
     }
 
-    suspend fun fetchUserLocationData(lat: Double, lon: Double): ReverseGeocodingResponse? {
-        return locationForecastSource.getUserLocation(lat, lon)
+    suspend fun fetchUserLocationData(lat: Double, lon: Double, lang: String): ReverseGeocodingResponse? {
+        return locationForecastSource.getUserLocation(lat, lon, lang)
     }
 }
