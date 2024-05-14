@@ -1449,19 +1449,15 @@ fun BoxComponent(
 
 @Composable
 fun DayTemperatureItem(vm: HomeViewModel, id: Int, date: String, maxTemperature: Int, minTemperature: Int, valgtTemperatur: String, weatherIcon: String) {
-    var expanded by remember { mutableStateOf(false) }
+    val expanded = vm.expandTable[id]
 
     Row(
         modifier = Modifier
             .clickable(onClick = {
                 for (i in 0..6) {
-                    if (i == id) {
-                        vm.expandTable[id] = !vm.expandTable[id]
-                        expanded = !expanded
-                    } else {
-                        vm.expandTable[i] = false
-                    }
+                    vm.expandTable[i] = false
                 }
+                vm.expandTable[id] = !expanded
             })
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 3.dp)
@@ -1508,8 +1504,9 @@ fun DayTemperatureItem(vm: HomeViewModel, id: Int, date: String, maxTemperature:
 
         IconButton(
             onClick = {
-                expanded = !expanded
-                vm.expandTable[id] = !vm.expandTable[id]
+                for (i in 0..6) {
+                    vm.expandTable[i] = i == id && !vm.expandTable[i]
+                }
             },
             modifier = Modifier
                 .rotate(if (expanded) 180f else 0f)
