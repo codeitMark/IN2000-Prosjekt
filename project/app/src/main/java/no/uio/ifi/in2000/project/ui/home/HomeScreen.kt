@@ -100,7 +100,6 @@ import java.util.Calendar
 import java.util.Locale
 import kotlin.math.roundToInt
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
@@ -205,7 +204,6 @@ fun LoadingScreenComponent() {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun TopRowComponent(vm: HomeViewModel) {
     Row(
@@ -253,7 +251,6 @@ fun NoResultsToast() {
         }
     }
 }
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SettingsComponent(vm: HomeViewModel) {
         Card(
@@ -410,7 +407,6 @@ fun ExtendedTableItem(data: List<List<Any>>) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SearchBar(vm: HomeViewModel) {
@@ -573,7 +569,6 @@ fun SearchBar(vm: HomeViewModel) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NextDaysComponent(vm: HomeViewModel) {
     Column(
@@ -688,7 +683,6 @@ fun NextDaysComponent(vm: HomeViewModel) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WeatherPerHourComponent(vm: HomeViewModel, scrollState: ScrollState, rotationState: State<Float>) {
     Text(
@@ -756,7 +750,6 @@ fun WeatherPerHourComponent(vm: HomeViewModel, scrollState: ScrollState, rotatio
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun UvWarningsComponent(vm: HomeViewModel) {
     Column(
@@ -788,7 +781,6 @@ fun UvWarningsComponent(vm: HomeViewModel) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NormalWarningsComponent(vm: HomeViewModel) {
     val alertIcons = vm.getAlertIcons()
@@ -818,7 +810,6 @@ fun NormalWarningsComponent(vm: HomeViewModel) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun UvComponent(vm: HomeViewModel) {
     Row(
@@ -870,7 +861,6 @@ fun UvComponent(vm: HomeViewModel) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WindRainSunriseSunsetComponent(vm: HomeViewModel) {
     Column(
@@ -998,7 +988,6 @@ fun WindRainSunriseSunsetComponent(vm: HomeViewModel) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun IconAndTemperatureComponent(vm: HomeViewModel) {
     Row(
@@ -1053,7 +1042,6 @@ fun IconAndTemperatureComponent(vm: HomeViewModel) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HeaderComponent(vm: HomeViewModel) {
 
@@ -1126,7 +1114,6 @@ fun HeaderComponent(vm: HomeViewModel) {
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun DropdownRow(
@@ -1282,7 +1269,6 @@ fun VerticalLine(){
 }
 
 //This box component is for the hour by hour weather forecast - if you want to use it!
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun BoxComponent(
     i: Int,
@@ -1453,7 +1439,6 @@ fun BoxComponent(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DayTemperatureItem(vm: HomeViewModel, id: Int, date: String, maxTemperature: Int, minTemperature: Int, valgtTemperatur: String, weatherIcon: String) {
     var expanded by remember { mutableStateOf(false) }

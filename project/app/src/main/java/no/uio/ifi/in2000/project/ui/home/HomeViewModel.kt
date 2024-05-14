@@ -45,7 +45,6 @@ import kotlin.math.roundToInt
 import no.uio.ifi.in2000.project.model.sunrise.Geometry as SunriseGeometry
 import no.uio.ifi.in2000.project.model.sunrise.Properties as SunriseProperties
 
-@RequiresApi(Build.VERSION_CODES.O)
 class HomeViewModel(
     private val streakRep: StreakRepository
 ) : ViewModel(){
@@ -215,7 +214,7 @@ class HomeViewModel(
     var lon = 0.0
 
     //Parameter for både MetAlerts og Searchbar
-    private var lang = "en"
+    private var lang = "no"
 
     // Parametere for MetAlerts
     var initialized by mutableStateOf(false)

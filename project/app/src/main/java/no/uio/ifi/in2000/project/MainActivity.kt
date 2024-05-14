@@ -41,7 +41,6 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var viewModel: HomeViewModel
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
 
         viewModel = HomeViewModel(StreakRepository(dataStore))
