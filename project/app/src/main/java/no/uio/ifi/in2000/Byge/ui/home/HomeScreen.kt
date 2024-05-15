@@ -212,7 +212,7 @@ fun TopRowComponent(vm: HomeViewModel) {
         verticalAlignment = Alignment.Top
     ) {
         Image(
-            painter = painterResource(id = R.drawable.byge_logo_hvit),
+            painter = painterResource(id = R.drawable.nye_byge_logo_hvit),
             contentDescription = "App_Logo",
             modifier = Modifier
                 .size(55.dp)
