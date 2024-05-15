@@ -4,12 +4,12 @@ import no.uio.ifi.in2000.Byge.model.search.AutoCompleteResponse
 import no.uio.ifi.in2000.Byge.model.search.ReverseGeocodingResponse
 
 class SearchRepository {
-    private val locationForecastSource = SearchDataSource()
+    private val SearchDataSource = SearchDataSource()
     suspend fun fetchSuggestions(text: String, lang: String): AutoCompleteResponse? {
-        return locationForecastSource.getSuggestions(text, lang)
+        return SearchDataSource.getSuggestions(text, lang)
     }
 
     suspend fun fetchUserLocationData(lat: Double, lon: Double, lang: String): ReverseGeocodingResponse? {
-        return locationForecastSource.getUserLocation(lat, lon, lang)
+        return SearchDataSource.getUserLocation(lat, lon, lang)
     }
 }
