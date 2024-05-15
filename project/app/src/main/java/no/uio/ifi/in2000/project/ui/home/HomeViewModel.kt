@@ -29,6 +29,7 @@ import no.uio.ifi.in2000.project.model.sunrise.Sunrise
 import no.uio.ifi.in2000.project.model.sunrise.SunriseResponse
 import no.uio.ifi.in2000.project.model.sunrise.Sunset
 import no.uio.ifi.in2000.project.model.sunrise.When
+import org.jetbrains.annotations.VisibleForTesting
 import java.util.Date
 import no.uio.ifi.in2000.project.model.sunrise.Geometry as SunriseGeometry
 import no.uio.ifi.in2000.project.model.sunrise.Properties as SunriseProperties
@@ -90,14 +91,12 @@ class HomeViewModel : ViewModel(){
     var alertsData: MetAlertsResponse? by mutableStateOf(MetAlertsResponse(listOf(), String(), String(), String()))
         private set
 
-    var sortedAlerts: LinkedHashMap<String, String> = LinkedHashMap()
-        private set
+    private var sortedAlerts: LinkedHashMap<String, String> = LinkedHashMap()
 
     var locationForecastIcons: MutableList<String> = mutableListOf<String>()
         private set
 
-    var metAlertsIcons: MutableList<String>? = mutableListOf<String>()
-        private set
+    private var metAlertsIcons: MutableList<String>? = mutableListOf<String>()
 
     var firstLoad = true
 
@@ -170,7 +169,9 @@ class HomeViewModel : ViewModel(){
     var timeZone = "+00:00"
     var offset = 0
     private var name = "" //For timeZone objekt. Sjekker om stedet er i DST eller STD.
-    private var dst = false
+
+    @VisibleForTesting
+    internal var dst = false
 
     private fun getTimeOnly(dateTimeString: String): String {
         // Litt risky måte å hente ut kun tidspunktet på
@@ -284,8 +285,9 @@ class HomeViewModel : ViewModel(){
         }
     }
 
-    private fun sjekkDST(sted: String){
-        val tz = TimeZone.getTimeZone(name)
+    @VisibleForTesting
+    internal fun sjekkDST(sted: String){
+        val tz = TimeZone.getTimeZone(sted)
         val currentDate = Date()
         dst = tz.inDaylightTime(currentDate)
     }

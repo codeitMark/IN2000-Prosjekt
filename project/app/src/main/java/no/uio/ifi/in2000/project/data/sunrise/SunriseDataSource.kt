@@ -8,14 +8,18 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.serialization.gson.gson
 import no.uio.ifi.in2000.project.model.sunrise.SunriseResponse
+import org.jetbrains.annotations.VisibleForTesting
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlin.math.ceil
 
 data class SunriseDataSource(private var path: String = "https://gw-uio.intark.uh-it.no/in2000/") {
-    var authorized = false
-    var connected = false
+    @VisibleForTesting
+    internal var authorized = false
+
+    @VisibleForTesting
+    internal var connected = false
 
     private val client = HttpClient {
         install(ContentNegotiation) {

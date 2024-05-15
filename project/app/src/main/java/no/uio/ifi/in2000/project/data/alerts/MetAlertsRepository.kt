@@ -29,7 +29,7 @@ class MetAlertsRepository() {
     suspend fun fetchAlerts(lang: String, lat: Double, lon: Double): MetAlertsResponse? {
         return metAlertsSource.getAlerts(lang, lat, lon)
     }
-    suspend fun sortAlerts(alerts: MetAlertsResponse?): LinkedHashMap<String, String>{ //Problemet med dette er at man mister varsler om det er samme varsel med ulik nivå (farge).
+    suspend fun sortAlerts(alerts: MetAlertsResponse?): LinkedHashMap<String, String>{ //Problemet med dette er at man mister varsler om det er samme varsel med ulik nivå (farge), selv om det er en "duplikat". Det dukker da egentlig ikke opp flere av samme varsel i MetAlerts, men man kan like godt fjerne denne metoden og bruke String verdien fra API-kallet.
         val map = LinkedHashMap<String, String>()
         alerts?.features?.forEach{
             map[it.properties.eventAwarenessName] = it.properties.instruction

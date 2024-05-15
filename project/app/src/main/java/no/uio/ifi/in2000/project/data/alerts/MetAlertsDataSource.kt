@@ -9,10 +9,16 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.serialization.gson.gson
 import no.uio.ifi.in2000.project.model.alerts.MetAlertsResponse
+import org.jetbrains.annotations.VisibleForTesting
 
 data class MetAlertsDataSource(private val path: String = "https://gw-uio.intark.uh-it.no/in2000/") {
-    var authorized = false
-    var connected = false
+    @VisibleForTesting
+    internal var authorized = false
+    @VisibleForTesting
+    internal var connected = false
+
+    //Forced to use variables and connected. Connected could be removed if they returned different values on fail.
+
     private val client = HttpClient(CIO){
         install(ContentNegotiation){
             gson()
@@ -27,8 +33,8 @@ data class MetAlertsDataSource(private val path: String = "https://gw-uio.intark
         return try {
             //val httpResponse = client.get("weatherapi/metalerts/2.0/current.json?lang=$lang") //Guaranteed to have data
             val httpResponse = client.get("weatherapi/metalerts/2.0/current.json?lang=$lang&lat=$lat&lon=$lon") //Most likely no warnings. (Minimal data)
-            //Log.i("LocationForecastDataSource", "response ${httpResponse.status.value}")
             connected = true
+            //Log.i("LocationForecastDataSource", "response ${httpResponse.status.value}")
             if (httpResponse.status.value == 200){
                 authorized = true
                 httpResponse.body<MetAlertsResponse>()

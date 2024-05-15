@@ -10,11 +10,16 @@ import io.ktor.client.request.get
 import io.ktor.serialization.gson.gson
 import no.uio.ifi.in2000.project.model.search.AutoCompleteResponse
 import no.uio.ifi.in2000.project.model.search.ReverseGeocodingResponse
+import org.jetbrains.annotations.VisibleForTesting
 
 
 data class SearchDataSource(private val path: String = "https://api.geoapify.com") {
-    var authorized = false
-    var connected = false
+    @VisibleForTesting
+    internal var authorized = false
+
+    @VisibleForTesting
+    internal var connected = false
+
     val apiKey = "19c993f3dda5470f99c6cebeb819fa9f"
     private val client = HttpClient(CIO){
         install(ContentNegotiation){
