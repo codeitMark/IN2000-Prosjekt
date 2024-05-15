@@ -207,24 +207,33 @@ fun LoadingScreenComponent() {
 fun TopRowComponent(vm: HomeViewModel) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 16.dp),
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.Top
     ) {
+        Image(
+            painter = painterResource(id = R.drawable.byge_logo_hvit),
+            contentDescription = "App_Logo",
+            modifier = Modifier
+                .size(55.dp)
+                .padding(top = 5.dp)
+        )
         SearchBar(vm)
-
         IconButton(
             onClick = { vm.showSettings = !vm.showSettings },
             modifier = Modifier
-                .size(80.dp)
-                .padding(end = 15.dp),
+                .size(60.dp),
             colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
         ) {
-            Icon(Icons.Default.Settings, contentDescription = "Settings")
+            Icon(Icons.Default.Settings, contentDescription = "Settings",
+                modifier = Modifier
+                    .size(70.dp)
+                    .padding(start = 5.dp, end = 10.dp)
+            )
         }
     }
 }
+
 
 @Composable
 fun NoResultsToast() {
@@ -246,7 +255,7 @@ fun NoResultsToast() {
                 .fillMaxWidth()
                 .padding(10.dp)
         ) {
-            Text(text = "Søket ditt gav ingen treff", color = Color.White)
+            Text(text = "Søket ditt ga ingen treff", color = Color.White)
         }
     }
 }
@@ -438,8 +447,8 @@ fun SearchBar(vm: HomeViewModel) {
     Column(
         modifier = Modifier
             .padding(top = 5.dp)
-            .padding(horizontal = 10.dp)
-            .width((configuration.screenWidthDp - 65).dp)
+            //.padding(horizontal = 10.dp)
+            .width((configuration.screenWidthDp - 105).dp)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
@@ -451,13 +460,14 @@ fun SearchBar(vm: HomeViewModel) {
 
         Column(modifier = Modifier.fillMaxWidth()) {
 
-            Row(modifier = Modifier.fillMaxWidth()) {
+            Row(modifier = Modifier.fillMaxWidth(),  horizontalArrangement = Arrangement.Center) {
                 val containerColor = Color(0xFF272D34)
                 OutlinedTextField(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .width(325.dp)
                         .height(heightTextFields)
                         .clip(RoundedCornerShape(30.dp))
+                        //.wrapContentSize(Alignment.Center)
                         .border(
                             width = 2.dp,
                             color = Color.White,
@@ -1440,19 +1450,15 @@ fun BoxComponent(
 
 @Composable
 fun DayTemperatureItem(vm: HomeViewModel, id: Int, date: String, maxTemperature: Int, minTemperature: Int, valgtTemperatur: String, weatherIcon: String) {
-    var expanded by remember { mutableStateOf(false) }
+    val expanded = vm.expandTable[id]
 
     Row(
         modifier = Modifier
             .clickable(onClick = {
                 for (i in 0..6) {
-                    if (i == id) {
-                        vm.expandTable[id] = !vm.expandTable[id]
-                        expanded = !expanded
-                    } else {
-                        vm.expandTable[i] = false
-                    }
+                    vm.expandTable[i] = false
                 }
+                vm.expandTable[id] = !expanded
             })
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 3.dp)
@@ -1499,8 +1505,9 @@ fun DayTemperatureItem(vm: HomeViewModel, id: Int, date: String, maxTemperature:
 
         IconButton(
             onClick = {
-                expanded = !expanded
-                vm.expandTable[id] = !vm.expandTable[id]
+                for (i in 0..6) {
+                    vm.expandTable[i] = i == id && !vm.expandTable[i]
+                }
             },
             modifier = Modifier
                 .rotate(if (expanded) 180f else 0f)

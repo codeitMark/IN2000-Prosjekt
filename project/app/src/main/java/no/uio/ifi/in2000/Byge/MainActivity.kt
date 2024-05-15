@@ -44,6 +44,7 @@ class MainActivity : ComponentActivity() {
 
         viewModel = HomeViewModel(StreakRepository(dataStore))
 
+
         super.onCreate(savedInstanceState)
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         getLocation()
