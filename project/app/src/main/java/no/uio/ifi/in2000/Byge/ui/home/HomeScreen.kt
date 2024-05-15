@@ -695,10 +695,10 @@ fun NextDaysComponent(vm: HomeViewModel) {
 @Composable
 fun WeatherPerHourComponent(vm: HomeViewModel, scrollState: ScrollState, rotationState: State<Float>) {
     Text(
-        text = "  Time for time",
+        text = "Time for time",
         fontSize = 30.sp,
         modifier = Modifier
-            .padding(bottom = 10.dp)
+            .padding(start = 15.dp, bottom = 10.dp)
             .fillMaxWidth(),
         style = TextStyle(
             color = Color.White
