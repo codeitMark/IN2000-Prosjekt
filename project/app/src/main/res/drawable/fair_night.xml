@@ -4,21 +4,24 @@
     android:height="49dp"
     android:viewportWidth="58"
     android:viewportHeight="49">
-  <path
-      android:pathData="M33.207,29.613C27.439,38.525 15.556,41.062 6.666,35.28C4.263,33.718 2.324,31.707 0.889,29.428C12.815,32.205 17.837,28.857 22.045,22.355C25.872,16.443 26.224,5.063 18.907,0.305C22.231,0.44 24.561,1.063 27.554,3.009C36.444,8.791 38.975,20.702 33.207,29.613Z">
-    <aapt:attr name="android:fillColor">
-      <gradient 
-          android:startX="31.944"
-          android:startY="5.865"
-          android:endX="10.987"
-          android:endY="38.09"
-          android:type="linear">
-        <item android:offset="0" android:color="#FFABA5A5"/>
-        <item android:offset="1" android:color="#FF454242"/>
-      </gradient>
-    </aapt:attr>
-  </path>
-  <path
-      android:pathData="M49.428,41H16.65C13.504,29.602 22.609,27.671 26.251,31.341C26.516,27.477 31.218,24.966 33.204,28.636C34.529,18.398 46.117,21.296 46.117,28.636C53.567,28.636 53.07,39.068 49.428,41Z"
-      android:fillColor="#ffffff"/>
+    <path android:pathData="M33.207,29.613C27.439,38.525 15.556,41.062 6.666,35.28C4.263,33.718 2.324,31.707 0.889,29.428C12.815,32.205 17.837,28.857 22.045,22.355C25.872,16.443 26.224,5.063 18.907,0.305C22.231,0.44 24.561,1.063 27.554,3.009C36.444,8.791 38.975,20.702 33.207,29.613Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endX="10.987"
+                android:endY="38.09"
+                android:startX="31.944"
+                android:startY="5.865"
+                android:type="linear">
+                <item
+                    android:color="#FFABA5A5"
+                    android:offset="0" />
+                <item
+                    android:color="#FF454242"
+                    android:offset="1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:fillColor="#ffffff"
+        android:pathData="M49.428,41H16.65C13.504,29.602 22.609,27.671 26.251,31.341C26.516,27.477 31.218,24.966 33.204,28.636C34.529,18.398 46.117,21.296 46.117,28.636C53.567,28.636 53.07,39.068 49.428,41Z" />
 </vector>
