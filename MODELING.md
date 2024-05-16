@@ -13,12 +13,12 @@
 
 
 
-# Usecase diagram:
+# Use case diagram:
 ![](./docs/diagrams/UseCaseDiagram.png)
 
 
 
-## Use case beskrivelse
+## Tekstlig beskrivelse for use case
 
 **Navn på Use Case:** Søke etter steder og se værinformasjon  
 **Aktør:** Bruker (ungdom mellom 18-25 år)
