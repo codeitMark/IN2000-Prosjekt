@@ -29,9 +29,10 @@ class MetAlertsRepository {
     suspend fun fetchAlerts(lang: String, lat: Double, lon: Double): MetAlertsResponse? {
         return metAlertsSource.getAlerts(lang, lat, lon)
     }
-    fun sortAlerts(alerts: MetAlertsResponse?): LinkedHashMap<String, String>{ //Problemet med dette er at man mister varsler om det er samme varsel med ulik nivå (farge).
+
+    fun sortAlerts(alerts: MetAlertsResponse?): LinkedHashMap<String, String> { //Problemet med dette er at man mister varsler om det er samme varsel med ulik nivå (farge).
         val map = LinkedHashMap<String, String>()
-        alerts?.features?.forEach{
+        alerts?.features?.forEach {
             map[it.properties.eventAwarenessName] = it.properties.instruction
         }
         return map
@@ -40,11 +41,11 @@ class MetAlertsRepository {
     fun fetchAlertIcons(alerts: MetAlertsResponse?): MutableList<String>? {
         val icons = mutableListOf<String>()
         return if (alerts?.features?.isNotEmpty()!!) { //If no alerts. No alerts =/= alerts.features is null.
-            alerts.features.forEach{
+            alerts.features.forEach {
                 icons.add("https://raw.githubusercontent.com/nrkno/yr-warning-icons/master/design/svg/${alertIcons[it.properties.event]}-${it.properties.riskMatrixColor.lowercase()}.svg")
             }
             icons
-        }else{ //In case of no alerts
+        } else { //In case of no alerts
             null
         }
     }

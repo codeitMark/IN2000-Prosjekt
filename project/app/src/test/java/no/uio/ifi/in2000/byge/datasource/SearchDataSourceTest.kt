@@ -8,8 +8,9 @@ class SearchDataSourceTest {
     private val location = "Oslo, Norway"
     private val lang = "no"
     private val source = SearchDataSource()
+
     @Test
-    fun test_getConnection(){
+    fun test_getConnection() {
         runBlocking {
             val suggestionsData = source.getSuggestions(location, lang)
             println(suggestionsData)
@@ -18,7 +19,7 @@ class SearchDataSourceTest {
     }
 
     @Test
-    fun test_getAlertsAccess(){
+    fun test_getAlertsAccess() {
         runBlocking {
             val suggestionsData = source.getSuggestions(location, lang)
             println(suggestionsData)

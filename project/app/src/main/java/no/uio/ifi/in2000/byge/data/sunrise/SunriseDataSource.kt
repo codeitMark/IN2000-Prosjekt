@@ -30,12 +30,13 @@ data class SunriseDataSource(private var path: String = "https://gw-uio.intark.u
         val currentDate = getCurrentDate()
 
         return try {
-            val httpResponse = client.get("weatherapi/sunrise/3.0/sun?lat=$lat&lon=$lon&date=$currentDate&offset=$timeZone")
+            val httpResponse =
+                client.get("weatherapi/sunrise/3.0/sun?lat=$lat&lon=$lon&date=$currentDate&offset=$timeZone")
             connected = true //test connection
             if (httpResponse.status.value == 200) {
                 authorized = true //test authorized (something would be wrong with Api-key if not)
                 httpResponse.body<SunriseResponse>()
-            } else{
+            } else {
                 null
             }
         } catch (e: Exception) {

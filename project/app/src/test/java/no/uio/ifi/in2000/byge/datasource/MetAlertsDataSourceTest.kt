@@ -9,8 +9,9 @@ class MetAlertsDataSourceTest {
     private val lat = 79.4
     private val lon = 5.0
     private val source = MetAlertsDataSource()
+
     @Test
-    fun test_getAlertsConnection(){
+    fun test_getAlertsConnection() {
         runBlocking {
             val alertsData = source.getAlerts(lang, lat, lon)
             println(alertsData)
@@ -19,7 +20,7 @@ class MetAlertsDataSourceTest {
     }
 
     @Test
-    fun test_getAlertsAccess(){
+    fun test_getAlertsAccess() {
         runBlocking {
             val alertsData = source.getAlerts(lang, lat, lon)
             println(alertsData)

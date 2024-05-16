@@ -186,20 +186,25 @@ fun HomeScreen(lat: Double, lon: Double, vm: HomeViewModel) {
 
 @Composable
 fun LoadingScreenComponent() {
-    Column (modifier = Modifier.fillMaxSize(),
+    Column(
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier
-            .height(250.dp)
-            .fillMaxWidth())
+        Spacer(
+            modifier = Modifier
+                .height(250.dp)
+                .fillMaxWidth()
+        )
         CircularProgressIndicator(
             modifier = Modifier.width(90.dp),
             color = MaterialTheme.colorScheme.secondary,
             trackColor = MaterialTheme.colorScheme.surfaceVariant,
         )
-        Spacer(modifier = Modifier
-            .height(800.dp)
-            .fillMaxWidth())
+        Spacer(
+            modifier = Modifier
+                .height(800.dp)
+                .fillMaxWidth()
+        )
     }
 }
 
@@ -226,7 +231,8 @@ fun TopRowComponent(vm: HomeViewModel) {
                 .size(60.dp),
             colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
         ) {
-            Icon(Icons.Default.Settings, contentDescription = "Settings",
+            Icon(
+                Icons.Default.Settings, contentDescription = "Settings",
                 modifier = Modifier
                     .size(70.dp)
                     .padding(start = 5.dp, end = 10.dp)
@@ -250,7 +256,7 @@ fun NoResultsToast() {
         colors = CardDefaults.cardColors(containerColor = Color(0xFF38424D))
     ) {
 
-        Row (
+        Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth()
@@ -260,79 +266,81 @@ fun NoResultsToast() {
         }
     }
 }
+
 @Composable
 fun SettingsComponent(vm: HomeViewModel) {
-        Card(
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .animateContentSize(
+                animationSpec = tween(
+                    durationMillis = 300,
+                    easing = LinearOutSlowInEasing
+                )
+            ),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF38424D))
+    ) {
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth()
-                .animateContentSize(
-                    animationSpec = tween(
-                        durationMillis = 300,
-                        easing = LinearOutSlowInEasing
-                    )
-                ),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFF38424D))
         ) {
+            var celsius by remember { mutableLongStateOf(0xFFFFFFFF) }
+            var fahrenheit by remember { mutableLongStateOf(0xFF8C9299) }
+            var checked by remember { mutableStateOf(false) }
 
-            Row (
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier
-                    .fillMaxWidth()
+            Row(
+                modifier = Modifier.padding(vertical = 10.dp)
             ) {
-                var celsius by remember { mutableLongStateOf(0xFFFFFFFF) }
-                var fahrenheit by remember { mutableLongStateOf(0xFF8C9299) }
-                var checked by remember { mutableStateOf(false) }
+                SettingsText(17, color = celsius, content = "Celsius", 10, 5, 0, 5)
+                SettingsText(17, color = 0xFFFFFFFF, content = " / ", 0, 5, 0, 5)
+                SettingsText(17, color = fahrenheit, content = "Fahrenheit", 0, 5, 50, 5)
 
-                Row (
-                    modifier = Modifier.padding(vertical = 10.dp)
-                ) {
-                    SettingsText(17, color = celsius, content = "Celsius", 10, 5, 0, 5)
-                    SettingsText(17, color = 0xFFFFFFFF, content = " / ", 0, 5, 0, 5)
-                    SettingsText(17, color = fahrenheit, content = "Fahrenheit", 0, 5, 50, 5)
-
-                    Switch(
-                        modifier = Modifier
-                            .size(2.dp)
-                            .padding(0.dp, 18.dp, 0.dp, 0.dp),
-                        checked = checked,
-                        onCheckedChange = {
-                            checked = it
-                            if (celsius == 0xFFFFFFFF) {
-                                celsius = 0xFF8C9299
-                                fahrenheit = 0xFFFFFFFF
-                            } else {
-                                celsius = 0xFFFFFFFF
-                                fahrenheit = 0xFF8C9299
-                            }
-                            vm.valgtTemperatur = if (vm.valgtTemperatur == "Celsius") {
-                                "Fahrenheit" //add this to viewmodel so we can process this in repo?
-                            } else {
-                                "Celsius"
-                            } },
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color(0xFF38424D),
-                            checkedTrackColor = Color(0xFFFFFFFF),
-                            uncheckedThumbColor = Color(0xFFFFFFFF),
-                            uncheckedTrackColor = Color(0xFF38424D),
-                        )
-                    )
-                }
-                IconButton(
-                    onClick = { vm.showSettings = false }, // Lukker boksen når klikket
+                Switch(
                     modifier = Modifier
-                        .size(50.dp),
-                    colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
-                ) {
-                    Icon(Icons.Default.Close, contentDescription = "Close settings")
-                }
+                        .size(2.dp)
+                        .padding(0.dp, 18.dp, 0.dp, 0.dp),
+                    checked = checked,
+                    onCheckedChange = {
+                        checked = it
+                        if (celsius == 0xFFFFFFFF) {
+                            celsius = 0xFF8C9299
+                            fahrenheit = 0xFFFFFFFF
+                        } else {
+                            celsius = 0xFFFFFFFF
+                            fahrenheit = 0xFF8C9299
+                        }
+                        vm.valgtTemperatur = if (vm.valgtTemperatur == "Celsius") {
+                            "Fahrenheit" //add this to viewmodel so we can process this in repo?
+                        } else {
+                            "Celsius"
+                        }
+                    },
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = Color(0xFF38424D),
+                        checkedTrackColor = Color(0xFFFFFFFF),
+                        uncheckedThumbColor = Color(0xFFFFFFFF),
+                        uncheckedTrackColor = Color(0xFF38424D),
+                    )
+                )
+            }
+            IconButton(
+                onClick = { vm.showSettings = false }, // Lukker boksen når klikket
+                modifier = Modifier
+                    .size(50.dp),
+                colors = IconButtonDefaults.iconButtonColors(contentColor = Color.White)
+            ) {
+                Icon(Icons.Default.Close, contentDescription = "Close settings")
             }
         }
+    }
 
 }
 
 @Composable
 fun ExtendedTableItem(data: List<List<Any>>) {
-    Row (
+    Row(
         modifier = Modifier
             .fillMaxWidth()
 
@@ -343,16 +351,18 @@ fun ExtendedTableItem(data: List<List<Any>>) {
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color(0xFF38424D))
-                .height(209.dp)) {
+                .height(209.dp)
+        ) {
             item {
 
                 Line()
-                Row (modifier = Modifier
-                    .fillMaxWidth()
-                    .height(37.dp),
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(37.dp),
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically
-                    ) {
+                ) {
                     Text(
                         text = "Tid",
                         color = Color.White,
@@ -385,18 +395,20 @@ fun ExtendedTableItem(data: List<List<Any>>) {
                             .width(30.dp)
                     )
                 }
-                Spacer(modifier = Modifier
-                    .padding(5.dp, 5.dp)
-                    .fillMaxWidth()
-                    .height(1.dp)
-                    .background(Color(0xFF999999))
+                Spacer(
+                    modifier = Modifier
+                        .padding(5.dp, 5.dp)
+                        .fillMaxWidth()
+                        .height(1.dp)
+                        .background(Color(0xFF999999))
                 )
             }
             items(data) {
                 val lists = it
-                Row(modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp, 8.dp),
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(5.dp, 8.dp),
                     horizontalArrangement = Arrangement.SpaceAround
 
                 ) {
@@ -405,7 +417,13 @@ fun ExtendedTableItem(data: List<List<Any>>) {
                     Text(text = "${lists[2]} m/s", color = Color.White)
                     Text(text = "${lists[3]} mm", color = Color.White)
                     Image(
-                        painter = painterResource(id = LocalContext.current.resources.getIdentifier(lists[4].toString(), "drawable", LocalContext.current.packageName)),
+                        painter = painterResource(
+                            id = LocalContext.current.resources.getIdentifier(
+                                lists[4].toString(),
+                                "drawable",
+                                LocalContext.current.packageName
+                            )
+                        ),
                         contentDescription = "Weather icon",
                         modifier = Modifier
                             .size(23.dp)
@@ -461,7 +479,7 @@ fun SearchBar(vm: HomeViewModel) {
 
         Column(modifier = Modifier.fillMaxWidth()) {
 
-            Row(modifier = Modifier.fillMaxWidth(),  horizontalArrangement = Arrangement.Center) {
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
                 val containerColor = Color(0xFF272D34)
                 OutlinedTextField(
                     modifier = Modifier
@@ -512,7 +530,7 @@ fun SearchBar(vm: HomeViewModel) {
                     ),
                     singleLine = true,
                     trailingIcon = {
-                        Row (verticalAlignment = Alignment.CenterVertically) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             if (vm.loadingSearch) {
                                 CircularProgressIndicator(
                                     modifier = Modifier
@@ -557,7 +575,12 @@ fun SearchBar(vm: HomeViewModel) {
                                 }
                                     .sorted()
                             ) {
-                                DropdownRow(vm, focusManager, keyboardController, title = it) { title ->
+                                DropdownRow(
+                                    vm,
+                                    focusManager,
+                                    keyboardController,
+                                    title = it
+                                ) { title ->
                                     vm.searchField = title
                                     vm.expanded = true
                                 }
@@ -566,7 +589,12 @@ fun SearchBar(vm: HomeViewModel) {
                             items(
                                 sug.sorted()
                             ) {
-                                DropdownRow(vm, focusManager, keyboardController, title = it) { title ->
+                                DropdownRow(
+                                    vm,
+                                    focusManager,
+                                    keyboardController,
+                                    title = it
+                                ) { title ->
                                     vm.searchField = title
                                     vm.expanded = true
                                 }
@@ -694,7 +722,11 @@ fun NextDaysComponent(vm: HomeViewModel) {
 }
 
 @Composable
-fun WeatherPerHourComponent(vm: HomeViewModel, scrollState: ScrollState, rotationState: State<Float>) {
+fun WeatherPerHourComponent(
+    vm: HomeViewModel,
+    scrollState: ScrollState,
+    rotationState: State<Float>
+) {
     Text(
         text = "Time for time",
         fontSize = 30.sp,
@@ -714,7 +746,11 @@ fun WeatherPerHourComponent(vm: HomeViewModel, scrollState: ScrollState, rotatio
         Row(modifier = Modifier.horizontalScroll(scrollState)) {
             for (i in 1..35) {
                 BoxComponent(i, vm, weatherIcon = {
-                    val iconids = LocalContext.current.resources.getIdentifier(vm.locationForecastIcons[i], "drawable", LocalContext.current.packageName) //ignore warning. It makes R.drawable dynamic instead of static, allowing us to apply variable names (since weather icons change a lot)
+                    val iconids = LocalContext.current.resources.getIdentifier(
+                        vm.locationForecastIcons[i],
+                        "drawable",
+                        LocalContext.current.packageName
+                    ) //ignore warning. It makes R.drawable dynamic instead of static, allowing us to apply variable names (since weather icons change a lot)
                     Image(
                         modifier = Modifier
                             .size(110.dp)
@@ -812,7 +848,11 @@ fun NormalWarningsComponent(vm: HomeViewModel) {
                     headline = it.properties.eventAwarenessName,
                     subtitle = "",
                     info = it.properties.instruction,
-                    iconResourceId = LocalContext.current.resources.getIdentifier(iconResourceName, "drawable", LocalContext.current.packageName)
+                    iconResourceId = LocalContext.current.resources.getIdentifier(
+                        iconResourceName,
+                        "drawable",
+                        LocalContext.current.packageName
+                    )
                 )
                 i++
             }
@@ -843,7 +883,8 @@ fun UvComponent(vm: HomeViewModel) {
         )
     }
 
-    vm.uvNow = vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky
+    vm.uvNow =
+        vm.weatherData!!.properties.timeseries[0].data.instant.details.ultraviolet_index_clear_sky
 
     val uvText = when {
         vm.weatherData != null && vm.uvNow < 3.0 -> "Lavt"
@@ -1006,7 +1047,11 @@ fun IconAndTemperatureComponent(vm: HomeViewModel) {
             .padding(start = 20.dp, end = 20.dp, bottom = 50.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        val iconid = LocalContext.current.resources.getIdentifier(vm.locationForecastIcons[0], "drawable", LocalContext.current.packageName) //ignore warning. It makes R.drawable dynamic instead of static, allowing us to apply variable names (since weather icons change a lot)
+        val iconid = LocalContext.current.resources.getIdentifier(
+            vm.locationForecastIcons[0],
+            "drawable",
+            LocalContext.current.packageName
+        ) //ignore warning. It makes R.drawable dynamic instead of static, allowing us to apply variable names (since weather icons change a lot)
         Image(
             modifier = Modifier
                 .size(110.dp)
@@ -1027,7 +1072,8 @@ fun IconAndTemperatureComponent(vm: HomeViewModel) {
                 "${(vm.weatherData!!.properties.timeseries[0].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F"
             }
 
-            val currentWeatherDescription = Constants.getWeatherDescription(vm.weatherData!!.properties.timeseries[0].data.next_1_hours.summary.symbol_code)
+            val currentWeatherDescription =
+                Constants.getWeatherDescription(vm.weatherData!!.properties.timeseries[0].data.next_1_hours.summary.symbol_code)
 
             Text(
                 modifier = Modifier.padding(vertical = 4.dp),
@@ -1068,7 +1114,7 @@ fun HeaderComponent(vm: HomeViewModel) {
             .padding(bottom = 50.dp, top = 15.dp, end = 20.dp),
         horizontalAlignment = Alignment.Start
     ) {
-        Row (
+        Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
@@ -1082,7 +1128,7 @@ fun HeaderComponent(vm: HomeViewModel) {
                 )
             )
 
-            Row (
+            Row(
                 horizontalArrangement = Arrangement.spacedBy((-23).dp)
             ) {
                 Image(
@@ -1095,7 +1141,7 @@ fun HeaderComponent(vm: HomeViewModel) {
 
                 )
                 AnimatedVisibility(visible = vm.showStreak) {
-                    Box (
+                    Box(
                         modifier = Modifier
                             .clip(RoundedCornerShape(8.dp))
                             .background(Color(0xFFFF6D00))
@@ -1154,7 +1200,7 @@ fun DropdownRow(
 
 //Composable to make the warning box
 @Composable
-fun WarningBox(headline: String, subtitle: String, info: String,  iconResourceId: Int) {
+fun WarningBox(headline: String, subtitle: String, info: String, iconResourceId: Int) {
     var expandedState by remember { mutableStateOf(false) }
     val rotationState by animateFloatAsState(
         targetValue = if (expandedState) 180f else 0f, label = ""
@@ -1243,9 +1289,17 @@ fun WarningBox(headline: String, subtitle: String, info: String,  iconResourceId
 
 //Makes text with the same type of font
 @Composable
-fun SettingsText(fontSize: Int, color: Long, content: String, start: Int, top: Int, end: Int, bottom: Int ){
+fun SettingsText(
+    fontSize: Int,
+    color: Long,
+    content: String,
+    start: Int,
+    top: Int,
+    end: Int,
+    bottom: Int
+) {
     Text(
-        text = content ,
+        text = content,
         style = TextStyle(
             fontSize = fontSize.sp,
             fontWeight = FontWeight(300),
@@ -1258,17 +1312,18 @@ fun SettingsText(fontSize: Int, color: Long, content: String, start: Int, top: I
 
 //Makes a line (used in the settings card and long term weather forecast
 @Composable
-fun Line(){
-    Spacer(modifier = Modifier
-        .fillMaxWidth()
-        .height(1.dp)
-        .background(Color(0xFFFFFFFF))
+fun Line() {
+    Spacer(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(1.dp)
+            .background(Color(0xFFFFFFFF))
     )
 }
 
 //Makes a vertical line (used between weather icon and degrees
 @Composable
-fun VerticalLine(){
+fun VerticalLine() {
     Spacer(
         Modifier
             .padding(start = 30.dp, end = 30.dp)
@@ -1293,7 +1348,7 @@ fun BoxComponent(
 
     if (time >= 24) { // Gjør time til lokal tid
         time -= 24
-    } else if (time < 0){ // For en eller annen grunn kan det bli negativt. Dette sørger for at det ikke skjer.
+    } else if (time < 0) { // For en eller annen grunn kan det bli negativt. Dette sørger for at det ikke skjer.
         time += 24
     }
 
@@ -1307,9 +1362,12 @@ fun BoxComponent(
     } else {
         "${(vm.weatherData!!.properties.timeseries[i].data.instant.details.air_temperature * 1.8 + 32).roundToInt()}°F"
     }
-    val windSpeed = "${vm.weatherData!!.properties.timeseries[i].data.instant.details.wind_speed.roundToInt()} m/s"
-    val precipitation = "${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount} mm"
-    val uvIndex = vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky
+    val windSpeed =
+        "${vm.weatherData!!.properties.timeseries[i].data.instant.details.wind_speed.roundToInt()} m/s"
+    val precipitation =
+        "${vm.weatherData!!.properties.timeseries[i].data.next_1_hours.details.precipitation_amount} mm"
+    val uvIndex =
+        vm.weatherData!!.properties.timeseries[i].data.instant.details.ultraviolet_index_clear_sky
     val width = 140
     val height = 278
 
@@ -1331,7 +1389,9 @@ fun BoxComponent(
             )
             .width(width.dp)
             .height(if (vm.allBoxesExpanded) height.dp else 160.dp)
-            .clickable { vm.allBoxesExpanded = !vm.allBoxesExpanded }, // Oppdaterer den felles expanded-state'en
+            .clickable {
+                vm.allBoxesExpanded = !vm.allBoxesExpanded
+            }, // Oppdaterer den felles expanded-state'en
         colors = CardDefaults.cardColors(
             containerColor = Color(0xFF4A535D)
         ),
@@ -1450,7 +1510,15 @@ fun BoxComponent(
 }
 
 @Composable
-fun DayTemperatureItem(vm: HomeViewModel, id: Int, date: String, maxTemperature: Int, minTemperature: Int, valgtTemperatur: String, weatherIcon: String) {
+fun DayTemperatureItem(
+    vm: HomeViewModel,
+    id: Int,
+    date: String,
+    maxTemperature: Int,
+    minTemperature: Int,
+    valgtTemperatur: String,
+    weatherIcon: String
+) {
     val expanded = vm.expandTable[id]
 
     Row(
@@ -1498,7 +1566,13 @@ fun DayTemperatureItem(vm: HomeViewModel, id: Int, date: String, maxTemperature:
         Spacer(modifier = Modifier.weight(1f))
 
         Image(
-            painter = painterResource(id = LocalContext.current.resources.getIdentifier(weatherIcon, "drawable", LocalContext.current.packageName)),
+            painter = painterResource(
+                id = LocalContext.current.resources.getIdentifier(
+                    weatherIcon,
+                    "drawable",
+                    LocalContext.current.packageName
+                )
+            ),
             contentDescription = "Weather icon",
             modifier = Modifier
                 .size(50.dp)
@@ -1556,7 +1630,10 @@ fun UVScale(uvIndex: Float) {
             }
             drawOval(
                 color = Color.White,
-                topLeft = Offset(uvIndexPosition - (10.dp.toPx() / 2), (size.height / 2) - (16.dp.toPx() / 2)), // Top-left hjørne av ovalen
+                topLeft = Offset(
+                    uvIndexPosition - (10.dp.toPx() / 2),
+                    (size.height / 2) - (16.dp.toPx() / 2)
+                ), // Top-left hjørne av ovalen
                 size = Size(10.dp.toPx(), 16.dp.toPx()) // Størrelsen til ovalen
             )
         }

@@ -9,7 +9,11 @@ class SearchRepository {
         return SearchDataSource.getSuggestions(text, lang)
     }
 
-    suspend fun fetchUserLocationData(lat: Double, lon: Double, lang: String): ReverseGeocodingResponse? {
+    suspend fun fetchUserLocationData(
+        lat: Double,
+        lon: Double,
+        lang: String
+    ): ReverseGeocodingResponse? {
         return SearchDataSource.getUserLocation(lat, lon, lang)
     }
 }

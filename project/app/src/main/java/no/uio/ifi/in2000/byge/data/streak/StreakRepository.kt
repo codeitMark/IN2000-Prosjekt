@@ -7,7 +7,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.first
 
-data class StreakStatus (
+data class StreakStatus(
     // On format yyyy-MM-dd
     val streak: Int,
     val lastDate: String

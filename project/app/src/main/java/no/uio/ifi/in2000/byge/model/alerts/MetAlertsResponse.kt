@@ -5,4 +5,4 @@ data class MetAlertsResponse(
     val lang: String,
     val lastChange: String,
     val type: String
-    )
+)

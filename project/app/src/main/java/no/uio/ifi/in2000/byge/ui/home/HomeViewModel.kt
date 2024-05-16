@@ -3,8 +3,8 @@ package no.uio.ifi.in2000.byge.ui.home
 import android.icu.util.TimeZone
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusRequester
@@ -42,7 +42,7 @@ import no.uio.ifi.in2000.byge.model.sunrise.Properties as SunriseProperties
 
 class HomeViewModel(
     private val streakRep: StreakRepository
-) : ViewModel(){
+) : ViewModel() {
     private val locationForecastRep = LocationForecastRepository()
     private val metAlertsRep = MetAlertsRepository()
     private val sunriseRep = SunriseRepository()
@@ -75,7 +75,7 @@ class HomeViewModel(
                     (periodLastToday.years != 0 || periodLastToday.months != 0 || periodLastToday.days != 1)
                     &&
                     !(periodLastToday.years == 0 && periodLastToday.months == 0 && periodLastToday.days == 0)
-                    ) {
+                ) {
                     streakRep.resetStreak(today.format(formatter))
                 }
                 storedData = streakRep.fetchInitialPreferences()
@@ -133,7 +133,14 @@ class HomeViewModel(
     var loadingSearch by mutableStateOf(false)
     var noResultsToast by mutableStateOf(false)
 
-    var alertsData: MetAlertsResponse? by mutableStateOf(MetAlertsResponse(listOf(), String(), String(), String()))
+    var alertsData: MetAlertsResponse? by mutableStateOf(
+        MetAlertsResponse(
+            listOf(),
+            String(),
+            String(),
+            String()
+        )
+    )
         private set
 
     private var sortedAlerts: LinkedHashMap<String, String> = LinkedHashMap()
@@ -253,8 +260,8 @@ class HomeViewModel(
 
     //fun loadData(lat: Double, lon: Double, county:String, lang: String){
     //Tester uten alerts (Lite sannsynlig for at det er alerts)
-    private fun loadData(lang: String, lat: Double, lon: Double, timeZone: String){
-        viewModelScope.launch(Dispatchers.IO){
+    private fun loadData(lang: String, lat: Double, lon: Double, timeZone: String) {
+        viewModelScope.launch(Dispatchers.IO) {
             weatherData = locationForecastRep.fetchWeather(lat, lon)
             locationForecastIcons = locationForecastRep.fetchLocationForecastIcons(weatherData)
             sunrise = sunriseRep.fetchSunrise(lat, lon, timeZone)
@@ -263,7 +270,7 @@ class HomeViewModel(
 
             responseStatus = true
             loadAlerts(lang, lat, lon)
-            if (!initialized){
+            if (!initialized) {
                 initialized = true
             }
             //Log.i("HOMEVIEWMODEL INIT", "Initiated.")
@@ -279,16 +286,17 @@ class HomeViewModel(
                 val item = response.results[0]
                 currentFormatted = item.formatted
                 name = item.timezone.name
-            sjekkDST()
-            if (dst){
-                timeZone = item.timezone.offset_DST //Daylight Saving Time. Sommertid.
-                offset = item.timezone.offset_DST_seconds/60/60
-            } else{
-                timeZone = item.timezone.offset_STD //Standard Time. Norge er i DST, mens steder som New Zealand er i STD.
-                offset = item.timezone.offset_STD_seconds/60/60
-            }
+                sjekkDST()
+                if (dst) {
+                    timeZone = item.timezone.offset_DST //Daylight Saving Time. Sommertid.
+                    offset = item.timezone.offset_DST_seconds / 60 / 60
+                } else {
+                    timeZone =
+                        item.timezone.offset_STD //Standard Time. Norge er i DST, mens steder som New Zealand er i STD.
+                    offset = item.timezone.offset_STD_seconds / 60 / 60
+                }
 
-            loadData(lang, lat, lon, timeZone)
+                loadData(lang, lat, lon, timeZone)
             }
             //loadData(59.9133301, 10.7389701)
             timeoutStreak()
@@ -331,10 +339,10 @@ class HomeViewModel(
     }
 
     //Seperat loadAlerts så vi slipper å kalle på LocationForecast på nytt hvis man bytter språk
-    private fun loadAlerts(lang: String, lat: Double, lon: Double){
-        viewModelScope.launch(Dispatchers.IO){
+    private fun loadAlerts(lang: String, lat: Double, lon: Double) {
+        viewModelScope.launch(Dispatchers.IO) {
             //Prevents app from crashing. There are no locations chosen.
-            if (!initialized){
+            if (!initialized) {
                 return@launch
             }
             alertsData = metAlertsRep.fetchAlerts(lang, lat, lon)
@@ -344,14 +352,17 @@ class HomeViewModel(
         }
     }
 
-    private fun sjekkDST(){
+    private fun sjekkDST() {
         val tz = TimeZone.getTimeZone(name)
         val currentDate = Date()
         dst = tz.inDaylightTime(currentDate)
     }
 
     // Hjelpefunksjon for å hente ut maksimums- og minimumstemperaturene for en dag
-    fun getTemperatureForDay(response: LocationForecastResponse, date: String): Pair<Double?, Double?> {
+    fun getTemperatureForDay(
+        response: LocationForecastResponse,
+        date: String
+    ): Pair<Double?, Double?> {
         val timeseries = response.properties.timeseries
 
         var maxTemp: Double? = null
@@ -393,7 +404,8 @@ class HomeViewModel(
                     if (time == "00:00:00Z" ||
                         time == "06:00:00Z" ||
                         time == "12:00:00Z" ||
-                        time == "18:00:00Z") {
+                        time == "18:00:00Z"
+                    ) {
 
                         val values = mutableListOf<Any>()
                         values.add(Constants.timeFormat[time].toString())
@@ -417,10 +429,12 @@ class HomeViewModel(
 
         return retList
     }
+
     // I ViewModel
     fun getAlertIcons(): Map<String, String> {
         return metAlertsRep.alertIcons
     }
+
     private suspend fun timeoutStreak() {
         delay(4000)
         showStreak = false

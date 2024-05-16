@@ -68,8 +68,12 @@ class MainActivity : ComponentActivity() {
             &&
             ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
             != PackageManager.PERMISSION_GRANTED
-            ) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 100)
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                100
+            )
             return
         }
 
@@ -89,6 +93,6 @@ class MainActivity : ComponentActivity() {
 // Comment on main
 
 @Composable
-fun MainScreen(lat: Double, lon: Double, vm: HomeViewModel){
+fun MainScreen(lat: Double, lon: Double, vm: HomeViewModel) {
     HomeScreen(lat, lon, vm)
 }

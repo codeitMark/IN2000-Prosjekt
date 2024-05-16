@@ -10,8 +10,9 @@ class LocationForecastDataSourceTest {
     private val lat = 58.7753
     private val lon = 5.9056
     private val source = LocationForecastDataSource()
+
     @Test
-    fun test_getWeatherConnection(){
+    fun test_getWeatherConnection() {
         runBlocking {
             val weatherData = source.getWeather(lat, lon)
             println(weatherData)
@@ -20,7 +21,7 @@ class LocationForecastDataSourceTest {
     }
 
     @Test
-    fun test_getWeatherAccess(){
+    fun test_getWeatherAccess() {
         runBlocking {
             val weatherData = source.getWeather(lat, lon)
             println(weatherData)
