@@ -3,8 +3,6 @@ Vi har benyttet oss av den anbefalte og moderne app strukturen beskrevet av Andr
 
 MVVM-arkitekturen har blitt hovedsakelig ivaretatt når det gjleder mappe- og filstruktur. Filene har høy kohesjon og lav kobling mellom hverandre, som fører til at filene kun avhenger av minst mengde filer. Dette fører til at koden blir mer oversiktlig og enklere å både redigere og vedlikeholde. Et unntak utenfor dette er MainActivity.kt, som bryter med MVVM, siden den egentlig kun er knyttet til View. Dette er fordi MainActivity blir brukt som en repository, som henter inn dataen HomeViewModel trenger, selv om det egentlig kun skal brukes til å vise noe på telefonen. En mulig løsning er å flytte denne metoden ut til en egen fil, som en repository og sende inn dataen til HomeViewModel. 
 
-
-
 noe om erm mainactivity 
 som sett i modeling, koblingene mellom filene/klassene.
 
