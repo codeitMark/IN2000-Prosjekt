@@ -1,20 +1,20 @@
 # Aktivitetsdiagram:
-![](./docs/diagrams/ActivityDiagram.png)
+![Aktivitetsdiagram](./docs/diagrams/ActivityDiagram.png)
 
 
 
 # Klassediagram:
-![](./docs/diagrams/KlasseDiagram.png)
+![Klassediagram](./docs/diagrams/KlasseDiagram.png)
 
 
 
 # Sekvensdiagram:
-![](./docs/diagrams/SekvensDiagram.png)
+![Sekvensdiagram](./docs/diagrams/SekvensDiagram.png)
 
 
 
 # Use case diagram:
-![](./docs/diagrams/UseCaseDiagram.png)
+![Use case diagram](./docs/diagrams/UseCaseDiagram.png)
 
 
 
