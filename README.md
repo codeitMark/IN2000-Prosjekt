@@ -1,6 +1,6 @@
 # Byge
 
-En værapp designet for unge voksne som bruker android, fra alderen 18-25.
+En værapp designet for unge voksne, fra alderen 18-25. Appen viser været nå, time for time og de neste dagene basert på området.
 
 # Dokumentasjon
 
