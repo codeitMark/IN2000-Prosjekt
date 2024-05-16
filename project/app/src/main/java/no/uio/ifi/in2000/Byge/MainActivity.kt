@@ -94,19 +94,3 @@ class MainActivity : ComponentActivity() {
 fun MainScreen(lat: Double, lon: Double, vm: HomeViewModel){
     HomeScreen(lat, lon, vm)
 }
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ProjectTheme {
-        Greeting("Android")
-    }
-}
