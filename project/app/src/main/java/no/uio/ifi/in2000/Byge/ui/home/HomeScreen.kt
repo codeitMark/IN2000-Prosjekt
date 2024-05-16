@@ -207,6 +207,7 @@ fun LoadingScreenComponent() {
 fun TopRowComponent(vm: HomeViewModel) {
     Row(
         modifier = Modifier
+            .padding(top = 10.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top
