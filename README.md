@@ -1,13 +1,27 @@
-# team-38
-# John
-# May Helena 
-# Marte
-# Mark
-# Iben
-# Hassan
-<br/>Velkommen til develop-branchen! Her kan dere merge så mye dere vil. Dette er essensielt en "unstable" versjon av main/MVP, hvor vi pusher mange ting vi jobber med her. For mer informasjon, sjekk GitFlow.
-<br/>Husk å "merge" via pull requests! git merge eller rebase funker uten pull requests, men de kommer uten commit historien! Da vet vi ikke hvem som har gjort hva og hvem som har peiling på ting.
-<br/>![GitFlow](https://www.google.com/search?client=firefox-b-d&sca_esv=bc1eb3f30bc375f8&sxsrf=ACQVn0_KNl6K8vGiowzc53Ms9p28PUrxdw:1712247261265&q=GitFlow&uds=AMwkrPsqM8oco4Q-BA4cM5SjIIFfOFon3pH4IFVJJUTS4cJf8Bq90VyybkQTiIz7PW7R5nQjbkOZTznverY8QgkQwQSiFux4VjWLpmeBFlQ09vFnZEpgeWfEYvmec93OgeNzl8UYqzLK3gGld51UTDTcXrL1bwxNJrGbZsFfA548RjVFUfGehOcgrjyJnKyoH7kq-yOauDaacf8NHKVR8rRmrJsWJ6JcJVpHkot2yf75igu7Y9eF7HVx5ovvsPsU-ucVxfa5IeU9&udm=2&prmd=ivnbtz&sa=X&ved=2ahUKEwjDwJmO-qiFAxUaAxAIHdXVCx0QtKgLegQIFRAB&biw=2560&bih=1251&dpr=1#vhid=RVUwMho2KypFeM&vssid=mosaic)
-<br/>Man skal i utgangspunktet la nye brancher ta utgangspunkt i denne branchen.
-<br/>Hvis dere sliter med litt dependencies, prøv å synkronisere Gradle filene! 
-<br/>File > Sync project with Gradle Files
+# Byge
+
+En værapp designet for unge voksne, fra alderen 18-25. Appen viser været nå, time for time og de neste dagene basert på området.
+
+# Dokumentasjon
+
+Under ser du hva som finnes av dokumentasjon som tilhører Byge. Du finner også hvor du finner den - Brukerdokumentasjon -> Rapporten - Produktdokumentasjon -> Rapporten - Archetecture.md -> root directory - Modelling.md -> root directory
+
+# Hvordan kjøre appen
+
+Du kan få tak i appen på GitHub her: https://github.uio.no/IN2000-V24/team-38.git
+For å kjøre appen kan du klone repositoriet fra linken over, for så å kjøre den enten på android enheten din, eller på en emulator.
+
+# Biblioteker
+
+    - ktor og gson
+    - viewmodel og coroutine
+    - coil
+    - datastore
+    - google play services (location)
+    - junit
+    - Jetpack Compose
+
+# Kjente feil
+
+    - Under første lasting må appen restartes etter å ha gitt tillatelse til å bruke brukerlokasjon for at den skal hente brukerlokasjonen. Dette kan også løses ved å åpne Google Maps og angi posisjon før man åpner appen.
+    - Under recomposition av skjermen mister en hvilket sted en har valgt

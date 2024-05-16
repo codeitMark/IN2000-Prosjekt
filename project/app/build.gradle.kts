@@ -53,11 +53,6 @@ android {
 
 dependencies {
 
-    dependencies {
-        val nav_version = "2.7.7"
-        implementation("androidx.navigation:navigation-compose:$nav_version")
-    }
-
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
@@ -81,10 +76,6 @@ dependencies {
     implementation("io.ktor:ktor-client-cio:$ktor_version")
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
-
-    val coil_version = "2.0.0"
-    implementation("io.coil-kt:coil-compose:2.5.0")
-    implementation("io.coil-kt:coil-svg:$coil_version")
 
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.8")
 
