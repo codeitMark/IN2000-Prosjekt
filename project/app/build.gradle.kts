@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "no.uio.ifi.in2000.Byge"
+    namespace = "no.uio.ifi.in2000.byge"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "no.uio.ifi.in2000.Byge"
+        applicationId = "no.uio.ifi.in2000.byge"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
