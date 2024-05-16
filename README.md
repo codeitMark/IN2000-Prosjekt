@@ -1,10 +1,6 @@
 # Byge
 
-En værapp designet for unge voksne, fra alderen 18-25. NOE INTRODUKSJON VET IKKE
-
-# Kjente problemer
-
-noenoe sørg for å restrukturere siden strukturen tok jeg fra et annet sted. posisjonsbasert vær. Røde feil, husk å Sync Project with Gradle files.
+En værapp designet for unge voksne som bruker android, fra alderen 18-25.
 
 # Dokumentasjon
 
@@ -27,5 +23,5 @@ For å kjøre appen kan du klone repositoriet fra linken over, for så å kjøre
 
 # Kjente feil
 
-    - Under første lasting må appen restartes etter å ha gitt tillatelse til å bruke brukerlokasjon for at den skal hente brukerlokasjonen.
+    - Under første lasting må appen restartes etter å ha gitt tillatelse til å bruke brukerlokasjon for at den skal hente brukerlokasjonen. Dette kan også løses ved å åpne Google Maps og angi posisjon før man åpner appen.
     - Under recomposition av skjermen mister en hvilket sted en har valgt
