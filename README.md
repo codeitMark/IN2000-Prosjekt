@@ -25,3 +25,7 @@ For å kjøre appen kan du klone repositoriet fra linken over, for så å kjøre
 
     - Under første lasting må appen restartes etter å ha gitt tillatelse til å bruke brukerlokasjon for at den skal hente brukerlokasjonen. Dette kan også løses ved å åpne Google Maps og angi posisjon før man åpner appen.
     - Under recomposition av skjermen mister en hvilket sted en har valgt
+
+# Kommentarer
+I retrospekt så fikk vi ikke til så mye av testingen, i tillegg til noen flere bad practices, som å ha API-nøklene åpent og pushet ut i Github.
+Det funker heller ikke lenger, må evt. legge til stubs for data, og sette opp geoapify igjen, for geolokasjon.
